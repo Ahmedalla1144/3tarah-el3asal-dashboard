@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Unit;
+use App\Models\ProductUnit;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\RedirectResponse;
@@ -92,6 +93,17 @@ class ProductController extends Controller
 
         $data = $request->validated();
         $product = Product::create($data);
+
+        // Automatically create a product unit for the base unit if it exists
+        if ($product->base_unit_id) {
+            ProductUnit::create([
+                'product_id' => $product->id,
+                'unit_id' => $product->base_unit_id,
+                'ratio_to_base' => 1.0,
+                'is_default_sale' => true, // Make base unit default for sales
+                'is_default_buy' => true,  // Make base unit default for purchases
+            ]);
+        }
 
         return redirect()
             ->route('products.index')

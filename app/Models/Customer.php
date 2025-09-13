@@ -30,4 +30,19 @@ class Customer extends Model
     {
         return $this->hasMany(ArReceipt::class);
     }
+
+    /**
+     * Calculate customer's current debit balance
+     * Opening balance + Total sales invoices - Total receipts
+     */
+    public function getCurrentBalanceAttribute(): float
+    {
+        $openingBalance = (float) ($this->opening_balance ?? 0);
+        $totalSales = (float) $this->salesInvoices()->sum('total');
+        $totalReceipts = (float) $this->receipts()->sum('amount');
+        
+        return round($openingBalance + $totalSales - $totalReceipts, 2);
+    }
+
+    protected $appends = ['current_balance'];
 }

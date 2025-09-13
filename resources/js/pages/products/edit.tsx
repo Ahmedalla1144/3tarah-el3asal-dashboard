@@ -111,6 +111,9 @@ export default function ProductEdit({ product, categories, units }: PageProps) {
                                 <Link href={productsRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">إلغاء</Button>
                                 </Link>
+                                <Link href={`/products/${product.id}/units`} className="inline-flex">
+                                    <Button type="button" variant="secondary">إدارة الوحدات</Button>
+                                </Link>
                                 <Button type="submit" disabled={processing}>حفظ</Button>
                             </div>
                         </>

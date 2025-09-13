@@ -7,10 +7,10 @@ import { type BreadcrumbItem } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMemo, useState } from 'react'
 
-interface ProductUnitRow { unit_id: number; unit: string | null; ratio_to_base: number; is_default_sale?: boolean }
+interface ProductUnitRow { unit_id: number; unit: string | null; ratio_to_base: number; is_default_sale?: boolean; is_default_buy?: boolean }
 interface ProductRow { id: number; name: string; base_unit_id: number | null; sale_price: number | null; stock: number; units?: ProductUnitRow[] }
 interface PageProps {
-    customers: { id: number; name: string }[]
+    customers: { id: number; name: string; current_balance: number }[]
     warehouses: { id: number; name: string }[]
     products: ProductRow[]
     units: { id: number; name: string }[]
@@ -30,6 +30,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
 
     const [items, setItems] = useState([{ product_id: '', unit_id: '', qty: '', unit_price: '', discount_value: '', tax_value: '', max_qty: 0 }])
     const [paidAmount, setPaidAmount] = useState<string>('')
+    const [selectedCustomerId, setSelectedCustomerId] = useState<string>('')
 
     const total = useMemo(() => {
         return items.reduce((sum, r) => {
@@ -41,17 +42,35 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
         }, 0)
     }, [items])
 
+    const selectedCustomer = customers.find(c => String(c.id) === selectedCustomerId)
+    const customerDebitBalance = selectedCustomer?.current_balance || 0
+    const actualTotal = total + customerDebitBalance
+
     function onSelectProduct(idx: number, productId: string) {
         const p = products.find(pr => String(pr.id) === productId)
-        const defaultUnitId = p?.units?.find(u => u.is_default_sale)?.unit_id ?? p?.base_unit_id
-        const ratio = p && defaultUnitId ? (p.units?.find(u => u.unit_id === defaultUnitId)?.ratio_to_base ?? 1) : 1
-        const derivedPrice = p?.sale_price != null ? (Number(p.sale_price) * ratio) : undefined
+        if (!p) return
+
+        // First try to find default sale unit, then default buy unit, then base unit, then first available unit
+        let defaultUnitId = p.units?.find(u => u.is_default_sale)?.unit_id
+        if (!defaultUnitId) {
+            defaultUnitId = p.units?.find(u => u.is_default_buy)?.unit_id
+        }
+        if (!defaultUnitId) {
+            defaultUnitId = p.base_unit_id
+        }
+        if (!defaultUnitId && p.units && p.units.length > 0) {
+            defaultUnitId = p.units[0].unit_id
+        }
+
+        const ratio = defaultUnitId ? (p.units?.find(u => u.unit_id === defaultUnitId)?.ratio_to_base ?? 1) : 1
+        const derivedPrice = p.sale_price != null ? (Number(p.sale_price) * ratio) : undefined
+        
         setItems(prev => prev.map((row, i) => i === idx ? {
             ...row,
             product_id: productId,
-            unit_id: defaultUnitId ? String(defaultUnitId) : row.unit_id,
-            unit_price: derivedPrice != null ? String(Number(derivedPrice.toFixed(6))) : row.unit_price,
-            max_qty: p?.stock || 0,
+            unit_id: defaultUnitId ? String(defaultUnitId) : '',
+            unit_price: derivedPrice != null ? String(Number(derivedPrice.toFixed(6))) : '',
+            max_qty: p.stock || 0,
         } : row))
     }
 
@@ -110,13 +129,15 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="customer_id">العميل</Label>
-                                    <Select name="customer_id" required>
+                                    <Select name="customer_id" required value={selectedCustomerId} onValueChange={setSelectedCustomerId}>
                                         <SelectTrigger id="customer_id">
                                             <SelectValue placeholder="اختر العميل" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {customers.map((c) => (
-                                                <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
+                                                <SelectItem key={c.id} value={String(c.id)}>
+                                                    {c.name} {c.current_balance !== 0 && `(رصيد: ${c.current_balance.toFixed(2)})`}
+                                                </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
@@ -214,6 +235,22 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
                                 </div>
                                 <div className="ml-auto w-full max-w-sm space-y-2 rounded-lg border p-4">
                                     <div className="flex items-center justify-between text-base font-semibold"><span>إجمالي الفاتورة</span><span>{total.toFixed(2)}</span></div>
+                                    {selectedCustomer && customerDebitBalance !== 0 && (
+                                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                            <span>الرصيد المدين</span>
+                                            <span className={customerDebitBalance > 0 ? 'text-red-600' : 'text-green-600'}>
+                                                {customerDebitBalance.toFixed(2)}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {selectedCustomer && customerDebitBalance !== 0 && (
+                                        <div className="flex items-center justify-between text-lg font-bold border-t pt-2">
+                                            <span>الإجمالي الفعلي</span>
+                                            <span className={actualTotal > 0 ? 'text-red-600' : 'text-green-600'}>
+                                                {actualTotal.toFixed(2)}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

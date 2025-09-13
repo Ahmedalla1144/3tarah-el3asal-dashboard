@@ -65,7 +65,11 @@ class SalesInvoiceController extends Controller
 
     public function create(): Response
     {
-        $customers = Customer::query()->orderBy('name')->get(['id', 'name'])->map(fn($c) => ['id' => $c->id, 'name' => $c->name]);
+        $customers = Customer::query()->orderBy('name')->get(['id', 'name'])->map(fn($c) => [
+            'id' => $c->id, 
+            'name' => $c->name,
+            'current_balance' => $c->current_balance
+        ]);
         $warehouses = Warehouse::query()->orderBy('name')->get(['id', 'name'])->map(fn($w) => ['id' => $w->id, 'name' => $w->name]);
         $products = Product::query()->with('units.unit')->orderBy('name')->get(['id', 'name', 'base_unit_id', 'sale_price'])->map(fn($p) => [
             'id' => $p->id,

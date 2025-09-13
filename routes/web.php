@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductUnitController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PurchaseInvoiceController;
@@ -20,6 +21,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::middleware('can:access-all')->group(function () {
         Route::resource('products', ProductController::class);
+        Route::get('products/{product}/units', [ProductUnitController::class, 'index'])->name('products.units.index');
+        Route::post('products/{product}/units', [ProductUnitController::class, 'store'])->name('products.units.store');
+        Route::patch('products/{product}/units/{productUnit}', [ProductUnitController::class, 'update'])->name('products.units.update');
+        Route::delete('products/{product}/units/{productUnit}', [ProductUnitController::class, 'destroy'])->name('products.units.destroy');
         Route::resource('categories', CategoryController::class);
         Route::resource('warehouses', WarehouseController::class);
         Route::resource('suppliers', SupplierController::class);
