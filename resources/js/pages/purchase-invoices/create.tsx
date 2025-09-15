@@ -17,15 +17,12 @@ interface PageProps {
     next_number: string
 }
 
-const routes = {
-    index: () => ({ url: '/purchase-invoices' }),
-    store: () => ({ url: '/purchase-invoices' }),
-}
+import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 
 export default function PurchaseInvoiceCreate({ suppliers, warehouses, products, units, next_number }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'فواتير الشراء', href: routes.index().url },
-        { title: 'إنشاء', href: routes.store().url },
+        { title: 'فواتير الشراء', href: purchaseInvoicesRoutes.index().url },
+        { title: 'إنشاء', href: purchaseInvoicesRoutes.store().url },
     ]
 
     const [items, setItems] = useState([{ product_id: '', unit_id: '', qty: '', unit_cost: '', discount_value: '', tax_value: '' }])
@@ -83,7 +80,7 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
             <Head title="إنشاء فاتورة شراء" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.store().url} method="post" className="mx-auto w-full max-w-4xl space-y-6">
+                <Form action={purchaseInvoicesRoutes.store().url} method="post" className="mx-auto w-full max-w-4xl space-y-6">
                     {({ processing, errors }) => (
                         <>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -197,7 +194,7 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="grid gap-2">
                                     <Label htmlFor="paid_amount">المبلغ المدفوع (اختياري)</Label>
-                                    <Input id="paid_amount" name="paid_amount" type="number" step="0.01" min="0" value={paidAmount} onChange={(e)=> setPaidAmount(e.target.value)} />
+                                    <Input id="paid_amount" name="paid_amount" type="number" step="0.01" min="0" max={total} value={paidAmount} onChange={(e)=> setPaidAmount(e.target.value)} />
                                     <div className="text-sm text-muted-foreground">لو دخلت مبلغ، هيتم تسجيل دفعة للمورد وربطها بالفاتورة.</div>
                                 </div>
                                 <div className="ml-auto w-full max-w-sm space-y-2 rounded-lg border p-4">
@@ -212,7 +209,7 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={purchaseInvoicesRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">إلغاء</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>إنشاء</Button>

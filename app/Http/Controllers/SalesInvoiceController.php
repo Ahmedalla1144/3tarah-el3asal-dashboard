@@ -20,6 +20,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -66,7 +67,7 @@ class SalesInvoiceController extends Controller
     public function create(): Response
     {
         $customers = Customer::query()->orderBy('name')->get(['id', 'name'])->map(fn($c) => [
-            'id' => $c->id, 
+            'id' => $c->id,
             'name' => $c->name,
             'current_balance' => $c->current_balance
         ]);
@@ -101,6 +102,13 @@ class SalesInvoiceController extends Controller
         $data = $request->validated();
 
         DB::transaction(function () use ($data) {
+            // Get customer balance at the time of invoice creation
+            $customerBalance = 0;
+            if ($data['customer_id']) {
+                $customer = Customer::find($data['customer_id']);
+                $customerBalance = $customer ? $customer->current_balance : 0;
+            }
+
             $invoice = SalesInvoice::create([
                 'number' => $data['number'],
                 'customer_id' => $data['customer_id'],
@@ -112,6 +120,7 @@ class SalesInvoiceController extends Controller
                 'discount_total' => 0,
                 'tax_total' => 0,
                 'total' => 0,
+                'customer_balance_at_creation' => $customerBalance,
                 'notes' => $data['notes'] ?? null,
                 'user_id' => Auth::user()->id,
             ]);
@@ -178,10 +187,16 @@ class SalesInvoiceController extends Controller
 
                 // Stock decrement
                 $balance = StockBalance::firstOrCreate(
-                    ['warehouse_id' => $warehouseId, 'product_id' => (int)$item['product_id']],
+                    ['warehouse_id' => $warehouseId, 'product_id' => $item['product_id']],
                     ['qty_base' => 0]
                 );
+
+                // Decrement the stock
                 $balance->decrement('qty_base', $qtyBase);
+
+                // Get the updated quantity
+                $balance->refresh();
+                $newQtyBase = $balance->qty_base;
 
                 // Inventory movement OUT
                 DB::table('inventory_movements')->insert([
@@ -208,7 +223,12 @@ class SalesInvoiceController extends Controller
 
             // Optional upfront payment
             if (!empty($data['paid_amount']) && (float)$data['paid_amount'] > 0) {
-                $amount = min((float)$data['paid_amount'], (float)$invoice->total);
+                if ((float)$data['paid_amount'] > (float)$grandTotal) {
+                    throw ValidationException::withMessages([
+                        'paid_amount' => 'لا يمكن أن يكون المبلغ المدفوع أكبر من قيمة الفاتورة',
+                    ]);
+                }
+                $amount = (float)$data['paid_amount'];
                 $nextNumber = (int) (ArReceipt::query()->max('id') ?? 0) + 1;
                 $receipt = ArReceipt::create([
                     'number' => (string)$nextNumber,
@@ -265,7 +285,52 @@ class SalesInvoiceController extends Controller
      */
     public function show(SalesInvoice $salesInvoice)
     {
-        //
+        $salesInvoice->load([
+            'customer',
+            'warehouse',
+            'items.product',
+            'items.unit'
+        ]);
+
+        return Inertia::render('sales-invoices/show', [
+            'invoice' => [
+                'id' => $salesInvoice->id,
+                'number' => $salesInvoice->number,
+                'date' => $salesInvoice->date,
+                'status' => $salesInvoice->status,
+                'total' => (float)$salesInvoice->total,
+                'paid_amount' => (float)$salesInvoice->paid_amount,
+                'remaining_amount' => (float)$salesInvoice->remaining_amount,
+                'notes' => $salesInvoice->notes,
+                'customer' => $salesInvoice->customer ? [
+                    'id' => $salesInvoice->customer->id,
+                    'name' => $salesInvoice->customer->name,
+                    'current_balance' => (float)$salesInvoice->customer->current_balance
+                ] : null,
+                'warehouse' => $salesInvoice->warehouse ? [
+                    'id' => $salesInvoice->warehouse->id,
+                    'name' => $salesInvoice->warehouse->name
+                ] : null,
+                'items' => $salesInvoice->items->map(function($item) {
+                    return [
+                        'id' => $item->id,
+                        'product' => [
+                            'id' => $item->product->id,
+                            'name' => $item->product->name
+                        ],
+                        'unit' => [
+                            'id' => $item->unit->id,
+                            'name' => $item->unit->name
+                        ],
+                        'qty' => (float)$item->qty,
+                        'unit_price' => (float)$item->unit_price,
+                        'discount_value' => (float)$item->discount_value,
+                        'tax_value' => (float)$item->tax_value,
+                        'total' => (float)$item->line_total
+                    ];
+                })
+            ]
+        ]);
     }
 
     /**
@@ -298,9 +363,13 @@ class SalesInvoiceController extends Controller
     public function pay(Request $request, SalesInvoice $salesInvoice): RedirectResponse
     {
         $validated = $request->validate([
-            'amount' => ['required', 'numeric', 'min:0.01'],
-            'payment_method_id' => ['nullable', 'integer'],
-            'account_id' => ['nullable', 'integer'],
+            'amount' => ['required', 'numeric', 'min:0.01', function($attr, $value, $fail) use ($salesInvoice) {
+                if ((float)$value > (float)$salesInvoice->remaining_amount) {
+                    $fail('لا يمكن أن يكون المبلغ المدفوع أكبر من المتبقي للفاتورة');
+                }
+            }],
+            'payment_method_id' => ['required', 'integer', 'exists:payment_methods,id'],
+            'account_id' => ['required', 'integer', 'exists:accounts,id'],
             'reference_no' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
         ]);
@@ -310,8 +379,8 @@ class SalesInvoiceController extends Controller
             $receipt = ArReceipt::create([
                 'number' => (string)$nextNumber,
                 'customer_id' => $salesInvoice->customer_id,
-                'account_id' => $validated['account_id'] ?? null,
-                'payment_method_id' => $validated['payment_method_id'] ?? null,
+                'account_id' => $validated['account_id'],
+                'payment_method_id' => $validated['payment_method_id'],
                 'amount' => (float)$validated['amount'],
                 'received_at' => now(),
                 'reference_no' => $validated['reference_no'] ?? null,
@@ -333,5 +402,17 @@ class SalesInvoiceController extends Controller
         });
 
         return redirect()->route('sales-invoices.index')->with('status', 'Payment recorded');
+    }
+
+    public function print(SalesInvoice $salesInvoice)
+    {
+        $salesInvoice->load([
+            'customer',
+            'warehouse',
+            'items.product',
+            'items.unit'
+        ]);
+
+        return view('sales-invoices.print', ['invoice' => $salesInvoice]);
     }
 }

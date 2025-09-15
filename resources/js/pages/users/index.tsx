@@ -22,21 +22,16 @@ interface PageProps {
     }
 }
 
-const routes = {
-    index: () => ({ url: '/users' }),
-    create: () => ({ url: '/users/create' }),
-    edit: (id: number) => ({ url: `/users/${id}/edit` }),
-    destroy: (id: number) => ({ url: `/users/${id}` }),
-}
+import usersRoutes from '@/routes/users'
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'المستخدمون', href: routes.index().url },
+    { title: 'المستخدمون', href: usersRoutes.index().url },
 ]
 
 export default function UsersIndex({ users }: PageProps) {
     const [search, setSearch] = useState('')
     const debouncedSearch = useDebouncedCallback((value: string) => {
-        router.get(routes.index().url, { search: value }, { preserveState: true, replace: true })
+        router.get(usersRoutes.index().url, { search: value }, { preserveState: true, replace: true })
     }, 300)
     const { add } = useToast()
 
@@ -57,15 +52,15 @@ export default function UsersIndex({ users }: PageProps) {
                         />
                     </div>
 
-                    <Link href={routes.create().url} className="inline-flex">
+                    <Link href={usersRoutes.create().url} className="inline-flex">
                         <Button>
                             <Plus className="mr-2 h-4 w-4" /> مستخدم جديد
                         </Button>
                     </Link>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                    <table className="min-w-full divide-y divide-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[600px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
@@ -82,7 +77,7 @@ export default function UsersIndex({ users }: PageProps) {
                                     <td className="px-4 py-2 text-sm">{u.roles.join(', ') || '-'}</td>
                                     <td className="px-4 py-2 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <Link href={routes.edit(u.id).url} className="inline-flex">
+                                            <Link href={usersRoutes.edit(u.id).url} className="inline-flex">
                                                 <Button variant="outline" size="sm">
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>
@@ -92,7 +87,7 @@ export default function UsersIndex({ users }: PageProps) {
                                                 size="sm"
                                                 onClick={() => {
                                                     if (!confirm('حذف هذا المستخدم؟')) return
-                                                    router.delete(routes.destroy(u.id).url, {
+                                                    router.delete(usersRoutes.destroy(u.id).url, {
                                                         onSuccess: () => add({ title: 'تم الحذف', description: 'تم حذف المستخدم بنجاح' }),
                                                         onError: () => add({ title: 'خطأ', description: 'تعذر حذف المستخدم', variant: 'destructive' }),
                                                     })

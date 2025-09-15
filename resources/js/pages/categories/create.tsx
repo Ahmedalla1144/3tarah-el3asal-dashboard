@@ -1,8 +1,4 @@
-const categoriesRoutes = {
-    index: () => ({ url: '/categories' }),
-    create: () => ({ url: '/categories/create' }),
-    store: () => ({ url: '/categories' }),
-}
+import categoriesRoutes from '@/routes/categories'
 import AppLayout from '@/layouts/app-layout'
 import { Form, Head, Link } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'

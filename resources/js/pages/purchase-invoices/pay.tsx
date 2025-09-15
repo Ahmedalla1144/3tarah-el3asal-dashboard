@@ -1,6 +1,8 @@
-import { router, usePage } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout'
+import { Head, router, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import { formatEGP } from '@/lib/currency'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 type AccountOption = { id: number; name: string }
 type MethodOption = { id: number; name: string }
@@ -15,24 +17,31 @@ export default function PurchaseInvoicePay() {
     const { props } = usePage<PageProps>();
     const { invoice, accounts, methods } = props;
     const [amount, setAmount] = useState(invoice?.remaining || 0);
-    const [accountId, setAccountId] = useState<number | ''>('');
-    const [methodId, setMethodId] = useState<number | ''>('');
+    const [accountId, setAccountId] = useState<string>('');
+    const [methodId, setMethodId] = useState<string>('');
     const [referenceNo, setReferenceNo] = useState('');
     const [notes, setNotes] = useState('');
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (amount > invoice.remaining) {
+            alert('لا يمكن أن يكون المبلغ المدفوع أكبر من المتبقي للفاتورة');
+            return;
+        }
+        if (!accountId || !methodId) return;
         router.post(`/purchase-invoices/${invoice.id}/pay`, {
             amount,
-            account_id: accountId || null,
-            payment_method_id: methodId || null,
+            account_id: parseInt(accountId),
+            payment_method_id: parseInt(methodId),
             reference_no: referenceNo || null,
             notes: notes || null,
         });
     };
 
     return (
-        <div className="mx-auto max-w-2xl p-4">
+        <AppLayout>
+            <Head title={`سداد فاتورة شراء #${invoice.number}`} />
+            <div className="mx-auto max-w-2xl p-4">
             <h1 className="mb-4 text-xl font-semibold">سداد فاتورة شراء #{invoice.number}</h1>
 
             <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -57,6 +66,7 @@ export default function PurchaseInvoicePay() {
                         type="number"
                         step="0.01"
                         min={0}
+                        max={invoice.remaining}
                         value={amount}
                         placeholder="ادخل المبلغ المراد سداده"
                         onChange={(e) => setAmount(parseFloat(e.target.value))}
@@ -68,33 +78,33 @@ export default function PurchaseInvoicePay() {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <label className="mb-1 block text-sm">الحساب</label>
-                        <select
-                            className="w-full rounded border px-3 py-2"
-                            value={accountId}
-                            onChange={(e) => setAccountId(e.target.value ? parseInt(e.target.value) : '')}
-                        >
-                            <option value="">اختر الحساب</option>
-                            {accounts?.map((a) => (
-                                <option key={a.id} value={a.id}>
-                                    {a.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Select value={accountId} onValueChange={setAccountId}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="اختر الحساب" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {accounts?.map((a) => (
+                                    <SelectItem key={a.id} value={String(a.id)}>
+                                        {a.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div>
                         <label className="mb-1 block text-sm">طريقة الدفع</label>
-                        <select
-                            className="w-full rounded border px-3 py-2"
-                            value={methodId}
-                            onChange={(e) => setMethodId(e.target.value ? parseInt(e.target.value) : '')}
-                        >
-                            <option value="">اختر الطريقة</option>
-                            {methods?.map((m) => (
-                                <option key={m.id} value={m.id}>
-                                    {m.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Select value={methodId} onValueChange={setMethodId}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="اختر الطريقة" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {methods?.map((m) => (
+                                    <SelectItem key={m.id} value={String(m.id)}>
+                                        {m.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -117,5 +127,6 @@ export default function PurchaseInvoicePay() {
                 </div>
             </form>
         </div>
+        </AppLayout>
     );
 }

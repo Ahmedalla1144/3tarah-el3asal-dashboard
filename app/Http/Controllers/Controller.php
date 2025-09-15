@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 abstract class Controller extends BaseController
 {
@@ -12,12 +13,21 @@ abstract class Controller extends BaseController
 
     protected function getDashboardMetrics(): array
     {
-        $totalPurchases = (float) DB::table('purchase_invoices')->sum('total');
-        $totalSales = (float) DB::table('sales_invoices')->sum('total');
+        $startOfMonth = Carbon::now()->startOfMonth()->toDateString();
+        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();
 
-        $bestProducts = DB::table('sales_invoice_items')
-            ->select('product_id', DB::raw('SUM(qty_base) as qty_sold'))
-            ->groupBy('product_id')
+        $totalPurchases = (float) DB::table('purchase_invoices')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->sum('total');
+        $totalSales = (float) DB::table('sales_invoices')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->sum('total');
+
+        $bestProducts = DB::table('sales_invoice_items as sii')
+            ->join('sales_invoices as si', 'si.id', '=', 'sii.sales_invoice_id')
+            ->whereBetween('si.date', [$startOfMonth, $endOfMonth])
+            ->select('sii.product_id', DB::raw('SUM(sii.qty_base) as qty_sold'))
+            ->groupBy('sii.product_id')
             ->orderByDesc('qty_sold')
             ->limit(5)
             ->get();
@@ -50,6 +60,10 @@ abstract class Controller extends BaseController
             'total_sales' => $totalSales,
             'best_products' => $best,
             'low_stock' => $lowStock,
+            'period' => [
+                'start' => $startOfMonth,
+                'end' => $endOfMonth,
+            ],
         ];
     }
 }

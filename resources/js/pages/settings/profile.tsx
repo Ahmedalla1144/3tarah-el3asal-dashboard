@@ -16,7 +16,7 @@ import { edit } from '@/routes/profile';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Profile settings',
+        title: 'إعدادات الملف الشخصي',
         href: edit().url,
     },
 ];
@@ -26,7 +26,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Profile settings" />
+            <Head title="إعدادات الملف الشخصي" />
 
             <SettingsLayout>
                 <div className="space-y-6">

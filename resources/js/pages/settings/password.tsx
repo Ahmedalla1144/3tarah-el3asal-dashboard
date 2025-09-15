@@ -15,7 +15,7 @@ import { edit } from '@/routes/password';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Password settings',
+        title: 'إعدادات كلمة المرور',
         href: edit().url,
     },
 ];
@@ -26,7 +26,7 @@ export default function Password() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Password settings" />
+            <Head title="إعدادات كلمة المرور" />
 
             <SettingsLayout>
                 <div className="space-y-6">

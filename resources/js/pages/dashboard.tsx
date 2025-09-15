@@ -2,10 +2,10 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import products from '@/routes/products';
 import { Button } from '@/components/ui/button';
 import { BarChart2 } from 'lucide-react';
-import { formatEGP } from '@/lib/currency'
+import { formatEGP, formatNumber } from '@/lib/currency'
+import purchaseInvoices from '@/routes/purchase-invoices';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,7 +34,7 @@ export default function Dashboard({ metrics }: PageProps) {
                         <div className="text-sm text-muted-foreground">أفضل المنتجات مبيعاً</div>
                         <ul className="mt-2 space-y-1 text-sm">
                             {metrics?.best_products?.map((bp, i) => (
-                                <li key={i} className="flex items-center justify-between"><span>{bp.product}</span><span>{bp.qty_sold}</span></li>
+                                <li key={i} className="flex items-center justify-between"><span>{bp.product}</span><span>{formatNumber(bp.qty_sold)}</span></li>
                             )) ?? <li>لا يوجد بيانات</li>}
                         </ul>
                     </div>
@@ -56,8 +56,8 @@ export default function Dashboard({ metrics }: PageProps) {
                                         {metrics?.low_stock?.map((p) => (
                                             <tr key={p.id} className="bg-red-50 dark:bg-red-900/20">
                                                 <td className="px-4 py-2 text-sm">{p.name}</td>
-                                                <td className="px-4 py-2 text-sm">{p.stock}</td>
-                                                <td className="px-4 py-2 text-sm">{p.min_stock}</td>
+                                                <td className="px-4 py-2 text-sm">{formatNumber(p.stock)}</td>
+                                                <td className="px-4 py-2 text-sm">{formatNumber(p.min_stock)}</td>
                                             </tr>
                                         )) ?? null}
                                     </tbody>
@@ -65,8 +65,8 @@ export default function Dashboard({ metrics }: PageProps) {
                             </div>
                         </div>
                         <div className="flex items-center justify-center">
-                            <Link href={products.index().url} className="inline-flex">
-                                <Button size="lg"><BarChart2 className="mr-2 h-4 w-4" /> إلى المنتجات</Button>
+                            <Link href={purchaseInvoices.index().url} className="inline-flex">
+                                <Button size="lg"><BarChart2 className="mr-2 h-4 w-4" /> إلى فاتورة الشراء</Button>
                             </Link>
                         </div>
                     </div>

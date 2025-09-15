@@ -222,3 +222,4 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
         </AppLayout>
     )
 }
+

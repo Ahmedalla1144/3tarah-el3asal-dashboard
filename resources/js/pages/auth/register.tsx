@@ -12,8 +12,8 @@ import AuthLayout from '@/layouts/auth-layout';
 
 export default function Register() {
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
-            <Head title="Register" />
+        <AuthLayout title="إنشاء حساب جديد" description="أدخل تفاصيلك أدناه لإنشاء حسابك">
+            <Head title="التسجيل" />
             <Form
                 {...RegisteredUserController.store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
@@ -24,7 +24,7 @@ export default function Register() {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">الاسم</Label>
                                 <Input
                                     id="name"
                                     type="text"
@@ -39,7 +39,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">البريد الإلكتروني</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -53,7 +53,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password">كلمة المرور</Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -67,7 +67,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Confirm password</Label>
+                                <Label htmlFor="password_confirmation">تأكيد كلمة المرور</Label>
                                 <Input
                                     id="password_confirmation"
                                     type="password"
@@ -82,14 +82,14 @@ export default function Register() {
 
                             <Button type="submit" className="mt-2 w-full" tabIndex={5}>
                                 {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                Create account
+                                إنشاء الحساب
                             </Button>
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
+                            لديك حساب بالفعل؟{' '}
                             <TextLink href={login()} tabIndex={6}>
-                                Log in
+                                تسجيل الدخول
                             </TextLink>
                         </div>
                     </>

@@ -2,7 +2,10 @@ import AppLayout from '@/layouts/app-layout'
 import { Head, Link } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
 import { type BreadcrumbItem } from '@/types'
-import { formatEGP } from '@/lib/currency'
+import { formatEGP, formatNumber } from '@/lib/currency'
+import { useEffect, useState } from 'react'
+import { configureQZ, listPrinters, printUrlToPrinter } from '@/lib/qz'
+import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 
 interface PageProps {
     invoice: {
@@ -23,16 +26,21 @@ interface PageProps {
     }
 }
 
-const routes = {
-    index: () => ({ url: '/purchase-invoices' }),
-    payForm: (id: number) => ({ url: `/purchase-invoices/${id}/pay` }),
-}
+import { form as payForm } from '@/routes/purchase-invoices/pay'
 
 export default function PurchaseInvoiceShow({ invoice }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'فواتير الشراء', href: routes.index().url },
+        { title: 'فواتير الشراء', href: purchaseInvoicesRoutes.index().url },
         { title: `#${invoice.number}`, href: '#' },
     ]
+
+    const [printers, setPrinters] = useState<string[]>([])
+    const [selectedPrinter, setSelectedPrinter] = useState<string>('')
+
+    useEffect(() => {
+        configureQZ('/qz/sign')
+        listPrinters().then(setPrinters).catch(() => {})
+    }, [])
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -42,8 +50,14 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                 <div className="flex items-center justify-between">
                     <div className="text-xl font-semibold">فاتورة شراء #{invoice.number}</div>
                     <div className="flex items-center gap-2">
-                        <Link href={routes.payForm(invoice.id).url} className="inline-flex"><Button>سداد</Button></Link>
-                        <Link href={routes.index().url} className="inline-flex"><Button variant="outline">رجوع</Button></Link>
+                        <Link href={purchaseInvoicesRoutes.print(invoice.id).url} className="inline-flex" target="_blank" rel="noopener noreferrer"><Button variant="outline">طباعة</Button></Link>
+                        <select className="rounded border px-2 py-1" value={selectedPrinter} onChange={(e)=> setSelectedPrinter(e.target.value)}>
+                            <option value="">اختر طابعة (QZ)</option>
+                            {printers.map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                        <Button disabled={!selectedPrinter} onClick={() => printUrlToPrinter(selectedPrinter, purchaseInvoicesRoutes.print(invoice.id).url)}>طباعة QZ</Button>
+                        <Link href={payForm(invoice.id).url} className="inline-flex"><Button>سداد</Button></Link>
+                        <Link href={purchaseInvoicesRoutes.index().url} className="inline-flex"><Button variant="outline">رجوع</Button></Link>
                     </div>
                 </div>
 
@@ -80,7 +94,7 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                                 <tr key={it.id}>
                                     <td className="px-4 py-2 text-sm">{it.product ?? '-'}</td>
                                     <td className="px-4 py-2 text-sm">{it.sku ?? '-'}</td>
-                                    <td className="px-4 py-2 text-sm">{it.qty}</td>
+                                    <td className="px-4 py-2 text-sm">{formatNumber(it.qty)}</td>
                                     <td className="px-4 py-2 text-sm">{formatEGP(it.unit_cost)}</td>
                                     <td className="px-4 py-2 text-sm">{formatEGP(it.discount_value)}</td>
                                     <td className="px-4 py-2 text-sm">{formatEGP(it.tax_value)}</td>

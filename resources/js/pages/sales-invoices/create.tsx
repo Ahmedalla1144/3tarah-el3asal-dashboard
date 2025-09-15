@@ -17,15 +17,12 @@ interface PageProps {
     next_number: string
 }
 
-const routes = {
-    index: () => ({ url: '/sales-invoices' }),
-    store: () => ({ url: '/sales-invoices' }),
-}
+import salesInvoicesRoutes from '@/routes/sales-invoices'
 
 export default function SalesInvoiceCreate({ customers, warehouses, products, units, next_number }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'فواتير المبيعات', href: routes.index().url },
-        { title: 'إنشاء', href: routes.store().url },
+        { title: 'فواتير المبيعات', href: salesInvoicesRoutes.index().url },
+        { title: 'إنشاء', href: salesInvoicesRoutes.store().url },
     ]
 
     const [items, setItems] = useState([{ product_id: '', unit_id: '', qty: '', unit_price: '', discount_value: '', tax_value: '', max_qty: 0 }])
@@ -64,7 +61,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
 
         const ratio = defaultUnitId ? (p.units?.find(u => u.unit_id === defaultUnitId)?.ratio_to_base ?? 1) : 1
         const derivedPrice = p.sale_price != null ? (Number(p.sale_price) * ratio) : undefined
-        
+
         setItems(prev => prev.map((row, i) => i === idx ? {
             ...row,
             product_id: productId,
@@ -113,7 +110,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
             <Head title="إنشاء فاتورة مبيعات" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.store().url} method="post" className="mx-auto w-full max-w-4xl space-y-6">
+                <Form action={salesInvoicesRoutes.store().url} method="post" className="mx-auto w-full max-w-4xl space-y-6">
                     {({ processing, errors }) => (
                         <>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -230,7 +227,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="grid gap-2">
                                     <Label htmlFor="paid_amount">المبلغ المدفوع (اختياري)</Label>
-                                    <Input id="paid_amount" name="paid_amount" type="number" step="0.01" min="0" value={paidAmount} onChange={(e)=> setPaidAmount(e.target.value)} />
+                                    <Input id="paid_amount" name="paid_amount" type="number" step="0.01" min="0" max={actualTotal || total} value={paidAmount} onChange={(e)=> setPaidAmount(e.target.value)} />
                                     <div className="text-sm text-muted-foreground">لو دخلت مبلغ، هيتم تسجيل إيصال واستقطاعه من الفاتورة مباشرة.</div>
                                 </div>
                                 <div className="ml-auto w-full max-w-sm space-y-2 rounded-lg border p-4">
@@ -261,7 +258,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={salesInvoicesRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">إلغاء</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>إنشاء</Button>

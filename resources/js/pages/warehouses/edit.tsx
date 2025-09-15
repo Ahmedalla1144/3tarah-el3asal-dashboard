@@ -8,17 +8,14 @@ import { type BreadcrumbItem } from '@/types'
 
 type PageProps = { warehouse: { id: number; name: string; code?: string | null; address?: string | null; is_active: boolean } }
 
-const routes = {
-    index: () => ({ url: '/warehouses' }),
-    update: (id: number) => ({ url: `/warehouses/${id}` }),
-}
+import warehousesRoutes from '@/routes/warehouses'
 
 export default function WarehouseEdit() {
     const { props } = usePage<PageProps>()
     const { warehouse } = props
     const { add } = useToast()
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'المخازن', href: routes.index().url },
+        { title: 'المخازن', href: warehousesRoutes.index().url },
         { title: `تعديل: ${warehouse.name}`, href: '#' },
     ]
 
@@ -27,7 +24,7 @@ export default function WarehouseEdit() {
             <Head title={`تعديل مخزن ${warehouse.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.update(warehouse.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المخزن بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المخزن', variant: 'destructive' })}>
+                <Form action={warehousesRoutes.update(warehouse.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المخزن بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المخزن', variant: 'destructive' })}>
                     {({ processing, errors }) => (
                         <>
                             <input type="hidden" name="_method" value="put" />
@@ -52,7 +49,7 @@ export default function WarehouseEdit() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={warehousesRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">رجوع</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>حفظ</Button>

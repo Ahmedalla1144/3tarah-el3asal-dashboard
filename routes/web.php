@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\QzController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\SalesInvoiceController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerPaymentController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
@@ -29,17 +31,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('warehouses', WarehouseController::class);
         Route::resource('suppliers', SupplierController::class);
         Route::resource('customers', CustomerController::class);
+        Route::get('customers/{customer}/payment', [CustomerPaymentController::class, 'create'])->name('customers.payment.create');
+        Route::post('customers/{customer}/payment', [CustomerPaymentController::class, 'store'])->name('customers.payment.store');
         Route::resource('users', UserController::class)->except(['show']);
     });
 
     Route::middleware('can:access-sales-invoices')->group(function () {
-        Route::resource('sales-invoices', SalesInvoiceController::class)->only(['index', 'create', 'store']);
+        Route::resource('sales-invoices', SalesInvoiceController::class)->only(['index', 'create', 'store', 'show']);
+        Route::get('sales-invoices/{salesInvoice}/print', [SalesInvoiceController::class, 'print'])->name('sales-invoices.print');
         Route::get('sales-invoices/{salesInvoice}/pay', [SalesInvoiceController::class, 'payForm'])->name('sales-invoices.pay.form');
         Route::post('sales-invoices/{salesInvoice}/pay', [SalesInvoiceController::class, 'pay'])->name('sales-invoices.pay');
         Route::resource('purchase-invoices', PurchaseInvoiceController::class)->only(['index', 'create', 'store', 'show']);
+        Route::get('purchase-invoices/{purchaseInvoice}/print', [PurchaseInvoiceController::class, 'print'])->name('purchase-invoices.print');
         Route::get('purchase-invoices/{purchaseInvoice}/pay', [PurchaseInvoiceController::class, 'payForm'])->name('purchase-invoices.pay.form');
         Route::post('purchase-invoices/{purchaseInvoice}/pay', [PurchaseInvoiceController::class, 'pay'])->name('purchase-invoices.pay');
     });
+
+    // QZ Tray signing endpoints
+    Route::post('/qz/sign', [QzController::class, 'sign'])->name('qz.sign');
+    Route::post('/qz/hash', [QzController::class, 'hash'])->name('qz.hash');
 });
 
 require __DIR__ . '/settings.php';

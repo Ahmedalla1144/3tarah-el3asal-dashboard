@@ -18,6 +18,11 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'qz' => [
+        // RSA private key in PKCS#8 (Base64 with -----BEGIN PRIVATE KEY-----)
+        'private_key' => env('QZ_PRIVATE_KEY', ''),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

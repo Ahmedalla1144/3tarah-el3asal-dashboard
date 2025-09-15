@@ -8,17 +8,14 @@ import { type BreadcrumbItem } from '@/types'
 
 type PageProps = { customer: { id: number; name: string; phone?: string | null; address?: string | null; email?: string | null; tax_id?: string | null; opening_balance?: number | null; credit_limit?: number | null; notes?: string | null; is_active: boolean } }
 
-const routes = {
-    index: () => ({ url: '/customers' }),
-    update: (id: number) => ({ url: `/customers/${id}` }),
-}
+import customersRoutes from '@/routes/customers'
 
 export default function CustomerEdit() {
     const { props } = usePage<PageProps>()
     const { customer } = props
     const { add } = useToast()
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'العملاء', href: routes.index().url },
+        { title: 'العملاء', href: customersRoutes.index().url },
         { title: `تعديل: ${customer.name}`, href: '#' },
     ]
 
@@ -27,7 +24,7 @@ export default function CustomerEdit() {
             <Head title={`تعديل عميل ${customer.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.update(customer.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث العميل بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث العميل', variant: 'destructive' })}>
+                <Form action={customersRoutes.update(customer.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث العميل بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث العميل', variant: 'destructive' })}>
                     {({ processing, errors }) => (
                         <>
                             <input type="hidden" name="_method" value="put" />
@@ -77,7 +74,7 @@ export default function CustomerEdit() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={customersRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">رجوع</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>حفظ</Button>

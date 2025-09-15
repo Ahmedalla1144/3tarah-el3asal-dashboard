@@ -117,8 +117,8 @@ class DatabaseSeeder extends Seeder
         }
 
         // Parties
-        $cust = Customer::factory()->create(['name' => 'عميل نقدي', 'credit_limit' => 0]);
-        $sup  = Supplier::factory()->create(['name' => 'مورد أساسي']);
+        $cust = Customer::factory()->create(['name' => 'عميل 1', 'credit_limit' => 0]);
+        $sup  = Supplier::factory()->create(['name' => 'مورد 1']);
 
         // Sequences
         $seqs = [
@@ -170,7 +170,7 @@ class DatabaseSeeder extends Seeder
                 'qty_base' => $qtyBase,
                 'unit_cost' => null,
                 'reason' => 'adjustment',
-                'adjustment_item_id' => DB::getPdo()->lastInsertId(), // not exact, but acceptable for seed
+                'adjustment_item_id' => DB::getPdo()->lastInsertId(),
                 'note' => 'Opening stock',
                 'moved_at' => now(),
                 'created_at' => now(),

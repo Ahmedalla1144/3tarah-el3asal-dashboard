@@ -22,22 +22,17 @@ interface PageProps {
     }
 }
 
-const routes = {
-    index: () => ({ url: '/suppliers' }),
-    create: () => ({ url: '/suppliers/create' }),
-    edit: (id: number) => ({ url: `/suppliers/${id}/edit` }),
-    destroy: (id: number) => ({ url: `/suppliers/${id}` }),
-}
+import suppliersRoutes from '@/routes/suppliers'
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'الموردون', href: routes.index().url },
+    { title: 'الموردون', href: suppliersRoutes.index().url },
 ]
 
 export default function SuppliersIndex({ suppliers }: PageProps) {
     const { add } = useToast()
     const [search, setSearch] = useState('')
     const debouncedSearch = useDebouncedCallback((value: string) => {
-        router.get(routes.index().url, { search: value }, { preserveState: true, replace: true })
+        router.get(suppliersRoutes.index().url, { search: value }, { preserveState: true, replace: true })
     }, 300)
 
     return (
@@ -57,20 +52,19 @@ export default function SuppliersIndex({ suppliers }: PageProps) {
                         />
                     </div>
 
-                    <Link href={routes.create().url} className="inline-flex">
+                    <Link href={suppliersRoutes.create().url} className="inline-flex">
                         <Button>
                             <Plus className="mr-2 h-4 w-4" /> مورد جديد
                         </Button>
                     </Link>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                    <table className="min-w-full divide-y divide-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[500px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الهاتف</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">نشط؟</th>
                                 <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
@@ -79,10 +73,9 @@ export default function SuppliersIndex({ suppliers }: PageProps) {
                                 <tr key={s.id}>
                                     <td className="px-4 py-2 text-sm">{s.name}</td>
                                     <td className="px-4 py-2 text-sm">{s.phone ?? '-'}</td>
-                                    <td className="px-4 py-2 text-sm">{s.is_active ? 'نعم' : 'لا'}</td>
                                     <td className="px-4 py-2 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <Link href={routes.edit(s.id).url} className="inline-flex">
+                                            <Link href={suppliersRoutes.edit(s.id).url} className="inline-flex">
                                                 <Button variant="outline" size="sm">
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>
@@ -92,7 +85,7 @@ export default function SuppliersIndex({ suppliers }: PageProps) {
                                                 size="sm"
                                                 onClick={() => {
                                                     if (!confirm('حذف هذا المورد؟')) return
-                                                    router.delete(routes.destroy(s.id).url, {
+                                                    router.delete(suppliersRoutes.destroy(s.id).url, {
                                                         onSuccess: () => add({ title: 'تم الحذف', description: 'تم حذف المورد بنجاح' }),
                                                         onError: () => add({ title: 'خطأ', description: 'تعذر حذف المورد', variant: 'destructive' }),
                                                     })

@@ -10,14 +10,11 @@ type Role = { id: number; name: string }
 
 interface PageProps { roles: Role[] }
 
-const routes = {
-    index: () => ({ url: '/users' }),
-    store: () => ({ url: '/users' }),
-}
+import usersRoutes from '@/routes/users'
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'المستخدمون', href: routes.index().url },
-    { title: 'إنشاء', href: routes.store().url },
+    { title: 'المستخدمون', href: usersRoutes.index().url },
+    { title: 'إنشاء', href: usersRoutes.store().url },
 ]
 
 export default function UserCreate({ roles }: PageProps) {
@@ -27,7 +24,7 @@ export default function UserCreate({ roles }: PageProps) {
             <Head title="مستخدم جديد" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء المستخدم بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء المستخدم', variant: 'destructive' })}>
+                <Form action={usersRoutes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء المستخدم بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء المستخدم', variant: 'destructive' })}>
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
@@ -62,7 +59,7 @@ export default function UserCreate({ roles }: PageProps) {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={usersRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">إلغاء</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>حفظ</Button>
