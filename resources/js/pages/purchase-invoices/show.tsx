@@ -3,6 +3,9 @@ import { Head, Link } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
 import { type BreadcrumbItem } from '@/types'
 import { formatEGP, formatNumber } from '@/lib/currency'
+import { useEffect, useState } from 'react'
+import { configureQZ, listPrinters, printUrlToPrinter } from '@/lib/qz'
+import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 
 interface PageProps {
     invoice: {
@@ -23,7 +26,6 @@ interface PageProps {
     }
 }
 
-import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 import { form as payForm } from '@/routes/purchase-invoices/pay'
 
 export default function PurchaseInvoiceShow({ invoice }: PageProps) {
@@ -31,6 +33,14 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
         { title: 'فواتير الشراء', href: purchaseInvoicesRoutes.index().url },
         { title: `#${invoice.number}`, href: '#' },
     ]
+
+    const [printers, setPrinters] = useState<string[]>([])
+    const [selectedPrinter, setSelectedPrinter] = useState<string>('')
+
+    useEffect(() => {
+        configureQZ('/qz/sign')
+        listPrinters().then(setPrinters).catch(() => {})
+    }, [])
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -41,6 +51,11 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                     <div className="text-xl font-semibold">فاتورة شراء #{invoice.number}</div>
                     <div className="flex items-center gap-2">
                         <Link href={purchaseInvoicesRoutes.print(invoice.id).url} className="inline-flex" target="_blank" rel="noopener noreferrer"><Button variant="outline">طباعة</Button></Link>
+                        <select className="rounded border px-2 py-1" value={selectedPrinter} onChange={(e)=> setSelectedPrinter(e.target.value)}>
+                            <option value="">اختر طابعة (QZ)</option>
+                            {printers.map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                        <Button disabled={!selectedPrinter} onClick={() => printUrlToPrinter(selectedPrinter, purchaseInvoicesRoutes.print(invoice.id).url)}>طباعة QZ</Button>
                         <Link href={payForm(invoice.id).url} className="inline-flex"><Button>سداد</Button></Link>
                         <Link href={purchaseInvoicesRoutes.index().url} className="inline-flex"><Button variant="outline">رجوع</Button></Link>
                     </div>

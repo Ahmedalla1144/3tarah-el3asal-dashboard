@@ -6,6 +6,8 @@ import { formatEGP, formatNumber } from '@/lib/currency'
 import { Printer, CreditCard } from 'lucide-react'
 import salesInvoicesRoutes from '@/routes/sales-invoices'
 import { form as payForm } from '@/routes/sales-invoices/pay'
+import { useEffect, useState } from 'react'
+import { configureQZ, listPrinters, printUrlToPrinter } from '@/lib/qz'
 
 interface InvoiceItem {
     id: number
@@ -53,6 +55,14 @@ export default function SalesInvoiceShow({ invoice }: PageProps) {
         { title: invoice.number, href: '' },
     ]
 
+    const [printers, setPrinters] = useState<string[]>([])
+    const [selectedPrinter, setSelectedPrinter] = useState<string>('')
+
+    useEffect(() => {
+        configureQZ('/qz/sign')
+        listPrinters().then(setPrinters).catch(() => {})
+    }, [])
+
     const handlePrint = () => {
         window.open(`/sales-invoices/${invoice.id}/print`, '_blank')
     }
@@ -74,6 +84,11 @@ export default function SalesInvoiceShow({ invoice }: PageProps) {
                                 <Printer className="mr-2 h-4 w-4" />
                                 طباعة
                             </Button>
+                            <select className="rounded border px-2 py-1" value={selectedPrinter} onChange={(e)=> setSelectedPrinter(e.target.value)}>
+                                <option value="">اختر طابعة (QZ)</option>
+                                {printers.map(p => <option key={p} value={p}>{p}</option>)}
+                            </select>
+                            <Button disabled={!selectedPrinter} onClick={() => printUrlToPrinter(selectedPrinter, salesInvoicesRoutes.print(invoice.id).url)}>طباعة QZ</Button>
                             {invoice.remaining_amount > 0 && (
                                 <Link href={payForm(invoice.id).url}>
                                     <Button>

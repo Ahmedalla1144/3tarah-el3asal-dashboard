@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\QzController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
@@ -45,6 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('purchase-invoices/{purchaseInvoice}/pay', [PurchaseInvoiceController::class, 'payForm'])->name('purchase-invoices.pay.form');
         Route::post('purchase-invoices/{purchaseInvoice}/pay', [PurchaseInvoiceController::class, 'pay'])->name('purchase-invoices.pay');
     });
+
+    // QZ Tray signing endpoints
+    Route::post('/qz/sign', [QzController::class, 'sign'])->name('qz.sign');
+    Route::post('/qz/hash', [QzController::class, 'hash'])->name('qz.hash');
 });
 
 require __DIR__ . '/settings.php';
