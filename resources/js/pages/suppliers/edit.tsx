@@ -8,17 +8,14 @@ import { type BreadcrumbItem } from '@/types'
 
 type PageProps = { supplier: { id: number; name: string; phone?: string | null; address?: string | null; email?: string | null; tax_id?: string | null; opening_balance?: number | null; notes?: string | null; is_active: boolean } }
 
-const routes = {
-    index: () => ({ url: '/suppliers' }),
-    update: (id: number) => ({ url: `/suppliers/${id}` }),
-}
+import suppliersRoutes from '@/routes/suppliers'
 
 export default function SupplierEdit() {
     const { props } = usePage<PageProps>()
     const { supplier } = props
     const { add } = useToast()
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'الموردون', href: routes.index().url },
+        { title: 'الموردون', href: suppliersRoutes.index().url },
         { title: `تعديل: ${supplier.name}`, href: '#' },
     ]
 
@@ -27,7 +24,7 @@ export default function SupplierEdit() {
             <Head title={`تعديل مورد ${supplier.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.update(supplier.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المورد بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المورد', variant: 'destructive' })}>
+                <Form action={suppliersRoutes.update(supplier.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المورد بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المورد', variant: 'destructive' })}>
                     {({ processing, errors }) => (
                         <>
                             <input type="hidden" name="_method" value="put" />
@@ -72,7 +69,7 @@ export default function SupplierEdit() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={suppliersRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">رجوع</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>حفظ</Button>

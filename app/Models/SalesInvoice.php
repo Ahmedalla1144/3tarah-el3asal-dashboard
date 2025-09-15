@@ -20,6 +20,7 @@ class SalesInvoice extends Model
         'discount_total',
         'tax_total',
         'total',
+        'customer_balance_at_creation',
         'notes',
         'user_id'
     ];

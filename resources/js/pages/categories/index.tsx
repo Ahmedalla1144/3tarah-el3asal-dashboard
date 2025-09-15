@@ -1,9 +1,4 @@
-const categoriesRoutes = {
-    index: () => ({ url: '/categories' }),
-    create: () => ({ url: '/categories/create' }),
-    edit: (id: number) => ({ url: `/categories/${id}/edit` }),
-    destroy: (id: number) => ({ url: `/categories/${id}` }),
-}
+import categoriesRoutes from '@/routes/categories'
 import AppLayout from '@/layouts/app-layout'
 import { Head, Link, router } from '@inertiajs/react'
 import { Button } from '@/components/ui/button'
@@ -62,8 +57,8 @@ export default function CategoriesIndex({ categories, filters }: PageProps) {
                     </Link>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                    <table className="min-w-full divide-y divide-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[300px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الرقم</th>

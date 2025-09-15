@@ -7,7 +7,7 @@ import { type BreadcrumbItem } from '@/types'
 import { useDebouncedCallback } from 'use-debounce'
 import { useState } from 'react'
 import { Pencil, Trash2, Plus } from 'lucide-react'
-import { formatEGP } from '@/lib/currency'
+import { formatEGP, formatNumber } from '@/lib/currency'
 
 type ProductRow = {
     id: number
@@ -71,8 +71,8 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                     </Link>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                    <table className="min-w-full divide-y divide-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[900px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الرقم</th>
@@ -93,10 +93,10 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                                     <td className="px-4 py-2 text-sm">{p.name}</td>
                                     <td className="px-4 py-2 text-sm">{p.sku ?? '-'}</td>
                                     <td className="px-4 py-2 text-sm">
-                                        {p.stock?.toLocaleString?.() ?? 0}
+                                        {formatNumber(p.stock ?? 0)}
                                         <span className="ml-1 text-xs text-muted-foreground">{p.base_unit?.name ?? ''}</span>
                                     </td>
-                                    <td className="px-4 py-2 text-sm">{p.min_stock ?? '-'}</td>
+                                    <td className="px-4 py-2 text-sm">{p.min_stock != null ? formatNumber(p.min_stock) : '-'}</td>
                                     <td className="px-4 py-2 text-sm">{p.sale_price != null ? formatEGP(p.sale_price) : '-'}</td>
                                     <td className="px-4 py-2 text-sm">{p.cost_price != null ? formatEGP(p.cost_price) : '-'}</td>
                                     <td className="px-4 py-2 text-sm">{p.is_active ? 'نعم' : 'لا'}</td>

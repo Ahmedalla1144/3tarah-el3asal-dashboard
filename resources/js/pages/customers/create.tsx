@@ -6,14 +6,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
 
-const routes = {
-    index: () => ({ url: '/customers' }),
-    store: () => ({ url: '/customers' }),
-}
+import customersRoutes from '@/routes/customers'
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'العملاء', href: routes.index().url },
-    { title: 'إنشاء', href: routes.store().url },
+    { title: 'العملاء', href: customersRoutes.index().url },
+    { title: 'إنشاء', href: customersRoutes.store().url },
 ]
 
 export default function CustomerCreate() {
@@ -23,7 +20,7 @@ export default function CustomerCreate() {
             <Head title="عميل جديد" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء العميل بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء العميل', variant: 'destructive' })}>
+                <Form action={customersRoutes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء العميل بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء العميل', variant: 'destructive' })}>
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
@@ -72,7 +69,7 @@ export default function CustomerCreate() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={customersRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">إلغاء</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>حفظ</Button>

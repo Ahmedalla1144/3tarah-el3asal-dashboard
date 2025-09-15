@@ -16,13 +16,46 @@ class CustomerController extends Controller
      */
     public function index(): Response
     {
-        $customers = Customer::query()->orderBy('name')->paginate(10)->through(fn($c) => [
+        $query = Customer::query()->with(['salesInvoices' => function($q) {
+            $q->where('status', 'open');
+        }]);
+        
+        // فلترة حسب البحث
+        if (request('search')) {
+            $query->where('name', 'like', '%' . request('search') . '%');
+        }
+        
+        // فلترة حسب الرصيد المدين
+        if (request('balance_filter') === 'with_balance') {
+            $query->whereHas('salesInvoices', function($q) {
+                $q->where('status', 'open');
+            });
+        } elseif (request('balance_filter') === 'without_balance') {
+            $query->whereDoesntHave('salesInvoices', function($q) {
+                $q->where('status', 'open');
+            });
+        }
+        
+        $customers = $query->orderBy('name')->paginate(10)->through(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
             'phone' => $c->phone,
             'is_active' => (bool)$c->is_active,
+            'current_balance' => $c->current_balance,
+            'unpaid_invoices' => $c->salesInvoices->map(fn($invoice) => [
+                'id' => $invoice->id,
+                'number' => $invoice->number,
+                'total' => $invoice->total,
+                'paid' => $invoice->paid_amount,
+                'remaining' => $invoice->remaining_amount,
+                'date' => $invoice->date,
+            ]),
         ]);
-        return Inertia::render('customers/index', ['customers' => $customers]);
+        
+        return Inertia::render('customers/index', [
+            'customers' => $customers,
+            'filters' => request()->only(['search', 'balance_filter'])
+        ]);
     }
 
     /**

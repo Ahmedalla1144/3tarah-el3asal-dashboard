@@ -22,22 +22,17 @@ interface PageProps {
     }
 }
 
-const routes = {
-    index: () => ({ url: '/warehouses' }),
-    create: () => ({ url: '/warehouses/create' }),
-    edit: (id: number) => ({ url: `/warehouses/${id}/edit` }),
-    destroy: (id: number) => ({ url: `/warehouses/${id}` }),
-}
+import warehousesRoutes from '@/routes/warehouses'
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'المخازن', href: routes.index().url },
+    { title: 'المخازن', href: warehousesRoutes.index().url },
 ]
 
 export default function WarehousesIndex({ warehouses }: PageProps) {
     const { add } = useToast()
     const [search, setSearch] = useState('')
     const debouncedSearch = useDebouncedCallback((value: string) => {
-        router.get(routes.index().url, { search: value }, { preserveState: true, replace: true })
+        router.get(warehousesRoutes.index().url, { search: value }, { preserveState: true, replace: true })
     }, 300)
 
     return (
@@ -57,21 +52,20 @@ export default function WarehousesIndex({ warehouses }: PageProps) {
                         />
                     </div>
 
-                    <Link href={routes.create().url} className="inline-flex">
+                    <Link href={warehousesRoutes.create().url} className="inline-flex">
                         <Button>
                             <Plus className="mr-2 h-4 w-4" /> مخزن جديد
                         </Button>
                     </Link>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                    <table className="min-w-full divide-y divide-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[500px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الكود</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">العنوان</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">نشط؟</th>
                                 <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
@@ -81,10 +75,9 @@ export default function WarehousesIndex({ warehouses }: PageProps) {
                                     <td className="px-4 py-2 text-sm">{w.name}</td>
                                     <td className="px-4 py-2 text-sm">{w.code ?? '-'}</td>
                                     <td className="px-4 py-2 text-sm">{w.address ?? '-'}</td>
-                                    <td className="px-4 py-2 text-sm">{w.is_active ? 'نعم' : 'لا'}</td>
                                     <td className="px-4 py-2 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <Link href={routes.edit(w.id).url} className="inline-flex">
+                                            <Link href={warehousesRoutes.edit(w.id).url} className="inline-flex">
                                                 <Button variant="outline" size="sm">
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>
@@ -94,7 +87,7 @@ export default function WarehousesIndex({ warehouses }: PageProps) {
                                                 size="sm"
                                                 onClick={() => {
                                                     if (!confirm('حذف هذا المخزن؟')) return
-                                                    router.delete(routes.destroy(w.id).url, {
+                                                    router.delete(warehousesRoutes.destroy(w.id).url, {
                                                         onSuccess: () => add({ title: 'تم الحذف', description: 'تم حذف المخزن بنجاح' }),
                                                         onError: () => add({ title: 'خطأ', description: 'تعذر حذف المخزن', variant: 'destructive' }),
                                                     })

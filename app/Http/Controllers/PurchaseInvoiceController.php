@@ -18,6 +18,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Account;
@@ -50,7 +51,9 @@ class PurchaseInvoiceController extends Controller
                     'supplier' => $pi->supplier?->name,
                     'date' => $pi->date,
                     'status' => $pi->status,
-                    'total' => $pi->total,
+                    'total' => (float)$pi->total,
+                    'paid' => (float)$pi->paid_amount,
+                    'remaining' => (float)$pi->remaining_amount,
                 ];
             });
 
@@ -172,23 +175,32 @@ class PurchaseInvoiceController extends Controller
 
                 // Stock increment in stock_balances
                 $balance = StockBalance::firstOrCreate(
-                    ['warehouse_id' => $warehouseId, 'product_id' => (int)$item['product_id']],
+                    ['warehouse_id' => $warehouseId, 'product_id' => $item['product_id']],
                     ['qty_base' => 0]
                 );
+
+                // Increment the stock
                 $balance->increment('qty_base', $qtyBase);
 
-                // Update product prices
-                Product::where('id', $item['product_id'])->update([
-                    'cost_price' => $item['unit_cost'],
-                    'sale_price' => $item['unit_cost'] * 1.2, // Set sale price as 20% markup
-                ]);
+                // Get the updated quantity
+                $balance->refresh();
+                $newQtyBase = $balance->qty_base;
+
+                // Update product prices for this specific product
+                $product = Product::find($item['product_id']);
+                if ($product) {
+                    $product->update([
+                        'cost_price' => $item['unit_cost'],
+                        'sale_price' => $item['unit_cost'] * 1.2, // Set sale price as 20% markup
+                    ]);
+                }
 
                 // Inventory movement IN
                 DB::table('inventory_movements')->insert([
                     'warehouse_id' => $data['warehouse_id'],
                     'product_id' => $item['product_id'],
                     'direction' => 'in',
-                    'qty_base' => $item['qty'],
+                    'qty_base' => $qtyBase,
                     'unit_cost' => $item['unit_cost'],
                     'reason' => 'purchase',
                     'purchase_invoice_item_id' => $piItem->id,
@@ -208,7 +220,12 @@ class PurchaseInvoiceController extends Controller
 
             // Optional upfront payment (AP)
             if (!empty($data['paid_amount']) && (float)$data['paid_amount'] > 0) {
-                $amount = min((float)$data['paid_amount'], (float)$invoice->total);
+                if ((float)$data['paid_amount'] > (float)$grandTotal) {
+                    throw ValidationException::withMessages([
+                        'paid_amount' => 'لا يمكن أن يكون المبلغ المدفوع أكبر من قيمة الفاتورة',
+                    ]);
+                }
+                $amount = (float)$data['paid_amount'];
                 $nextNumber = (int) (ApPayment::query()->max('id') ?? 0) + 1;
                 $payment = ApPayment::create([
                     'number' => (string)$nextNumber,
@@ -276,6 +293,18 @@ class PurchaseInvoiceController extends Controller
         ]);
     }
 
+    public function print(PurchaseInvoice $purchaseInvoice)
+    {
+        $purchaseInvoice->load([
+            'supplier',
+            'warehouse',
+            'items.product',
+            'items.unit'
+        ]);
+
+        return view('purchase-invoices.print', ['invoice' => $purchaseInvoice]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -328,20 +357,24 @@ class PurchaseInvoiceController extends Controller
     public function pay(Request $request, PurchaseInvoice $purchaseInvoice): RedirectResponse
     {
         $validated = $request->validate([
-            'amount' => ['required', 'numeric', 'min:0.01'],
-            'payment_method_id' => ['nullable', 'integer'],
-            'account_id' => ['nullable', 'integer'],
+            'amount' => ['required', 'numeric', 'min:0.01', function($attr, $value, $fail) use ($purchaseInvoice) {
+                if ((float)$value > (float)$purchaseInvoice->remaining_amount) {
+                    $fail('لا يمكن أن يكون المبلغ المدفوع أكبر من المتبقي للفاتورة');
+                }
+            }],
+            'payment_method_id' => ['required', 'integer', 'exists:payment_methods,id'],
+            'account_id' => ['required', 'integer', 'exists:accounts,id'],
             'reference_no' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
         ]);
 
         DB::transaction(function () use ($validated, $purchaseInvoice) {
-            $nextNumber = (int) (\App\Models\ApPayment::query()->max('id') ?? 0) + 1;
-            $payment = \App\Models\ApPayment::create([
+            $nextNumber = (int) (ApPayment::query()->max('id') ?? 0) + 1;
+            $payment = ApPayment::create([
                 'number' => (string)$nextNumber,
                 'supplier_id' => $purchaseInvoice->supplier_id,
-                'account_id' => $validated['account_id'] ?? null,
-                'payment_method_id' => $validated['payment_method_id'] ?? null,
+                'account_id' => $validated['account_id'],
+                'payment_method_id' => $validated['payment_method_id'],
                 'amount' => (float)$validated['amount'],
                 'paid_at' => now(),
                 'reference_no' => $validated['reference_no'] ?? null,
@@ -349,7 +382,7 @@ class PurchaseInvoiceController extends Controller
                 'user_id' => Auth::user()->id,
             ]);
 
-            \App\Models\ApAllocation::create([
+            ApAllocation::create([
                 'ap_payment_id' => $payment->id,
                 'purchase_invoice_id' => $purchaseInvoice->id,
                 'amount' => (float)$validated['amount'],

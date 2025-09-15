@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { type BreadcrumbItem } from '@/types'
 import { useDebouncedCallback } from 'use-debounce'
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Printer, Eye } from 'lucide-react'
 import { formatEGP } from '@/lib/currency'
 
 type InvoiceRow = { id: number; number: string; customer: string | null; date: string; status: string; total: number; paid?: number; remaining?: number }
@@ -23,20 +23,17 @@ interface PageProps {
     filters: { search?: string }
 }
 
-const routes = {
-    index: () => ({ url: '/sales-invoices' }),
-    create: () => ({ url: '/sales-invoices/create' }),
-    payForm: (id: number) => ({ url: `/sales-invoices/${id}/pay` }),
-}
+import salesInvoicesRoutes from '@/routes/sales-invoices'
+import { form as payForm } from '@/routes/sales-invoices/pay'
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'فواتير المبيعات', href: routes.index().url },
+    { title: 'فواتير المبيعات', href: salesInvoicesRoutes.index().url },
 ]
 
 export default function SalesInvoicesIndex({ invoices, filters }: PageProps) {
     const [search, setSearch] = useState(filters.search ?? '')
     const debouncedSearch = useDebouncedCallback((value: string) => {
-        router.get(routes.index().url, { search: value }, { preserveState: true, replace: true })
+        router.get(salesInvoicesRoutes.index().url, { search: value }, { preserveState: true, replace: true })
     }, 300)
 
     return (
@@ -56,15 +53,15 @@ export default function SalesInvoicesIndex({ invoices, filters }: PageProps) {
                         />
                     </div>
 
-                    <Link href={routes.create().url} className="inline-flex">
+                    <Link href={salesInvoicesRoutes.create().url} className="inline-flex">
                         <Button>
                             <Plus className="mr-2 h-4 w-4" /> فاتورة جديدة
                         </Button>
                     </Link>
                 </div>
 
-                <div className="overflow-hidden rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                    <table className="min-w-full divide-y divide-border">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[900px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الرقم</th>
@@ -88,7 +85,18 @@ export default function SalesInvoicesIndex({ invoices, filters }: PageProps) {
                                     <td className="px-4 py-2 text-sm">{formatEGP(inv.paid ?? 0)}</td>
                                     <td className="px-4 py-2 text-sm">{formatEGP(inv.remaining ?? 0)}</td>
                                     <td className="px-4 py-2 text-sm">
-                                        <Link href={routes.payForm(inv.id).url} className="text-blue-600 hover:underline">سداد</Link>
+                                        <div className="flex items-center gap-2">
+                                            <Link href={salesInvoicesRoutes.show(inv.id).url} className="text-blue-600 hover:underline">
+                                                <Eye className="h-4 w-4" />
+                                            </Link>
+                                            <button
+                                                onClick={() => window.open(`/sales-invoices/${inv.id}/print`, '_blank')}
+                                                className="text-green-600 hover:underline"
+                                            >
+                                                <Printer className="h-4 w-4" />
+                                            </button>
+                                            <Link href={payForm(inv.id).url} className="text-orange-600 hover:underline">سداد</Link>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

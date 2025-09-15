@@ -9,17 +9,14 @@ import { useToast } from '@/components/ui/toast'
 type Role = { id: number; name: string }
 type PageProps = { user: { id: number; name: string; email: string; role_ids: number[] }, roles: Role[] }
 
-const routes = {
-    index: () => ({ url: '/users' }),
-    update: (id: number) => ({ url: `/users/${id}` }),
-}
+import usersRoutes from '@/routes/users'
 
 export default function UserEdit() {
     const { props } = usePage<PageProps>()
     const { user, roles } = props
     const { add } = useToast()
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'المستخدمون', href: routes.index().url },
+        { title: 'المستخدمون', href: usersRoutes.index().url },
         { title: `تعديل: ${user.name}`, href: '#' },
     ]
 
@@ -28,7 +25,7 @@ export default function UserEdit() {
             <Head title={`تعديل مستخدم ${user.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={routes.update(user.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المستخدم بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المستخدم', variant: 'destructive' })}>
+                <Form action={usersRoutes.update(user.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المستخدم بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المستخدم', variant: 'destructive' })}>
                     {({ processing, errors }) => (
                         <>
                             <input type="hidden" name="_method" value="put" />
@@ -64,7 +61,7 @@ export default function UserEdit() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                <Link href={routes.index().url} className="inline-flex">
+                                <Link href={usersRoutes.index().url} className="inline-flex">
                                     <Button type="button" variant="outline">رجوع</Button>
                                 </Link>
                                 <Button type="submit" disabled={processing}>حفظ</Button>
