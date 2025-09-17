@@ -83,7 +83,8 @@ export default function CustomerEdit() {
                                 <div className="text-sm text-destructive">{errors.notes}</div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" defaultChecked={customer.is_active} />
+                                <input type="hidden" name="is_active" value="0" />
+                                <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" defaultChecked={customer.is_active} value="1" />
                                 <Label htmlFor="is_active">نشط</Label>
                             </div>
 
