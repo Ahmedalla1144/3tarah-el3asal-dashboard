@@ -24,7 +24,21 @@ export default function CustomerEdit() {
             <Head title={`تعديل عميل ${customer.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={customersRoutes.update(customer.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث العميل بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث العميل', variant: 'destructive' })}>
+                <Form
+                    action={customersRoutes.update(customer.id).url}
+                    method="post"
+                    className="mx-auto w-full max-w-xl space-y-4"
+                    onSubmit={(e)=> {
+                        const form = e.currentTarget as HTMLFormElement
+                        const nameInput = (form.elements.namedItem('name') as HTMLInputElement)
+                        if (!nameInput.value || nameInput.value.trim() === '') {
+                            e.preventDefault()
+                            alert('الاسم مطلوب')
+                        }
+                    }}
+                    onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث العميل بنجاح' })}
+                    onError={() => add({ title: 'خطأ', description: 'تعذر تحديث العميل', variant: 'destructive' })}
+                >
                     {({ processing, errors }) => (
                         <>
                             <input type="hidden" name="_method" value="put" />

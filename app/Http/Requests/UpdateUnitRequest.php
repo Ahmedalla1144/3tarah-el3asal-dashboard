@@ -11,7 +11,7 @@ class UpdateUnitRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,9 @@ class UpdateUnitRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('unit')?->id ?? null;
         return [
-            //
+            'name' => ['required', 'string', 'max:100', 'unique:units,name,' . $id],
         ];
     }
 }

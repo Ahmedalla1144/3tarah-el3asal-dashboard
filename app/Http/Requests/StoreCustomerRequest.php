@@ -33,4 +33,12 @@ class StoreCustomerRequest extends FormRequest
             'is_active' => ['nullable', 'boolean'],
         ];
     }
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'opening_balance' => $this->opening_balance ?? 0,
+            'credit_limit' => $this->credit_limit ?? 0,
+            'is_active' => $this->is_active ?? true,
+        ]);
+    }
 }

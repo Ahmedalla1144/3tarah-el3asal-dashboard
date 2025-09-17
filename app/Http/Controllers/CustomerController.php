@@ -19,12 +19,12 @@ class CustomerController extends Controller
         $query = Customer::query()->with(['salesInvoices' => function($q) {
             $q->where('status', 'open');
         }]);
-        
+
         // فلترة حسب البحث
         if (request('search')) {
             $query->where('name', 'like', '%' . request('search') . '%');
         }
-        
+
         // فلترة حسب الرصيد المدين
         if (request('balance_filter') === 'with_balance') {
             $query->whereHas('salesInvoices', function($q) {
@@ -35,7 +35,7 @@ class CustomerController extends Controller
                 $q->where('status', 'open');
             });
         }
-        
+
         $customers = $query->orderBy('name')->paginate(10)->through(fn($c) => [
             'id' => $c->id,
             'name' => $c->name,
@@ -51,7 +51,7 @@ class CustomerController extends Controller
                 'date' => $invoice->date,
             ]),
         ]);
-        
+
         return Inertia::render('customers/index', [
             'customers' => $customers,
             'filters' => request()->only(['search', 'balance_filter'])

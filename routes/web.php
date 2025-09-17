@@ -14,6 +14,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerPaymentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UnitController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('warehouses', WarehouseController::class);
         Route::resource('suppliers', SupplierController::class);
         Route::resource('customers', CustomerController::class);
+        Route::resource('units', UnitController::class)->except(['show']);
         Route::get('customers/{customer}/payment', [CustomerPaymentController::class, 'create'])->name('customers.payment.create');
         Route::post('customers/{customer}/payment', [CustomerPaymentController::class, 'store'])->name('customers.payment.store');
         Route::resource('users', UserController::class)->except(['show']);

@@ -18,11 +18,12 @@ const DASHBOARD_HREF = dashboard().url;
 
 const allNavItems: NavItemWithRoles[] = [
     { title: 'لوحة التحكم', href: DASHBOARD_HREF, icon: LayoutGrid, visibleFor: ['admin', 'cashier'] },
-    { title: 'المنتجات', href: products.index(), icon: Folder, visibleFor: ['admin'] },
     { title: 'الفئات', href: '/categories', icon: Folder, visibleFor: ['admin'] },
+    { title: 'الوحدات', href: '/units', icon: Folder, visibleFor: ['admin'] },
+    { title: 'المنتجات', href: products.index(), icon: Folder, visibleFor: ['admin'] },
+    { title: 'المخازن', href: '/warehouses', icon: Folder, visibleFor: ['admin'] },
     { title: 'فواتير الشراء', href: '/purchase-invoices', icon: Folder, visibleFor: ['admin', 'cashier'] },
     { title: 'فواتير المبيعات', href: '/sales-invoices', icon: Folder, visibleFor: ['admin', 'cashier'] },
-    { title: 'المخازن', href: '/warehouses', icon: Folder, visibleFor: ['admin'] },
     { title: 'الموردون', href: '/suppliers', icon: Folder, visibleFor: ['admin'] },
     { title: 'العملاء', href: '/customers', icon: Folder, visibleFor: ['admin'] },
     { title: 'المستخدمون', href: '/users', icon: Folder, visibleFor: ['admin'] },
