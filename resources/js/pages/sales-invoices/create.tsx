@@ -61,13 +61,14 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
 
         const ratio = defaultUnitId ? (p.units?.find(u => u.unit_id === defaultUnitId)?.ratio_to_base ?? 1) : 1
         const derivedPrice = p.sale_price != null ? (Number(p.sale_price) * ratio) : undefined
+        const availableForUnit = p.stock ? (p.stock / ratio) : 0
 
         setItems(prev => prev.map((row, i) => i === idx ? {
             ...row,
             product_id: productId,
             unit_id: defaultUnitId ? String(defaultUnitId) : '',
             unit_price: derivedPrice != null ? String(Number(derivedPrice.toFixed(6))) : '',
-            max_qty: p.stock || 0,
+            max_qty: Number.isFinite(availableForUnit) ? Number(availableForUnit.toFixed(6)) : 0,
         } : row))
     }
 
@@ -76,10 +77,12 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
         const p = products.find(pr => String(pr.id) === row.product_id)
         const ratio = p?.units?.find(u => String(u.unit_id) === unitId)?.ratio_to_base ?? 1
         const derivedPrice = p?.sale_price != null ? (Number(p.sale_price) * ratio) : undefined
+        const availableForUnit = p?.stock ? (p.stock / ratio) : 0
         setItems(prev => prev.map((r, i) => i === idx ? {
             ...r,
             unit_id: unitId,
             unit_price: derivedPrice != null ? String(Number(derivedPrice.toFixed(6))) : r.unit_price,
+            max_qty: Number.isFinite(availableForUnit) ? Number(availableForUnit.toFixed(6)) : 0,
         } : r))
     }
 
@@ -192,7 +195,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
                                         </div>
                                         <div className="md:col-span-2">
                                             <Label>الكمية</Label>
-                                            <Input name={`items[${idx}][qty]`} value={items[idx].qty} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, qty: e.target.value}: r))} type="number" step="0.001" min="0" max={items[idx].max_qty} required />
+                                            <Input name={`items[${idx}][qty]`} value={items[idx].qty} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, qty: e.target.value}: r))} type="number" step="0.001" min="0" max={items[idx].max_qty || undefined} required />
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.qty`]}</div>
                                             {getAvailableForSelectedUnit(idx) != null && (
                                                 <div className="text-xs text-muted-foreground">المتاح: {getAvailableForSelectedUnit(idx)}</div>
