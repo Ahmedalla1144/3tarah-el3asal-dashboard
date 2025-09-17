@@ -79,6 +79,10 @@ class UnitController extends Controller
      */
     public function destroy(Unit $unit): RedirectResponse
     {
+        if ($unit->productUnits()->exists()) {
+            return redirect()->route('units.index')->with('error', 'لا يمكن حذف الوحدة لأنها مستخدمة في المنتجات');
+        }
+
         $unit->delete();
         return redirect()->route('units.index')->with('status', 'تم حذف الوحدة');
     }
