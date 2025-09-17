@@ -189,9 +189,11 @@ class PurchaseInvoiceController extends Controller
                 // Update product prices for this specific product
                 $product = Product::find($item['product_id']);
                 if ($product) {
+                    // Normalize entered unit_cost to base unit price
+                    $baseUnitCost = (float)$item['unit_cost'] / max(1e-9, $ratio);
                     $product->update([
-                        'cost_price' => $item['unit_cost'],
-                        'sale_price' => $item['unit_cost'] * 1.2, // Set sale price as 20% markup
+                        'cost_price' => round($baseUnitCost, 6),
+                        'sale_price' => round($baseUnitCost * 1.2, 6),
                     ]);
                 }
 
