@@ -70,8 +70,9 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                         >
                             <div className="grid gap-2">
                                 <Label htmlFor="unit_id">الوحدة</Label>
+                                {/* Hidden field to actually submit the selected unit id */}
+                                <input type="hidden" name="unit_id" value={newUnit.unit_id} />
                                 <Select 
-                                    name="unit_id" 
                                     required 
                                     value={newUnit.unit_id}
                                     onValueChange={(val) => setNewUnit(prev => ({ ...prev, unit_id: val }))}
@@ -103,18 +104,23 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">
+                                    {/* Send 0/1 for boolean */}
+                                    <input type="hidden" name="is_default_sale" value="0" />
                                     <Checkbox
                                         id="is_default_sale"
                                         name="is_default_sale"
+                                        value="1"
                                         checked={newUnit.is_default_sale}
                                         onCheckedChange={(val) => setNewUnit(prev => ({ ...prev, is_default_sale: !!val }))}
                                     />
                                     <Label htmlFor="is_default_sale">افتراضي للمبيعات</Label>
                                 </div>
                                 <div className="flex items-center gap-2">
+                                    <input type="hidden" name="is_default_buy" value="0" />
                                     <Checkbox
                                         id="is_default_buy"
                                         name="is_default_buy"
+                                        value="1"
                                         checked={newUnit.is_default_buy}
                                         onCheckedChange={(val) => setNewUnit(prev => ({ ...prev, is_default_buy: !!val }))}
                                     />
