@@ -20,7 +20,21 @@ export default function CustomerCreate() {
             <Head title="عميل جديد" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={customersRoutes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء العميل بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء العميل', variant: 'destructive' })}>
+                <Form
+                    action={customersRoutes.store().url}
+                    method="post"
+                    className="mx-auto w-full max-w-xl space-y-4"
+                    onSubmit={(e)=> {
+                        const form = e.currentTarget as HTMLFormElement
+                        const nameInput = (form.elements.namedItem('name') as HTMLInputElement)
+                        if (!nameInput.value || nameInput.value.trim() === '') {
+                            e.preventDefault()
+                            alert('الاسم مطلوب')
+                        }
+                    }}
+                    onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء العميل بنجاح' })}
+                    onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء العميل', variant: 'destructive' })}
+                >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
@@ -50,12 +64,12 @@ export default function CustomerCreate() {
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="opening_balance">الرصيد الافتتاحي</Label>
-                                <Input id="opening_balance" name="opening_balance" type="number" step="0.01" min="0" />
+                                <Input id="opening_balance" name="opening_balance" type="number" step="0.01" min="0" defaultValue="0" />
                                 <div className="text-sm text-destructive">{errors.opening_balance}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="credit_limit">حد الائتمان</Label>
-                                <Input id="credit_limit" name="credit_limit" type="number" step="0.01" min="0" />
+                                <Input id="credit_limit" name="credit_limit" type="number" step="0.01" min="0" defaultValue="0" />
                                 <div className="text-sm text-destructive">{errors.credit_limit}</div>
                             </div>
                             <div className="grid gap-2">
