@@ -11,7 +11,7 @@ class UpdateWarehouseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateWarehouseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:255', 'unique:warehouses,name,' . $this->warehouse->id],
+            'code' => ['nullable', 'string', 'max:50', 'unique:warehouses,code,' . $this->warehouse->id],
+            'address' => ['nullable', 'string', 'max:255'],
+            'notes' => ['nullable', 'string'],
         ];
     }
 }
