@@ -146,18 +146,21 @@ class SalesInvoiceController extends Controller
                 ->keyBy(fn($r) => $r->product_id . '|' . $r->unit_id);
 
             foreach ($items as $item) {
-                // Check stock availability
+                // Determine ratio to base for the selected unit
+                $ratio = (float) ($ratios->get(((int)$item['product_id']) . '|' . ((int)$item['unit_id']))->ratio_to_base ?? 1.0);
+
+                // Check stock availability for the selected unit
                 $product = $productsById->get((int)$item['product_id']);
                 if (!$product || $product->stock <= 0) {
                     throw new \Exception("المنتج {$product->name} غير متوفر في المخزون");
                 }
 
-                if ($product->stock < $item['qty']) {
-                    throw new \Exception("الكمية المطلوبة للمنتج {$product->name} تتجاوز المخزون المتاح ({$product->stock})");
+                // Calculate available quantity in the selected unit
+                $availableInSelectedUnit = $product->stock / $ratio;
+                if ($availableInSelectedUnit < (float)$item['qty']) {
+                    $unitName = $ratios->get(((int)$item['product_id']) . '|' . ((int)$item['unit_id']))->unit?->name ?? 'الوحدة المختارة';
+                    throw new \Exception("الكمية المطلوبة للمنتج {$product->name} ({$item['qty']} {$unitName}) تتجاوز المخزون المتاح ({$availableInSelectedUnit} {$unitName})");
                 }
-
-                // Determine ratio to base for the selected unit
-                $ratio = (float) ($ratios->get(((int)$item['product_id']) . '|' . ((int)$item['unit_id']))->ratio_to_base ?? 1.0);
 
                 // If unit_price not provided, derive from base sale_price
                 $unitPrice = isset($item['unit_price']) && $item['unit_price'] !== null && $item['unit_price'] !== ''
