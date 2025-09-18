@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\SalesInvoiceController::form
-* @see app/Http/Controllers/SalesInvoiceController.php:264
+* @see app/Http/Controllers/SalesInvoiceController.php:267
 * @route '/sales-invoices/{salesInvoice}/pay'
 */
 export const form = (args: { salesInvoice: number | { id: number } } | [salesInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ form.definition = {
 
 /**
 * @see \App\Http\Controllers\SalesInvoiceController::form
-* @see app/Http/Controllers/SalesInvoiceController.php:264
+* @see app/Http/Controllers/SalesInvoiceController.php:267
 * @route '/sales-invoices/{salesInvoice}/pay'
 */
 form.url = (args: { salesInvoice: number | { id: number } } | [salesInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ form.url = (args: { salesInvoice: number | { id: number } } | [salesInvoice: num
 
 /**
 * @see \App\Http\Controllers\SalesInvoiceController::form
-* @see app/Http/Controllers/SalesInvoiceController.php:264
+* @see app/Http/Controllers/SalesInvoiceController.php:267
 * @route '/sales-invoices/{salesInvoice}/pay'
 */
 form.get = (args: { salesInvoice: number | { id: number } } | [salesInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -59,7 +59,7 @@ form.get = (args: { salesInvoice: number | { id: number } } | [salesInvoice: num
 
 /**
 * @see \App\Http\Controllers\SalesInvoiceController::form
-* @see app/Http/Controllers/SalesInvoiceController.php:264
+* @see app/Http/Controllers/SalesInvoiceController.php:267
 * @route '/sales-invoices/{salesInvoice}/pay'
 */
 form.head = (args: { salesInvoice: number | { id: number } } | [salesInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -69,7 +69,7 @@ form.head = (args: { salesInvoice: number | { id: number } } | [salesInvoice: nu
 
 /**
 * @see \App\Http\Controllers\SalesInvoiceController::form
-* @see app/Http/Controllers/SalesInvoiceController.php:264
+* @see app/Http/Controllers/SalesInvoiceController.php:267
 * @route '/sales-invoices/{salesInvoice}/pay'
 */
 const formForm = (args: { salesInvoice: number | { id: number } } | [salesInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ const formForm = (args: { salesInvoice: number | { id: number } } | [salesInvoic
 
 /**
 * @see \App\Http\Controllers\SalesInvoiceController::form
-* @see app/Http/Controllers/SalesInvoiceController.php:264
+* @see app/Http/Controllers/SalesInvoiceController.php:267
 * @route '/sales-invoices/{salesInvoice}/pay'
 */
 formForm.get = (args: { salesInvoice: number | { id: number } } | [salesInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -89,7 +89,7 @@ formForm.get = (args: { salesInvoice: number | { id: number } } | [salesInvoice:
 
 /**
 * @see \App\Http\Controllers\SalesInvoiceController::form
-* @see app/Http/Controllers/SalesInvoiceController.php:264
+* @see app/Http/Controllers/SalesInvoiceController.php:267
 * @route '/sales-invoices/{salesInvoice}/pay'
 */
 formForm.head = (args: { salesInvoice: number | { id: number } } | [salesInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
