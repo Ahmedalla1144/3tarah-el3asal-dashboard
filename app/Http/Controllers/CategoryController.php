@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -28,7 +29,7 @@ class CategoryController extends Controller
             ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString()
-            ->through(fn (Category $c) => [
+            ->through(fn(Category $c) => [
                 'id' => $c->id,
                 'name' => $c->name,
             ]);
@@ -100,7 +101,17 @@ class CategoryController extends Controller
     public function destroy(Category $category): RedirectResponse
     {
         $this->authorize('delete', $category);
-        $category->delete();
-        return redirect()->route('categories.index')->with('status', 'Category deleted');
+
+        try {
+            $category->delete();
+        } catch (QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن حذف الفئة لوجود معاملات مرتبطة به.');
+            }
+            return redirect()->back()->with('error', 'تعذر حذف الفئة.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'تعذر حذف الفئة.');
+        }
+        return redirect()->back()->with('status', 'تم حذف الفئة');
     }
 }

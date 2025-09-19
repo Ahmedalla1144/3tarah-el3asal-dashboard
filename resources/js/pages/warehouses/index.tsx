@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout'
 import { Head, Link, router } from '@inertiajs/react'
-import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { type BreadcrumbItem } from '@/types'
@@ -29,7 +28,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function WarehousesIndex({ warehouses }: PageProps) {
-    const { add } = useToast()
     const [search, setSearch] = useState('')
     const debouncedSearch = useDebouncedCallback((value: string) => {
         router.get(warehousesRoutes.index().url, { search: value }, { preserveState: true, replace: true })
@@ -87,10 +85,7 @@ export default function WarehousesIndex({ warehouses }: PageProps) {
                                                 size="sm"
                                                 onClick={() => {
                                                     if (!confirm('حذف هذا المخزن؟')) return
-                                                    router.delete(warehousesRoutes.destroy(w.id).url, {
-                                                        onSuccess: () => add({ title: 'تم الحذف', description: 'تم حذف المخزن بنجاح' }),
-                                                        onError: () => add({ title: 'خطأ', description: 'تعذر حذف المخزن', variant: 'destructive' }),
-                                                    })
+                                                    router.delete(warehousesRoutes.destroy(w.id).url)
                                                 }}
                                             >
                                                 <Trash2 className="h-4 w-4" />

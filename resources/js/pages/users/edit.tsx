@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useToast } from '@/components/ui/toast'
 
 type Role = { id: number; name: string }
 type PageProps = { user: { id: number; name: string; email: string; role_ids: number[] }, roles: Role[] }
@@ -14,7 +13,6 @@ import usersRoutes from '@/routes/users'
 export default function UserEdit() {
     const { props } = usePage<PageProps>()
     const { user, roles } = props
-    const { add } = useToast()
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'المستخدمون', href: usersRoutes.index().url },
         { title: `تعديل: ${user.name}`, href: '#' },
@@ -25,7 +23,7 @@ export default function UserEdit() {
             <Head title={`تعديل مستخدم ${user.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={usersRoutes.update(user.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المستخدم بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المستخدم', variant: 'destructive' })}>
+                <Form action={usersRoutes.update(user.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4">
                     {({ processing, errors }) => (
                         <>
                             <input type="hidden" name="_method" value="put" />

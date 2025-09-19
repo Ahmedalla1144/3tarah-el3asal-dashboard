@@ -80,7 +80,7 @@ class WarehouseController extends Controller
     public function update(UpdateWarehouseRequest $request, Warehouse $warehouse): RedirectResponse
     {
         $warehouse->update($request->validated());
-        return redirect()->route('warehouses.index')->with('status', 'Warehouse updated');
+        return redirect()->route('warehouses.index')->with('status', 'تم تحديث بيانات المخزن بنجاح');
     }
 
     /**
@@ -90,9 +90,14 @@ class WarehouseController extends Controller
     {
         try {
             $warehouse->delete();
+        } catch (QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن حذف المخزن لوجود معاملات مرتبطة به.');
+            }
+            return redirect()->back()->with('error', 'تعذر حذف المخزن.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error','لا يمكن الحذف الان');
+            return redirect()->back()->with('error', 'تعذر حذف المخزن.');
         }
-        return redirect()->back()->with('status', 'تم الحذف بنجاح');
+        return redirect()->back()->with('status', 'تم حذف المخزن');
     }
 }

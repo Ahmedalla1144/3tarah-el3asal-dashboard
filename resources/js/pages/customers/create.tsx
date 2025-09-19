@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout'
 import { Form, Head, Link } from '@inertiajs/react'
-import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,7 +13,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CustomerCreate() {
-    const { add } = useToast()
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="عميل جديد" />
@@ -32,8 +30,6 @@ export default function CustomerCreate() {
                             alert('الاسم مطلوب')
                         }
                     }}
-                    onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء العميل بنجاح' })}
-                    onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء العميل', variant: 'destructive' })}
                 >
                     {({ processing, errors }) => (
                         <>

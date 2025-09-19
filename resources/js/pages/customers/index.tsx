@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout'
 import { Head, Link, router } from '@inertiajs/react'
-import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -46,7 +45,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CustomersIndex({ customers, filters = {} }: PageProps) {
-    const { add } = useToast()
     const [search, setSearch] = useState(filters.search ?? '')
     const [balanceFilter, setBalanceFilter] = useState(filters.balance_filter ?? 'all')
 
@@ -195,10 +193,7 @@ export default function CustomersIndex({ customers, filters = {} }: PageProps) {
                                                 size="sm"
                                                 onClick={() => {
                                                     if (!confirm('حذف هذا العميل؟')) return
-                                                    router.delete(customersRoutes.destroy(c.id).url, {
-                                                        onSuccess: () => add({ title: 'تم الحذف', description: 'تم حذف العميل بنجاح' }),
-                                                        onError: () => add({ title: 'خطأ', description: 'تعذر حذف العميل', variant: 'destructive' }),
-                                                    })
+                                                    router.delete(customersRoutes.destroy(c.id).url)
                                                 }}
                                             >
                                                 <Trash2 className="h-4 w-4" />

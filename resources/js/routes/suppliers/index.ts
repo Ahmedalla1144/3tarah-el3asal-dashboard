@@ -528,7 +528,7 @@ update.patch = (args: { supplier: number | { id: number } } | [supplier: number 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\SupplierController::destroy
- * @see app/Http/Controllers/SupplierController.php:89
+ * @see app/Http/Controllers/SupplierController.php:94
  * @route '/suppliers/{supplier}'
  */
 export const destroy = (args: { supplier: number | { id: number } } | [supplier: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -543,7 +543,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\SupplierController::destroy
- * @see app/Http/Controllers/SupplierController.php:89
+ * @see app/Http/Controllers/SupplierController.php:94
  * @route '/suppliers/{supplier}'
  */
 destroy.url = (args: { supplier: number | { id: number } } | [supplier: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -576,7 +576,7 @@ destroy.url = (args: { supplier: number | { id: number } } | [supplier: number |
 
 /**
 * @see \App\Http\Controllers\SupplierController::destroy
- * @see app/Http/Controllers/SupplierController.php:89
+ * @see app/Http/Controllers/SupplierController.php:94
  * @route '/suppliers/{supplier}'
  */
 destroy.delete = (args: { supplier: number | { id: number } } | [supplier: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -586,7 +586,7 @@ destroy.delete = (args: { supplier: number | { id: number } } | [supplier: numbe
 
     /**
 * @see \App\Http\Controllers\SupplierController::destroy
- * @see app/Http/Controllers/SupplierController.php:89
+ * @see app/Http/Controllers/SupplierController.php:94
  * @route '/suppliers/{supplier}'
  */
     const destroyForm = (args: { supplier: number | { id: number } } | [supplier: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -601,7 +601,7 @@ destroy.delete = (args: { supplier: number | { id: number } } | [supplier: numbe
 
             /**
 * @see \App\Http\Controllers\SupplierController::destroy
- * @see app/Http/Controllers/SupplierController.php:89
+ * @see app/Http/Controllers/SupplierController.php:94
  * @route '/suppliers/{supplier}'
  */
         destroyForm.delete = (args: { supplier: number | { id: number } } | [supplier: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

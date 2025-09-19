@@ -101,12 +101,12 @@ class UserController extends Controller
         $user->update($update);
         $user->roles()->sync($data['roles'] ?? []);
 
-        return redirect()->route('users.index')->with('status', 'User updated');
+        return redirect()->route('users.index')->with('status', 'تم تحديث بيانات العميل بنجاح');
     }
 
     public function destroy(User $user): RedirectResponse
     {
         $user->delete();
-        return redirect()->route('users.index')->with('status', 'User deleted');
+        return redirect()->route('users.index')->with('status', 'تم مسح بيانات العميل بنجاح');
     }
 }

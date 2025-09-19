@@ -77,10 +77,15 @@ class SupplierController extends Controller
     {
         try {
             $supplier->update($request->validated());
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن تعديل المورد بسبب قيود على البيانات (تعارض فريد أو مرجع).');
+            }
+            return redirect()->back()->with('error', 'تعذر تعديل المورد.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'تعذر تعديل المورد.');
         }
-        return redirect()->route('suppliers.index')->with('status', 'Supplier updated');
+        return redirect()->route('suppliers.index')->with('status', 'تم تعديل المورد');
     }
 
     /**
@@ -88,7 +93,16 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier): RedirectResponse
     {
-        $supplier->delete();
-        return redirect()->route('suppliers.index')->with('status', 'Supplier deleted');
+        try {
+            $supplier->delete();
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن حذف المورد لوجود معاملات مرتبطة به.');
+            }
+            return redirect()->back()->with('error', 'تعذر حذف المورد.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'تعذر حذف المورد.');
+        }
+        return redirect()->route('suppliers.index')->with('status', 'تم حذف المورد');
     }
 }

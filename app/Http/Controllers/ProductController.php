@@ -12,6 +12,7 @@ use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -274,10 +275,17 @@ class ProductController extends Controller
     {
         $this->authorize('delete', $product);
 
-        $product->delete();
+        try {
+            $product->delete();
+        } catch (QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن حذف المنتج لوجود معاملات مرتبطة به.');
+            }
+            return redirect()->back()->with('error', 'حدث خطأ أثناء الحذف.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'حدث خطأ أثناء الحذف.');
+        }
 
-        return redirect()
-            ->route('products.index')
-            ->with('status', 'Product deleted');
+        return redirect()->route('products.index')->with('status', 'تم حذف المنتج');
     }
 }

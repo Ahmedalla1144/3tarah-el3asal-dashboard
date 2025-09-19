@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useToast } from '@/components/ui/toast'
 
 type Role = { id: number; name: string }
 
@@ -18,13 +17,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function UserCreate({ roles }: PageProps) {
-    const { add } = useToast()
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="مستخدم جديد" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={usersRoutes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء المستخدم بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء المستخدم', variant: 'destructive' })}>
+                <Form action={usersRoutes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4">
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">

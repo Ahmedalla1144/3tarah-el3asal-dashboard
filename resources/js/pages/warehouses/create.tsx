@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout'
 import { Form, Head, Link } from '@inertiajs/react'
-import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,13 +13,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function WarehouseCreate() {
-    const { add } = useToast()
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="مخزن جديد" />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={warehousesRoutes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم إنشاء المخزن بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر إنشاء المخزن', variant: 'destructive' })}>
+                <Form action={warehousesRoutes.store().url} method="post" className="mx-auto w-full max-w-xl space-y-4" >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">

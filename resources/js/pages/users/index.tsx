@@ -6,7 +6,6 @@ import { type BreadcrumbItem } from '@/types'
 import { useDebouncedCallback } from 'use-debounce'
 import { useState } from 'react'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
-import { useToast } from '@/components/ui/toast'
 
 type UserRow = { id: number; name: string; email: string; roles: string[] }
 type PaginationLink = string | null
@@ -33,7 +32,6 @@ export default function UsersIndex({ users }: PageProps) {
     const debouncedSearch = useDebouncedCallback((value: string) => {
         router.get(usersRoutes.index().url, { search: value }, { preserveState: true, replace: true })
     }, 300)
-    const { add } = useToast()
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -87,10 +85,7 @@ export default function UsersIndex({ users }: PageProps) {
                                                 size="sm"
                                                 onClick={() => {
                                                     if (!confirm('حذف هذا المستخدم؟')) return
-                                                    router.delete(usersRoutes.destroy(u.id).url, {
-                                                        onSuccess: () => add({ title: 'تم الحذف', description: 'تم حذف المستخدم بنجاح' }),
-                                                        onError: () => add({ title: 'خطأ', description: 'تعذر حذف المستخدم', variant: 'destructive' }),
-                                                    })
+                                                    router.delete(usersRoutes.destroy(u.id).url)
                                                 }}
                                             >
                                                 <Trash2 className="h-4 w-4" />

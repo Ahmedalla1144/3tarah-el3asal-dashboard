@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatEGP } from '@/lib/currency'
@@ -32,7 +31,7 @@ interface Allocation {
     amount: string
 }
 
-export default function CustomerPayment({ customer, accounts, paymentMethods }: PageProps) {
+export default function CustomerPayment({ customer }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'العملاء', href: '/customers' },
         { title: customer.name, href: `/customers/${customer.id}/edit` },

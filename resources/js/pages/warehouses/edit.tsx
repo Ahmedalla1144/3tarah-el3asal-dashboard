@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout'
 import { Form, Head, Link, usePage } from '@inertiajs/react'
-import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,7 +12,6 @@ import warehousesRoutes from '@/routes/warehouses'
 export default function WarehouseEdit() {
     const { props } = usePage<PageProps>()
     const { warehouse } = props
-    const { add } = useToast()
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'المخازن', href: warehousesRoutes.index().url },
         { title: `تعديل: ${warehouse.name}`, href: '#' },
@@ -24,7 +22,7 @@ export default function WarehouseEdit() {
             <Head title={`تعديل مخزن ${warehouse.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Form action={warehousesRoutes.update(warehouse.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث المخزن بنجاح' })} onError={() => add({ title: 'خطأ', description: 'تعذر تحديث المخزن', variant: 'destructive' })}>
+                <Form action={warehousesRoutes.update(warehouse.id).url} method="post" className="mx-auto w-full max-w-xl space-y-4" >
                     {({ processing, errors }) => (
                         <>
                             <input type="hidden" name="_method" value="put" />

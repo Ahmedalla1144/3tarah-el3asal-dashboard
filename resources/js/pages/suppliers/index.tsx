@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout'
 import { Head, Link, router } from '@inertiajs/react'
-import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { type BreadcrumbItem } from '@/types'
@@ -29,7 +28,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function SuppliersIndex({ suppliers }: PageProps) {
-    const { add } = useToast()
     const [search, setSearch] = useState('')
     const debouncedSearch = useDebouncedCallback((value: string) => {
         router.get(suppliersRoutes.index().url, { search: value }, { preserveState: true, replace: true })
@@ -85,10 +83,7 @@ export default function SuppliersIndex({ suppliers }: PageProps) {
                                                 size="sm"
                                                 onClick={() => {
                                                     if (!confirm('حذف هذا المورد؟')) return
-                                                    router.delete(suppliersRoutes.destroy(s.id).url, {
-                                                        onSuccess: () => add({ title: 'تم الحذف', description: 'تم حذف المورد بنجاح' }),
-                                                        onError: () => add({ title: 'خطأ', description: 'تعذر حذف المورد', variant: 'destructive' }),
-                                                    })
+                                                    router.delete(suppliersRoutes.destroy(s.id).url)
                                                 }}
                                             >
                                                 <Trash2 className="h-4 w-4" />

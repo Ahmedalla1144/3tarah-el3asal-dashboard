@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout'
 import { Form, Head, Link, usePage } from '@inertiajs/react'
-import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,7 +12,6 @@ import customersRoutes from '@/routes/customers'
 export default function CustomerEdit() {
     const { props } = usePage<PageProps>()
     const { customer } = props
-    const { add } = useToast()
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'العملاء', href: customersRoutes.index().url },
         { title: `تعديل: ${customer.name}`, href: '#' },
@@ -36,8 +34,6 @@ export default function CustomerEdit() {
                             alert('الاسم مطلوب')
                         }
                     }}
-                    onSuccess={() => add({ title: 'تم الحفظ', description: 'تم تحديث العميل بنجاح' })}
-                    onError={() => add({ title: 'خطأ', description: 'تعذر تحديث العميل', variant: 'destructive' })}
                 >
                     {({ processing, errors }) => (
                         <>

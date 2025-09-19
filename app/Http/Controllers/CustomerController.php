@@ -109,8 +109,17 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request, Customer $customer): RedirectResponse
     {
-        $customer->update($request->validated());
-        return redirect()->route('customers.index')->with('status', 'Customer updated');
+        try {
+            $customer->update($request->validated());
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن تعديل العميل بسبب قيود على البيانات (تعارض فريد أو مرجع).');
+            }
+            return redirect()->back()->with('error', 'تعذر تعديل العميل.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'تعذر تعديل العميل.');
+        }
+        return redirect()->route('customers.index')->with('status', 'تم تعديل العميل');
     }
 
     /**
@@ -118,7 +127,16 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer): RedirectResponse
     {
-        $customer->delete();
-        return redirect()->route('customers.index')->with('status', 'Customer deleted');
+        try {
+            $customer->delete();
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن حذف العميل لوجود معاملات مرتبطة به.');
+            }
+            return redirect()->back()->with('error', 'تعذر حذف العميل.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'تعذر حذف العميل.');
+        }
+        return redirect()->route('customers.index')->with('status', 'تم حذف العميل');
     }
 }
