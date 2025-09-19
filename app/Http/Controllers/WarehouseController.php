@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Warehouse;
 use App\Http\Requests\StoreWarehouseRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -87,7 +88,11 @@ class WarehouseController extends Controller
      */
     public function destroy(Warehouse $warehouse): RedirectResponse
     {
-        $warehouse->delete();
-        return redirect()->route('warehouses.index')->with('status', 'Warehouse deleted');
+        try {
+            $warehouse->delete();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error','لا يمكن الحذف الان');
+        }
+        return redirect()->back()->with('status', 'تم الحذف بنجاح');
     }
 }

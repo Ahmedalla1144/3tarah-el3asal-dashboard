@@ -19,26 +19,53 @@ abstract class Controller extends BaseController
         $totalPurchases = (float) DB::table('purchase_invoices')
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('total');
+
         $totalSales = (float) DB::table('sales_invoices')
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('total');
 
-        $bestProducts = DB::table('sales_invoice_items as sii')
-            ->join('sales_invoices as si', 'si.id', '=', 'sii.sales_invoice_id')
-            ->whereBetween('si.date', [$startOfMonth, $endOfMonth])
-            ->select('sii.product_id', DB::raw('SUM(sii.qty_base) as qty_sold'))
-            ->groupBy('sii.product_id')
-            ->orderByDesc('qty_sold')
-            ->limit(5)
-            ->get();
+        // جلب أفضل المنتجات حسب الكمية في الوحدة الأساسية
+        $bestProductsRaw = DB::table('sales_invoice_items as sii')
+    ->join('sales_invoices as si', 'si.id', '=', 'sii.sales_invoice_id')
+    ->join('products as p', 'p.id', '=', 'sii.product_id')
+    ->leftJoin('product_units as pu', function($join) {
+        $join->on('pu.product_id', '=', 'sii.product_id')
+        ->on('pu.unit_id', '=', 'sii.unit_id');
+    })
+    ->whereBetween('si.date', [$startOfMonth, $endOfMonth])
+    ->select('sii.product_id', 'sii.qty_base', DB::raw('COALESCE(pu.ratio_to_base,1) as ratio'))
+    ->get();
 
-        $productNames = DB::table('products')->whereIn('id', $bestProducts->pluck('product_id'))->pluck('name', 'id');
-        $best = $bestProducts->map(fn($r) => [
-            'product' => $productNames[$r->product_id] ?? ('#'.$r->product_id),
-            'qty_sold' => (float)$r->qty_sold,
-        ]);
+        $productIds = $bestProductsRaw->pluck('product_id');
+        $qtyByProduct = [];
+        // dd($bestProductsRaw);
+foreach ($bestProductsRaw as $item) {
+    $qtyByProduct[$item->product_id] = ($qtyByProduct[$item->product_id] ?? 0) + ($item->qty_base * $item->ratio);
+}
 
-        // Low stock alerts: products where stock <= min_stock
+arsort($qtyByProduct);
+$topProducts = array_slice($qtyByProduct, 0, 5, true);
+
+        // أسماء المنتجات
+        $productNames = DB::table('products')->whereIn('id', array_keys($topProducts))->pluck('name', 'id');
+
+        // الوحدة الأساسية لكل منتج
+        $baseUnits = DB::table('products')->whereIn('id', array_keys($topProducts))->pluck('base_unit_id', 'id');
+
+
+        $units = DB::table('units')->whereIn('id', $baseUnits->values())->pluck('name', 'id');
+
+
+        $bestProducts = [];
+        foreach ($topProducts as $productId => $qty) {
+            $bestProducts[] = [
+                'product' => $productNames[$productId] ?? ('#'.$productId),
+                'qty_sold' => (float)$qty,
+                'product_unit' => $units[$baseUnits[$productId]] ?? null,
+            ];
+        }
+
+        // Low stock alerts: المنتجات حيث المخزون <= الحد الأدنى
         $lowStock = DB::table('products as p')
             ->leftJoin('stock_balances as sb', 'sb.product_id', '=', 'p.id')
             ->select('p.id', 'p.name', 'p.min_stock', DB::raw('COALESCE(SUM(sb.qty_base),0) as stock'))
@@ -58,7 +85,7 @@ abstract class Controller extends BaseController
         return [
             'total_purchases' => $totalPurchases,
             'total_sales' => $totalSales,
-            'best_products' => $best,
+            'best_products' => $bestProducts,
             'low_stock' => $lowStock,
             'period' => [
                 'start' => $startOfMonth,

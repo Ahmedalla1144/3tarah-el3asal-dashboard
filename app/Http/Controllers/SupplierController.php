@@ -75,7 +75,11 @@ class SupplierController extends Controller
      */
     public function update(UpdateSupplierRequest $request, Supplier $supplier): RedirectResponse
     {
-        $supplier->update($request->validated());
+        try {
+            $supplier->update($request->validated());
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
         return redirect()->route('suppliers.index')->with('status', 'Supplier updated');
     }
 

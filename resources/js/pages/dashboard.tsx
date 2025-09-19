@@ -14,7 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface PageProps { metrics?: { total_purchases: number; total_sales: number; best_products: { product: string; qty_sold: number }[]; low_stock: { id: number; name: string; stock: number; min_stock: number }[] } }
+interface PageProps { metrics?: { total_purchases: number; total_sales: number; best_products: { product: string; qty_sold: number; product_unit: string | null }[]; low_stock: { id: number; name: string; stock: number; min_stock: number }[] } }
 
 export default function Dashboard({ metrics }: PageProps) {
     return (
@@ -33,8 +33,14 @@ export default function Dashboard({ metrics }: PageProps) {
                     <div className="rounded-xl border p-4">
                         <div className="text-sm text-muted-foreground">أفضل المنتجات مبيعاً</div>
                         <ul className="mt-2 space-y-1 text-sm">
+
                             {metrics?.best_products?.map((bp, i) => (
-                                <li key={i} className="flex items-center justify-between"><span>{bp.product}</span><span>{formatNumber(bp.qty_sold)}</span></li>
+
+                                <li key={i} className="flex items-center justify-between">
+                                    <span>{bp.product}</span>
+                                    <span>{bp.product_unit ? `${formatNumber(bp.qty_sold)} ${bp.product_unit}` : formatNumber(bp.qty_sold)}</span>
+                                </li>
+
                             )) ?? <li>لا يوجد بيانات</li>}
                         </ul>
                     </div>
