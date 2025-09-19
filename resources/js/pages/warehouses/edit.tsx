@@ -43,7 +43,7 @@ export default function WarehouseEdit() {
                                 <Input id="address" name="address" defaultValue={warehouse.address ?? ''} />
                                 <div className="text-sm text-destructive">{errors.address}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="items-center gap-2 hidden">
                                 <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" defaultChecked={warehouse.is_active} />
                                 <Label htmlFor="is_active">نشط</Label>
                             </div>

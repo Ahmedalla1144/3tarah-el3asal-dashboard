@@ -8,6 +8,7 @@ import { type BreadcrumbItem } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { formatQty } from '@/lib/currency'
 
 interface PageProps {
     product: {
@@ -25,10 +26,14 @@ interface PageProps {
     }
     categories: { id: number; name: string }[]
     units: { id: number; name: string }[]
+    product_units?: { unit_id: number; unit_name: string | null; ratio_to_base: number }[]
 }
 
-export default function ProductEdit({ product, categories, units }: PageProps) {
+export default function ProductEdit({ product, categories, units, product_units = [] }: PageProps) {
     const [isActive, setIsActive] = useState(!!product.is_active)
+    const [baseUnitId, setBaseUnitId] = useState<string>(product.base_unit_id ? String(product.base_unit_id) : '')
+    const [salePrice, setSalePrice] = useState<string>(product.sale_price != null ? String(product.sale_price) : '')
+    const [costPrice, setCostPrice] = useState<string>(product.cost_price != null ? String(product.cost_price) : '')
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'المنتجات', href: productsRoutes.index().url },
         { title: `تعديل #${product.id}`, href: productsRoutes.edit(product.id).url },
@@ -74,7 +79,20 @@ export default function ProductEdit({ product, categories, units }: PageProps) {
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="base_unit_id">الوحدة الأساسية</Label>
-                                <Select name="base_unit_id" defaultValue={product.base_unit_id ? String(product.base_unit_id) : undefined}>
+                                <input type="hidden" name="base_unit_id" value={baseUnitId} />
+                                <Select value={baseUnitId} onValueChange={(val) => {
+                                    // Find ratio of the newly selected unit relative to current base
+                                    const ratio = product_units.find(u => String(u.unit_id) === val)?.ratio_to_base ?? 1
+                                    // Multiply prices by ratio to convert to new base
+                                    const sp = parseFloat(String(product.sale_price) || '0')
+                                    const cp = parseFloat(String(product.cost_price) || '0')
+                                    const newSp = Number.isFinite(sp) ? (sp * ratio) : sp
+                                    const newCp = Number.isFinite(cp) ? (cp * ratio) : cp
+                                    console.log(newSp, newCp)
+                                    setSalePrice(newSp ? String(Number(newSp.toFixed(6))) : '')
+                                    setCostPrice(newCp ? String(Number(newCp.toFixed(6))) : '')
+                                    setBaseUnitId(val)
+                                }}>
                                     <SelectTrigger id="base_unit_id">
                                         <SelectValue placeholder="اختر وحدة" />
                                     </SelectTrigger>
@@ -88,20 +106,20 @@ export default function ProductEdit({ product, categories, units }: PageProps) {
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="sale_price">سعر البيع</Label>
-                                <Input id="sale_price" name="sale_price" type="number" step="0.01" min="0" defaultValue={product.sale_price ?? ''} />
+                                <Input id="sale_price" name="sale_price" type="number" step="0.000001" min="0" value={Number(salePrice)} onChange={(e)=> setSalePrice(e.target.value)} />
                                 <div className="text-sm text-destructive">{errors.sale_price}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="cost_price">سعر التكلفة</Label>
-                                <Input id="cost_price" name="cost_price" type="number" step="0.01" min="0" defaultValue={product.cost_price ?? ''} />
+                                <Input id="cost_price" name="cost_price" type="number" step="0.000001" min="0" value={Number(costPrice)} onChange={(e)=> setCostPrice(e.target.value)} />
                                 <div className="text-sm text-destructive">{errors.cost_price}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="min_stock">الحد الأدنى للمخزون</Label>
-                                <Input id="min_stock" name="min_stock" type="number" step="0.01" min="0" defaultValue={product.min_stock ?? ''} />
+                                <Input id="min_stock" name="min_stock" type="number" step="0.000001" min="0" defaultValue={formatQty(product.min_stock) ?? ''} />
                                 <div className="text-sm text-destructive">{errors.min_stock}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="items-center gap-2 hidden">
                                 <input type="hidden" name="is_active" value={isActive ? '1' : '0'} />
                                 <Checkbox id="is_active" checked={isActive} onCheckedChange={(val) => setIsActive(!!val)} />
                                 <Label htmlFor="is_active">نشط</Label>

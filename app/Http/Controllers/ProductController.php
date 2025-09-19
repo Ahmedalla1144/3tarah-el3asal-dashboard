@@ -6,10 +6,12 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Unit;
 use App\Models\ProductUnit;
+use App\Models\StockBalance;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -135,6 +137,8 @@ class ProductController extends Controller
             ->get(['id', 'name'])
             ->map(fn($u) => ['id' => $u->id, 'name' => $u->name]);
 
+        $product->load(['units.unit']);
+
         return Inertia::render('products/edit', [
             'product' => [
                 'id' => $product->id,
@@ -151,6 +155,11 @@ class ProductController extends Controller
             ],
             'categories' => $categories,
             'units' => $units,
+            'product_units' => $product->units->map(fn($pu) => [
+                'unit_id' => $pu->unit_id,
+                'unit_name' => $pu->unit?->name,
+                'ratio_to_base' => (float) $pu->ratio_to_base,
+            ]),
         ]);
     }
 
@@ -161,7 +170,97 @@ class ProductController extends Controller
     {
         $this->authorize('update', $product);
 
-        $product->update($request->validated());
+        $data = $request->validated();
+
+        // Handle base unit change: rebase ratios and stock to keep physical quantities consistent
+        $newBaseUnitId = $data['base_unit_id'] ?? $product->base_unit_id;
+        $oldBaseUnitId = $product->base_unit_id;
+
+        if ($newBaseUnitId && $oldBaseUnitId && (int) $newBaseUnitId !== (int) $oldBaseUnitId) {
+            // Find existing ratio of the intended new base unit relative to the old base
+            $newBasePivot = ProductUnit::query()
+                ->where('product_id', $product->id)
+                ->where('unit_id', $newBaseUnitId)
+                ->first();
+
+            if ($newBasePivot) {
+                $rebasingFactor = (float) max($newBasePivot->ratio_to_base, 1e-9); // old-base per 1 new-base
+
+                DB::transaction(function () use ($product, $data, $newBaseUnitId, $rebasingFactor, $newBasePivot) {
+                    // Update product including min_stock scaled to new base
+                    $newMinStock = $product->min_stock !== null
+                        ? round(((float) $product->min_stock) / $rebasingFactor, 6)
+                        : null;
+
+                    $newSalePrice = $product->sale_price !== null
+                        ? round(((float) $product->sale_price) * $rebasingFactor, 6)
+                        : null;
+                    $newCostPrice = $product->cost_price !== null
+                        ? round(((float) $product->cost_price) * $rebasingFactor, 6)
+                        : null;
+
+                    $product->update(array_merge($data, [
+                        'min_stock' => $newMinStock,
+                        'base_unit_id' => $newBaseUnitId,
+                        'sale_price' => $newSalePrice,
+                        'cost_price' => $newCostPrice,
+                    ]));
+
+                    // Rebase all product unit ratios: divide by factor so they become relative to new base
+                    ProductUnit::query()
+                        ->where('product_id', $product->id)
+                        ->update([
+                            'ratio_to_base' => DB::raw('ratio_to_base / ' . $rebasingFactor),
+                        ]);
+
+                    // Ensure the selected new base unit has ratio 1 exactly
+                    $newBasePivot->refresh();
+                    $newBasePivot->update(['ratio_to_base' => 1.0]);
+
+                    // Rebase current stock balances to the new base unit
+                    StockBalance::query()
+                        ->where('product_id', $product->id)
+                        ->update([
+                            'qty_base' => DB::raw('qty_base / ' . $rebasingFactor),
+                        ]);
+
+                    // Rebase historical line items to keep analytics correct
+                    DB::table('sales_invoice_items')
+                        ->where('product_id', $product->id)
+                        ->update([
+                            'qty_base' => DB::raw('qty_base / ' . $rebasingFactor),
+                        ]);
+
+                    DB::table('purchase_invoice_items')
+                        ->where('product_id', $product->id)
+                        ->update([
+                            'qty_base' => DB::raw('qty_base / ' . $rebasingFactor),
+                        ]);
+
+                    DB::table('inventory_movements')
+                        ->where('product_id', $product->id)
+                        ->update([
+                            'qty_base' => DB::raw('qty_base / ' . $rebasingFactor),
+                        ]);
+                });
+            } else {
+                // If no mapping exists for the chosen unit, create one as base (ratio 1) and proceed with a simple update
+                DB::transaction(function () use ($product, $data, $newBaseUnitId) {
+                    ProductUnit::firstOrCreate([
+                        'product_id' => $product->id,
+                        'unit_id' => $newBaseUnitId,
+                    ], [
+                        'ratio_to_base' => 1.0,
+                        'is_default_sale' => false,
+                        'is_default_buy' => false,
+                    ]);
+
+                    $product->update($data);
+                });
+            }
+        } else {
+            $product->update($data);
+        }
 
         return redirect()
             ->route('products.index')

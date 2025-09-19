@@ -67,13 +67,21 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                             action={`/products/${product.id}/units`}
                             method="post"
                             className="grid grid-cols-1 gap-4 md:grid-cols-4"
+                            onSubmitComplete={() => {
+                                setNewUnit({
+                                    unit_id: '',
+                                    ratio_to_base: '',
+                                    is_default_sale: false,
+                                    is_default_buy: false,
+                                })
+                            }}
                         >
                             <div className="grid gap-2">
                                 <Label htmlFor="unit_id">الوحدة</Label>
                                 {/* Hidden field to actually submit the selected unit id */}
                                 <input type="hidden" name="unit_id" value={newUnit.unit_id} />
-                                <Select 
-                                    required 
+                                <Select
+                                    required
                                     value={newUnit.unit_id}
                                     onValueChange={(val) => setNewUnit(prev => ({ ...prev, unit_id: val }))}
                                 >
@@ -171,7 +179,6 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                                                 <input type="hidden" name="_method" value="patch" />
                                                 <input type="hidden" name="ratio_to_base" value={unit.ratio_to_base} />
                                                 <input type="hidden" name="is_default_sale" value={unit.is_default_sale ? '0' : '1'} />
-                                                <input type="hidden" name="is_default_buy" value={unit.is_default_buy} />
                                                 <Button
                                                     type="submit"
                                                     variant={unit.is_default_sale ? "default" : "outline"}
@@ -188,7 +195,6 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                                             >
                                                 <input type="hidden" name="_method" value="patch" />
                                                 <input type="hidden" name="ratio_to_base" value={unit.ratio_to_base} />
-                                                <input type="hidden" name="is_default_sale" value={unit.is_default_sale} />
                                                 <input type="hidden" name="is_default_buy" value={unit.is_default_buy ? '0' : '1'} />
                                                 <Button
                                                     type="submit"

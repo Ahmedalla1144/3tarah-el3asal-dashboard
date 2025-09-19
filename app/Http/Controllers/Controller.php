@@ -24,51 +24,36 @@ abstract class Controller extends BaseController
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('total');
 
-        // جلب أفضل المنتجات حسب الكمية في الوحدة الأساسية
-        $bestProductsRaw = DB::table('sales_invoice_items as sii')
-    ->join('sales_invoices as si', 'si.id', '=', 'sii.sales_invoice_id')
-    ->join('products as p', 'p.id', '=', 'sii.product_id')
-    ->leftJoin('product_units as pu', function($join) {
-        $join->on('pu.product_id', '=', 'sii.product_id')
-        ->on('pu.unit_id', '=', 'sii.unit_id');
-    })
-    ->whereBetween('si.date', [$startOfMonth, $endOfMonth])
-    ->select('sii.product_id', 'sii.qty_base', DB::raw('COALESCE(pu.ratio_to_base,1) as ratio'))
-    ->get();
+        // أفضل المنتجات: جمع الكمية بوحدة الأساس (qty_base) مباشرة
+        $bestProductsAgg = DB::table('sales_invoice_items as sii')
+            ->join('sales_invoices as si', 'si.id', '=', 'sii.sales_invoice_id')
+            ->whereBetween('si.date', [$startOfMonth, $endOfMonth])
+            ->select('sii.product_id', DB::raw('SUM(sii.qty_base) as qty_base_sum'))
+            ->groupBy('sii.product_id')
+            ->orderByDesc(DB::raw('SUM(sii.qty_base)'))
+            ->limit(5)
+            ->get();
 
-        $productIds = $bestProductsRaw->pluck('product_id');
-        $qtyByProduct = [];
-        // dd($bestProductsRaw);
-foreach ($bestProductsRaw as $item) {
-    $qtyByProduct[$item->product_id] = ($qtyByProduct[$item->product_id] ?? 0) + ($item->qty_base * $item->ratio);
-}
+        $topProductIds = $bestProductsAgg->pluck('product_id')->all();
+        $productNames = DB::table('products')->whereIn('id', $topProductIds)->pluck('name', 'id');
+        $baseUnitsMap = DB::table('products')->whereIn('id', $topProductIds)->pluck('base_unit_id', 'id');
+        $unitNames = DB::table('units')->whereIn('id', $baseUnitsMap->values())->pluck('name', 'id');
 
-arsort($qtyByProduct);
-$topProducts = array_slice($qtyByProduct, 0, 5, true);
-
-        // أسماء المنتجات
-        $productNames = DB::table('products')->whereIn('id', array_keys($topProducts))->pluck('name', 'id');
-
-        // الوحدة الأساسية لكل منتج
-        $baseUnits = DB::table('products')->whereIn('id', array_keys($topProducts))->pluck('base_unit_id', 'id');
-
-
-        $units = DB::table('units')->whereIn('id', $baseUnits->values())->pluck('name', 'id');
-
-
-        $bestProducts = [];
-        foreach ($topProducts as $productId => $qty) {
-            $bestProducts[] = [
-                'product' => $productNames[$productId] ?? ('#'.$productId),
-                'qty_sold' => (float)$qty,
-                'product_unit' => $units[$baseUnits[$productId]] ?? null,
+        $bestProducts = $bestProductsAgg->map(function ($row) use ($productNames, $baseUnitsMap, $unitNames) {
+            $productId = $row->product_id;
+            $baseUnitId = $baseUnitsMap[$productId] ?? null;
+            return [
+                'product' => $productNames[$productId] ?? ('#' . $productId),
+                'qty_sold' => (float) $row->qty_base_sum,
+                'product_unit' => $baseUnitId ? ($unitNames[$baseUnitId] ?? null) : null,
             ];
-        }
+        })->all();
 
         // Low stock alerts: المنتجات حيث المخزون <= الحد الأدنى
         $lowStock = DB::table('products as p')
             ->leftJoin('stock_balances as sb', 'sb.product_id', '=', 'p.id')
-            ->select('p.id', 'p.name', 'p.min_stock', DB::raw('COALESCE(SUM(sb.qty_base),0) as stock'))
+            ->leftJoin('units as u', 'u.id', '=', 'p.base_unit_id')
+            ->select('p.id', 'p.name', 'p.min_stock', 'u.name as unit_name', DB::raw('COALESCE(SUM(sb.qty_base),0) as stock'))
             ->whereNotNull('p.min_stock')
             ->groupBy('p.id', 'p.name', 'p.min_stock')
             ->havingRaw('COALESCE(SUM(sb.qty_base),0) <= p.min_stock')
@@ -78,8 +63,9 @@ $topProducts = array_slice($qtyByProduct, 0, 5, true);
             ->map(fn($r) => [
                 'id' => $r->id,
                 'name' => $r->name,
-                'stock' => (float)$r->stock,
-                'min_stock' => (float)$r->min_stock,
+                'stock' => (float) $r->stock,
+                'min_stock' => (float) $r->min_stock,
+                'unit_name' => $r->unit_name,
             ]);
 
         return [

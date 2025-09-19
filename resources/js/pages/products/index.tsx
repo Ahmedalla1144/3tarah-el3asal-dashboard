@@ -7,7 +7,7 @@ import { type BreadcrumbItem } from '@/types'
 import { useDebouncedCallback } from 'use-debounce'
 import { useState } from 'react'
 import { Pencil, Trash2, Plus } from 'lucide-react'
-import { formatEGP, formatNumber } from '@/lib/currency'
+import { formatEGP, formatQty } from '@/lib/currency'
 
 type ProductRow = {
     id: number
@@ -82,7 +82,7 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                                 <th className="px-4 py-2 text-left text-sm font-medium">الحد الأدنى</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">سعر البيع</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">سعر التكلفة</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">نشط؟</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium hidden">نشط؟</th>
                                 <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
@@ -93,13 +93,13 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                                     <td className="px-4 py-2 text-sm">{p.name}</td>
                                     <td className="px-4 py-2 text-sm">{p.sku ?? '-'}</td>
                                     <td className="px-4 py-2 text-sm">
-                                        {formatNumber(p.stock ?? 0)}
+                                        {formatQty(p.stock ?? 0)}
                                         <span className="ml-1 text-xs text-muted-foreground">{p.base_unit?.name ?? ''}</span>
                                     </td>
-                                    <td className="px-4 py-2 text-sm">{p.min_stock != null ? formatNumber(p.min_stock) : '-'}</td>
+                                    <td className="px-4 py-2 text-sm">{p.min_stock != null ? formatQty(p.min_stock) : '-'}</td>
                                     <td className="px-4 py-2 text-sm">{p.sale_price != null ? formatEGP(p.sale_price) : '-'}</td>
                                     <td className="px-4 py-2 text-sm">{p.cost_price != null ? formatEGP(p.cost_price) : '-'}</td>
-                                    <td className="px-4 py-2 text-sm">{p.is_active ? 'نعم' : 'لا'}</td>
+                                    <td className="px-4 py-2 text-sm hidden">{p.is_active ? 'نعم' : 'لا'}</td>
                                     <td className="px-4 py-2 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <Link href={productsRoutes.edit(p.id).url} className="inline-flex">

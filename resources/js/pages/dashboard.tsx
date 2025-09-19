@@ -4,7 +4,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { BarChart2 } from 'lucide-react';
-import { formatEGP, formatNumber } from '@/lib/currency'
+import { formatEGP, formatQty } from '@/lib/currency'
 import purchaseInvoices from '@/routes/purchase-invoices';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -14,7 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface PageProps { metrics?: { total_purchases: number; total_sales: number; best_products: { product: string; qty_sold: number; product_unit: string | null }[]; low_stock: { id: number; name: string; stock: number; min_stock: number }[] } }
+interface PageProps { metrics?: { total_purchases: number; total_sales: number; best_products: { product: string; qty_sold: number; product_unit: string | null }[]; low_stock: { id: number; name: string; stock: number; min_stock: number; unit_name?: string | null }[] } }
 
 export default function Dashboard({ metrics }: PageProps) {
     return (
@@ -38,7 +38,7 @@ export default function Dashboard({ metrics }: PageProps) {
 
                                 <li key={i} className="flex items-center justify-between">
                                     <span>{bp.product}</span>
-                                    <span>{bp.product_unit ? `${formatNumber(bp.qty_sold)} ${bp.product_unit}` : formatNumber(bp.qty_sold)}</span>
+                                    <span>{bp.product_unit ? `${formatQty(bp.qty_sold)} ${bp.product_unit}` : formatQty(bp.qty_sold)}</span>
                                 </li>
 
                             )) ?? <li>لا يوجد بيانات</li>}
@@ -62,8 +62,14 @@ export default function Dashboard({ metrics }: PageProps) {
                                         {metrics?.low_stock?.map((p) => (
                                             <tr key={p.id} className="bg-red-50 dark:bg-red-900/20">
                                                 <td className="px-4 py-2 text-sm">{p.name}</td>
-                                                <td className="px-4 py-2 text-sm">{formatNumber(p.stock)}</td>
-                                                <td className="px-4 py-2 text-sm">{formatNumber(p.min_stock)}</td>
+                                                <td className="px-4 py-2 text-sm">
+                                                    {formatQty(p.stock)}
+                                                    {p.unit_name ? <span className="ml-1 text-xs text-muted-foreground">{p.unit_name}</span> : null}
+                                                </td>
+                                                <td className="px-4 py-2 text-sm">
+                                                    {formatQty(p.min_stock)}
+                                                    {p.unit_name ? <span className="ml-1 text-xs text-muted-foreground">{p.unit_name}</span> : null}
+                                                </td>
                                             </tr>
                                         )) ?? null}
                                     </tbody>

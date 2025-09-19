@@ -3,6 +3,9 @@ import { Head, router, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import { formatEGP } from '@/lib/currency'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { BreadcrumbItem } from '@/types';
+import salesInvoicesRoutes from '@/routes/sales-invoices'
+
 
 type AccountOption = { id: number; name: string }
 type MethodOption = { id: number; name: string }
@@ -17,8 +20,8 @@ export default function SalesInvoicePay() {
     const { props } = usePage<PageProps>();
     const { invoice, accounts, methods } = props;
     const [amount, setAmount] = useState(invoice?.remaining || 0);
-    const [accountId, setAccountId] = useState<string>('');
-    const [methodId, setMethodId] = useState<string>('');
+    const [accountId, setAccountId] = useState<string>('1');
+    const [methodId, setMethodId] = useState<string>('1');
     const [referenceNo, setReferenceNo] = useState('');
     const [notes, setNotes] = useState('');
 
@@ -38,8 +41,14 @@ export default function SalesInvoicePay() {
         });
     };
 
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: 'فواتير الشراء', href: salesInvoicesRoutes.index().url },
+        { title: `#${invoice.number}`, href: salesInvoicesRoutes.show(invoice.id).url },
+        { title: 'سداد', href: '#' },
+    ];
+
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`سداد فاتورة مبيعات #${invoice.number}`} />
             <div className="mx-auto max-w-2xl p-4">
             <h1 className="mb-4 text-xl font-semibold">سداد فاتورة مبيعات #{invoice.number}</h1>
@@ -75,7 +84,7 @@ export default function SalesInvoicePay() {
                     />
                     <div className="mt-1 text-xs text-muted-foreground">يمكنك سداد جزء من الفاتورة أو المبلغ بالكامل.</div>
                 </div>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid-cols-1 gap-4 md:grid-cols-2 hidden">
                     <div>
                         <label className="mb-1 block text-sm">الحساب</label>
                         <Select value={accountId} onValueChange={setAccountId}>

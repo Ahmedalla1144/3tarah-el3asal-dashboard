@@ -86,7 +86,7 @@ export default function ProductCreate({ categories, units }: PageProps) {
                                 <Input id="min_stock" name="min_stock" type="number" step="0.01" min="0" />
                                 <div className="text-sm text-destructive">{errors.min_stock}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                                <div className="items-center gap-2 hidden">
                                 <input type="hidden" name="is_active" value={isActive ? '1' : '0'} />
                                 <Checkbox id="is_active" checked={isActive} onCheckedChange={(val) => setIsActive(!!val)} />
                                 <Label htmlFor="is_active">نشط</Label>

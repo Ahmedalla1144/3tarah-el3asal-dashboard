@@ -24,7 +24,7 @@ return new class extends Migration
             $table->decimal('discount_value', 14, 2)->default(0);
             $table->decimal('tax_value', 14, 2)->default(0);
             $table->decimal('line_total', 14, 2);
-            $table->integer('qty_base')->default(0);
+            $table->decimal('qty_base', 14, 3)->default(0);
             $table->index(['product_id']);
             $table->timestamps();
         });

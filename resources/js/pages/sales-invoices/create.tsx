@@ -13,13 +13,12 @@ interface PageProps {
     customers: { id: number; name: string; current_balance: number }[]
     warehouses: { id: number; name: string }[]
     products: ProductRow[]
-    units: { id: number; name: string }[]
     next_number: string
 }
 
 import salesInvoicesRoutes from '@/routes/sales-invoices'
 
-export default function SalesInvoiceCreate({ customers, warehouses, products, units, next_number }: PageProps) {
+export default function SalesInvoiceCreate({ customers, warehouses, products, next_number }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'فواتير المبيعات', href: salesInvoicesRoutes.index().url },
         { title: 'إنشاء', href: salesInvoicesRoutes.store().url },
@@ -53,14 +52,14 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
             defaultUnitId = p.units?.find(u => u.is_default_buy)?.unit_id
         }
         if (!defaultUnitId) {
-            defaultUnitId = p.base_unit_id
+            defaultUnitId = p.base_unit_id ?? undefined
         }
         if (!defaultUnitId && p.units && p.units.length > 0) {
             defaultUnitId = p.units[0].unit_id
         }
 
         const ratio = defaultUnitId ? (p.units?.find(u => u.unit_id === defaultUnitId)?.ratio_to_base ?? 1) : 1
-        const derivedPrice = p.sale_price != null ? (Number(p.sale_price) * ratio) : undefined
+        const derivedPrice: number | undefined = p.sale_price != null ? (Number(p.sale_price) * ratio) : undefined;
         const availableForUnit = p.stock ? (p.stock / ratio) : 0
 
         setItems(prev => prev.map((row, i) => i === idx ? {
@@ -203,7 +202,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, un
                                         </div>
                                         <div className="md:col-span-2">
                                             <Label>سعر الوحدة</Label>
-                                            <Input name={`items[${idx}][unit_price]`} value={items[idx].unit_price} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, unit_price: e.target.value}: r))} type="number" step="0.01" min="0" required />
+                                            <Input name={`items[${idx}][unit_price]`} value={items[idx].unit_price} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, unit_price: e.target.value}: r))} type="number" step="0.0001" min="0" required />
                                             {getSelectedUnitName(idx) && (
                                                 <div className="text-xs text-muted-foreground">للوحدة: {getSelectedUnitName(idx)}</div>
                                             )}

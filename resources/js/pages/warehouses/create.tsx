@@ -43,7 +43,7 @@ export default function WarehouseCreate() {
                                 <Input id="notes" name="notes" />
                                 <div className="text-sm text-destructive">{errors.notes}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="items-center gap-2" hidden>
                                 <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" />
                                 <Label htmlFor="is_active">نشط</Label>
                             </div>

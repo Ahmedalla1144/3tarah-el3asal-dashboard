@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('sku', 80)->nullable();
             $table->string('barcode', 80)->nullable();
             $table->foreignIdFor(Unit::class, 'base_unit_id')->constrained()->cascadeOnDelete();
-            $table->decimal('sale_price', 14, 2)->nullable();
-            $table->decimal('cost_price', 14, 2)->nullable();
-            $table->decimal('min_stock', 14, 0)->default(0);
+            $table->decimal('sale_price', 14, 6)->nullable();
+            $table->decimal('cost_price', 14, 6)->nullable();
+            $table->decimal('min_stock', 14, 3)->default(0);
             $table->boolean('is_batch_tracked')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

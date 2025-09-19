@@ -34,3 +34,20 @@ export function formatNumber(value: number | null | undefined): string {
 }
 
 
+export function formatQty(value: number | null | undefined): string {
+    const n = typeof value === 'number' ? value : Number(value ?? 0)
+
+    if (!Number.isFinite(n)) {
+        return '0'
+    }
+
+    const formatter = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 3,
+        useGrouping: true
+    })
+
+    return formatter.format(n)
+}
+
+
