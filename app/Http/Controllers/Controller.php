@@ -49,17 +49,26 @@ abstract class Controller extends BaseController
             ];
         })->all();
 
-        // Low stock alerts: المنتجات حيث المخزون <= الحد الأدنى
+        // subquery: total stock per product
+        $stockSums = DB::table('stock_balances')
+            ->select('product_id', DB::raw('SUM(qty_base) AS stock'))
+            ->groupBy('product_id');
+
+        // main query
         $lowStock = DB::table('products as p')
-            ->leftJoin('stock_balances as sb', 'sb.product_id', '=', 'p.id')
+            ->leftJoinSub($stockSums, 's', fn($j) => $j->on('s.product_id', '=', 'p.id'))
             ->leftJoin('units as u', 'u.id', '=', 'p.base_unit_id')
-            ->select('p.id', 'p.name', 'p.min_stock', 'u.name as unit_name', DB::raw('COALESCE(SUM(sb.qty_base),0) as stock'))
             ->whereNotNull('p.min_stock')
-            ->groupBy('p.id', 'p.name', 'p.min_stock')
-            ->havingRaw('COALESCE(SUM(sb.qty_base),0) <= p.min_stock')
-            ->orderBy(DB::raw('COALESCE(SUM(sb.qty_base),0)'))
+            ->whereRaw('COALESCE(s.stock, 0) <= p.min_stock')
+            ->orderByRaw('COALESCE(s.stock, 0) ASC')
             ->limit(10)
-            ->get()
+            ->get([
+                'p.id',
+                'p.name',
+                'p.min_stock',
+                DB::raw('COALESCE(s.stock, 0) AS stock'),
+                'u.name as unit_name',
+            ])
             ->map(fn($r) => [
                 'id' => $r->id,
                 'name' => $r->name,
@@ -67,6 +76,26 @@ abstract class Controller extends BaseController
                 'min_stock' => (float) $r->min_stock,
                 'unit_name' => $r->unit_name,
             ]);
+
+
+        // Low stock alerts: المنتجات حيث المخزون <= الحد الأدنى
+        // $lowStock = DB::table('products as p')
+        //     ->leftJoin('stock_balances as sb', 'sb.product_id', '=', 'p.id')
+        //     ->leftJoin('units as u', 'u.id', '=', 'p.base_unit_id')
+        //     ->select('p.id', 'p.name', 'p.min_stock', 'u.name as unit_name', DB::raw('COALESCE(SUM(sb.qty_base),0) as stock'))
+        //     ->whereNotNull('p.min_stock')
+        //     ->groupBy('p.id', 'p.name', 'p.min_stock', 'u.name')
+        //     ->havingRaw('COALESCE(SUM(sb.qty_base),0) <= p.min_stock')
+        //     ->orderBy(DB::raw('COALESCE(SUM(sb.qty_base),0)'))
+        //     ->limit(10)
+        //     ->get()
+        //     ->map(fn($r) => [
+        //         'id' => $r->id,
+        //         'name' => $r->name,
+        //         'stock' => (float) $r->stock,
+        //         'min_stock' => (float) $r->min_stock,
+        //         'unit_name' => $r->unit_name,
+        //     ]);
 
         return [
             'total_purchases' => $totalPurchases,

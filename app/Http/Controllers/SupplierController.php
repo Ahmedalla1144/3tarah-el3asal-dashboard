@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,8 +39,17 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request): RedirectResponse
     {
-        Supplier::create($request->validated());
-        return redirect()->route('suppliers.index')->with('status', 'Supplier created');
+        try {
+            Supplier::create($request->validated());
+        } catch (QueryException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return redirect()->back()->with('error', 'لا يمكن اضافة المورد بسبب قيود على البيانات برجاء فحص البيانات و اعد المحاولة.');
+            }
+            return redirect()->back()->with('error', 'تعذر اضافة المورد.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'تعذر اضافة المورد.');
+        }
+        return redirect()->route('suppliers.index')->with('status', 'تم اضافة المورد');
     }
 
     /**
@@ -77,7 +87,7 @@ class SupplierController extends Controller
     {
         try {
             $supplier->update($request->validated());
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             if ((string) $e->getCode() === '23000') {
                 return redirect()->back()->with('error', 'لا يمكن تعديل المورد بسبب قيود على البيانات (تعارض فريد أو مرجع).');
             }
@@ -95,7 +105,7 @@ class SupplierController extends Controller
     {
         try {
             $supplier->delete();
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             if ((string) $e->getCode() === '23000') {
                 return redirect()->back()->with('error', 'لا يمكن حذف المورد لوجود معاملات مرتبطة به.');
             }
