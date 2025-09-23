@@ -4,14 +4,36 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
+import { useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
-type PageProps = { customer: { id: number; name: string; phone?: string | null; address?: string | null; email?: string | null; tax_id?: string | null; opening_balance?: number | null; credit_limit?: number | null; notes?: string | null; is_active: boolean } }
+type PageProps = {
+    customer: { id: number; name: string; phone?: string | null; address?: string | null; email?: string | null; tax_id?: string | null; opening_balance?: number | null; credit_limit?: number | null; notes?: string | null; is_active: boolean }
+    [key: string]: any
+}
 
 import customersRoutes from '@/routes/customers'
 
 export default function CustomerEdit() {
     const { props } = usePage<PageProps>()
     const { customer } = props
+
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="customers"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
+                    { name: 'phone', label: 'الهاتف', maxLength: 30 },
+                    { name: 'email', label: 'البريد الإلكتروني', maxLength: 100 },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
+
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'العملاء', href: customersRoutes.index().url },
         { title: `تعديل: ${customer.name}`, href: '#' },
@@ -41,12 +63,12 @@ export default function CustomerEdit() {
                             <div className="grid gap-2">
                                 <Label htmlFor="name">الاسم</Label>
                                 <Input id="name" name="name" required defaultValue={customer.name} />
-                                <div className="text-sm text-destructive">{errors.name}</div>
+                                <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="phone">الهاتف</Label>
                                 <Input id="phone" name="phone" defaultValue={customer.phone ?? ''} />
-                                <div className="text-sm text-destructive">{errors.phone}</div>
+                                <div className="text-sm text-destructive" data-error-for="phone">{errors.phone}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="address">العنوان</Label>
@@ -56,7 +78,7 @@ export default function CustomerEdit() {
                             <div className="grid gap-2">
                                 <Label htmlFor="email">البريد الإلكتروني</Label>
                                 <Input id="email" name="email" type="email" defaultValue={customer.email ?? ''} />
-                                <div className="text-sm text-destructive">{errors.email}</div>
+                                <div className="text-sm text-destructive" data-error-for="email">{errors.email}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="tax_id">الرقم الضريبي</Label>

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\UnitController::index
- * @see app/Http/Controllers/UnitController.php:17
+ * @see app/Http/Controllers/UnitController.php:18
  * @route '/units'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\UnitController::index
- * @see app/Http/Controllers/UnitController.php:17
+ * @see app/Http/Controllers/UnitController.php:18
  * @route '/units'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\UnitController::index
- * @see app/Http/Controllers/UnitController.php:17
+ * @see app/Http/Controllers/UnitController.php:18
  * @route '/units'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\UnitController::index
- * @see app/Http/Controllers/UnitController.php:17
+ * @see app/Http/Controllers/UnitController.php:18
  * @route '/units'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\UnitController::index
- * @see app/Http/Controllers/UnitController.php:17
+ * @see app/Http/Controllers/UnitController.php:18
  * @route '/units'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\UnitController::index
- * @see app/Http/Controllers/UnitController.php:17
+ * @see app/Http/Controllers/UnitController.php:18
  * @route '/units'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\UnitController::index
- * @see app/Http/Controllers/UnitController.php:17
+ * @see app/Http/Controllers/UnitController.php:18
  * @route '/units'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\UnitController::create
- * @see app/Http/Controllers/UnitController.php:31
+ * @see app/Http/Controllers/UnitController.php:43
  * @route '/units/create'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\UnitController::create
- * @see app/Http/Controllers/UnitController.php:31
+ * @see app/Http/Controllers/UnitController.php:43
  * @route '/units/create'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\UnitController::create
- * @see app/Http/Controllers/UnitController.php:31
+ * @see app/Http/Controllers/UnitController.php:43
  * @route '/units/create'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\UnitController::create
- * @see app/Http/Controllers/UnitController.php:31
+ * @see app/Http/Controllers/UnitController.php:43
  * @route '/units/create'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\UnitController::create
- * @see app/Http/Controllers/UnitController.php:31
+ * @see app/Http/Controllers/UnitController.php:43
  * @route '/units/create'
  */
     const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\UnitController::create
- * @see app/Http/Controllers/UnitController.php:31
+ * @see app/Http/Controllers/UnitController.php:43
  * @route '/units/create'
  */
         createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\UnitController::create
- * @see app/Http/Controllers/UnitController.php:31
+ * @see app/Http/Controllers/UnitController.php:43
  * @route '/units/create'
  */
         createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\UnitController::store
- * @see app/Http/Controllers/UnitController.php:39
+ * @see app/Http/Controllers/UnitController.php:51
  * @route '/units'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -172,7 +172,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\UnitController::store
- * @see app/Http/Controllers/UnitController.php:39
+ * @see app/Http/Controllers/UnitController.php:51
  * @route '/units'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\UnitController::store
- * @see app/Http/Controllers/UnitController.php:39
+ * @see app/Http/Controllers/UnitController.php:51
  * @route '/units'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\UnitController::store
- * @see app/Http/Controllers/UnitController.php:39
+ * @see app/Http/Controllers/UnitController.php:51
  * @route '/units'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -201,7 +201,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\UnitController::store
- * @see app/Http/Controllers/UnitController.php:39
+ * @see app/Http/Controllers/UnitController.php:51
  * @route '/units'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\UnitController::edit
- * @see app/Http/Controllers/UnitController.php:57
+ * @see app/Http/Controllers/UnitController.php:69
  * @route '/units/{unit}/edit'
  */
 export const edit = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\UnitController::edit
- * @see app/Http/Controllers/UnitController.php:57
+ * @see app/Http/Controllers/UnitController.php:69
  * @route '/units/{unit}/edit'
  */
 edit.url = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -260,7 +260,7 @@ edit.url = (args: { unit: number | { id: number } } | [unit: number | { id: numb
 
 /**
 * @see \App\Http\Controllers\UnitController::edit
- * @see app/Http/Controllers/UnitController.php:57
+ * @see app/Http/Controllers/UnitController.php:69
  * @route '/units/{unit}/edit'
  */
 edit.get = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -269,7 +269,7 @@ edit.get = (args: { unit: number | { id: number } } | [unit: number | { id: numb
 })
 /**
 * @see \App\Http\Controllers\UnitController::edit
- * @see app/Http/Controllers/UnitController.php:57
+ * @see app/Http/Controllers/UnitController.php:69
  * @route '/units/{unit}/edit'
  */
 edit.head = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -279,7 +279,7 @@ edit.head = (args: { unit: number | { id: number } } | [unit: number | { id: num
 
     /**
 * @see \App\Http\Controllers\UnitController::edit
- * @see app/Http/Controllers/UnitController.php:57
+ * @see app/Http/Controllers/UnitController.php:69
  * @route '/units/{unit}/edit'
  */
     const editForm = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -289,7 +289,7 @@ edit.head = (args: { unit: number | { id: number } } | [unit: number | { id: num
 
             /**
 * @see \App\Http\Controllers\UnitController::edit
- * @see app/Http/Controllers/UnitController.php:57
+ * @see app/Http/Controllers/UnitController.php:69
  * @route '/units/{unit}/edit'
  */
         editForm.get = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -298,7 +298,7 @@ edit.head = (args: { unit: number | { id: number } } | [unit: number | { id: num
         })
             /**
 * @see \App\Http\Controllers\UnitController::edit
- * @see app/Http/Controllers/UnitController.php:57
+ * @see app/Http/Controllers/UnitController.php:69
  * @route '/units/{unit}/edit'
  */
         editForm.head = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -314,7 +314,7 @@ edit.head = (args: { unit: number | { id: number } } | [unit: number | { id: num
     edit.form = editForm
 /**
 * @see \App\Http\Controllers\UnitController::update
- * @see app/Http/Controllers/UnitController.php:70
+ * @see app/Http/Controllers/UnitController.php:82
  * @route '/units/{unit}'
  */
 export const update = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -329,7 +329,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\UnitController::update
- * @see app/Http/Controllers/UnitController.php:70
+ * @see app/Http/Controllers/UnitController.php:82
  * @route '/units/{unit}'
  */
 update.url = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -362,7 +362,7 @@ update.url = (args: { unit: number | { id: number } } | [unit: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\UnitController::update
- * @see app/Http/Controllers/UnitController.php:70
+ * @see app/Http/Controllers/UnitController.php:82
  * @route '/units/{unit}'
  */
 update.put = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -371,7 +371,7 @@ update.put = (args: { unit: number | { id: number } } | [unit: number | { id: nu
 })
 /**
 * @see \App\Http\Controllers\UnitController::update
- * @see app/Http/Controllers/UnitController.php:70
+ * @see app/Http/Controllers/UnitController.php:82
  * @route '/units/{unit}'
  */
 update.patch = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -381,7 +381,7 @@ update.patch = (args: { unit: number | { id: number } } | [unit: number | { id: 
 
     /**
 * @see \App\Http\Controllers\UnitController::update
- * @see app/Http/Controllers/UnitController.php:70
+ * @see app/Http/Controllers/UnitController.php:82
  * @route '/units/{unit}'
  */
     const updateForm = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -396,7 +396,7 @@ update.patch = (args: { unit: number | { id: number } } | [unit: number | { id: 
 
             /**
 * @see \App\Http\Controllers\UnitController::update
- * @see app/Http/Controllers/UnitController.php:70
+ * @see app/Http/Controllers/UnitController.php:82
  * @route '/units/{unit}'
  */
         updateForm.put = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -410,7 +410,7 @@ update.patch = (args: { unit: number | { id: number } } | [unit: number | { id: 
         })
             /**
 * @see \App\Http\Controllers\UnitController::update
- * @see app/Http/Controllers/UnitController.php:70
+ * @see app/Http/Controllers/UnitController.php:82
  * @route '/units/{unit}'
  */
         updateForm.patch = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -426,7 +426,7 @@ update.patch = (args: { unit: number | { id: number } } | [unit: number | { id: 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\UnitController::destroy
- * @see app/Http/Controllers/UnitController.php:80
+ * @see app/Http/Controllers/UnitController.php:92
  * @route '/units/{unit}'
  */
 export const destroy = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -441,7 +441,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\UnitController::destroy
- * @see app/Http/Controllers/UnitController.php:80
+ * @see app/Http/Controllers/UnitController.php:92
  * @route '/units/{unit}'
  */
 destroy.url = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -474,7 +474,7 @@ destroy.url = (args: { unit: number | { id: number } } | [unit: number | { id: n
 
 /**
 * @see \App\Http\Controllers\UnitController::destroy
- * @see app/Http/Controllers/UnitController.php:80
+ * @see app/Http/Controllers/UnitController.php:92
  * @route '/units/{unit}'
  */
 destroy.delete = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -484,7 +484,7 @@ destroy.delete = (args: { unit: number | { id: number } } | [unit: number | { id
 
     /**
 * @see \App\Http\Controllers\UnitController::destroy
- * @see app/Http/Controllers/UnitController.php:80
+ * @see app/Http/Controllers/UnitController.php:92
  * @route '/units/{unit}'
  */
     const destroyForm = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -499,7 +499,7 @@ destroy.delete = (args: { unit: number | { id: number } } | [unit: number | { id
 
             /**
 * @see \App\Http\Controllers\UnitController::destroy
- * @see app/Http/Controllers/UnitController.php:80
+ * @see app/Http/Controllers/UnitController.php:92
  * @route '/units/{unit}'
  */
         destroyForm.delete = (args: { unit: number | { id: number } } | [unit: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

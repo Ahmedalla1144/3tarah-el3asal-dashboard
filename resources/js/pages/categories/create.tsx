@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
+import { useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'الفئات', href: categoriesRoutes.index().url },
@@ -12,6 +14,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CategoryCreate() {
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="categories"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 100 },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="إنشاء فئة" />
@@ -27,7 +42,7 @@ export default function CategoryCreate() {
                             <div className="grid gap-2">
                                 <Label htmlFor="name">الاسم</Label>
                                 <Input id="name" name="name" required />
-                                <div className="text-sm text-destructive">{errors.name}</div>
+                                <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                             </div>
 
                             <div className="flex items-center gap-2">

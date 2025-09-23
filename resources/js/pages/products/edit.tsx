@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { formatQty } from '@/lib/currency'
+import { attachLiveValidation } from '@/components/forms/validate'
 
 interface PageProps {
     product: {
@@ -34,6 +35,26 @@ export default function ProductEdit({ product, categories, units, product_units 
     const [baseUnitId, setBaseUnitId] = useState<string>(product.base_unit_id ? String(product.base_unit_id) : '')
     const [salePrice, setSalePrice] = useState<string>(product.sale_price != null ? String(product.sale_price) : '')
     const [costPrice, setCostPrice] = useState<string>(product.cost_price != null ? String(product.cost_price) : '')
+
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="products"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 200 },
+                    { name: 'category_id', label: 'الفئة', required: true },
+                    { name: 'base_unit_id', label: 'الوحدة الأساسية', required: true },
+                    { name: 'sale_price', label: 'سعر البيع', required: true },
+                    { name: 'cost_price', label: 'سعر التكلفة', required: true },
+                    { name: 'min_stock', label: 'الحد الأدنى للمخزون', required: true },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
+
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'المنتجات', href: productsRoutes.index().url },
         { title: `تعديل #${product.id}`, href: productsRoutes.edit(product.id).url },
@@ -56,7 +77,7 @@ export default function ProductEdit({ product, categories, units, product_units 
                             <div className="grid gap-2">
                                 <Label htmlFor="name">الاسم</Label>
                                 <Input id="name" name="name" defaultValue={product.name} required />
-                                <div className="text-sm text-destructive">{errors.name}</div>
+                                <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="category_id">الفئة</Label>
@@ -70,7 +91,7 @@ export default function ProductEdit({ product, categories, units, product_units 
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <div className="text-sm text-destructive">{errors.category_id}</div>
+                                <div className="text-sm text-destructive" data-error-for="category_id">{errors.category_id}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="sku">الكود SKU</Label>
@@ -102,22 +123,22 @@ export default function ProductEdit({ product, categories, units, product_units 
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <div className="text-sm text-destructive">{errors.base_unit_id}</div>
+                                <div className="text-sm text-destructive" data-error-for="base_unit_id">{errors.base_unit_id}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="sale_price">سعر البيع</Label>
                                 <Input id="sale_price" name="sale_price" type="number" step="0.000001" min="0" value={Number(salePrice)} onChange={(e)=> setSalePrice(e.target.value)} />
-                                <div className="text-sm text-destructive">{errors.sale_price}</div>
+                                <div className="text-sm text-destructive" data-error-for="sale_price">{errors.sale_price}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="cost_price">سعر التكلفة</Label>
                                 <Input id="cost_price" name="cost_price" type="number" step="0.000001" min="0" value={Number(costPrice)} onChange={(e)=> setCostPrice(e.target.value)} />
-                                <div className="text-sm text-destructive">{errors.cost_price}</div>
+                                <div className="text-sm text-destructive" data-error-for="cost_price">{errors.cost_price}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="min_stock">الحد الأدنى للمخزون</Label>
                                 <Input id="min_stock" name="min_stock" type="number" step="0.000001" min="0" defaultValue={formatQty(product.min_stock) ?? ''} />
-                                <div className="text-sm text-destructive">{errors.min_stock}</div>
+                                <div className="text-sm text-destructive" data-error-for="min_stock">{errors.min_stock}</div>
                             </div>
                             <div className="items-center gap-2 hidden">
                                 <input type="hidden" name="is_active" value={isActive ? '1' : '0'} />

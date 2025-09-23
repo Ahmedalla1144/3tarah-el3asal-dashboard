@@ -8,6 +8,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import { useState } from 'react'
 import { Pencil, Trash2, Plus } from 'lucide-react'
 import { formatEGP, formatQty } from '@/lib/currency'
+import EmptyState from '@/components/empty-state'
 
 type ProductRow = {
     id: number
@@ -87,7 +88,9 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {products.data.map((p) => (
+                            {products.data.length === 0 ? (
+                                <EmptyState colSpan={9} />
+                            ) : products.data.map((p) => (
                                 <tr key={p.id} className={p.min_stock != null && p.stock <= p.min_stock ? 'bg-red-50 dark:bg-red-900/20' : ''}>
                                     <td className="px-4 py-2 text-sm">{p.id}</td>
                                     <td className="px-4 py-2 text-sm">{p.name}</td>
@@ -125,7 +128,7 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                     </table>
                 </div>
 
-                {products.links.length > 0 && (
+                {products.last_page > 1 && (
                     <div className="flex flex-wrap items-center gap-2">
                         {products.links.map((link, idx) => (
                             <Link

@@ -35,6 +35,7 @@ class UserController extends Controller
 
         return Inertia::render('users/index', [
             'users' => $users,
+            'filters'=> ['search' => $search]
         ]);
     }
 

@@ -8,20 +8,32 @@ use App\Http\Requests\UpdateUnitRequest;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $units = Unit::query()->orderBy('name')->paginate(10)->withQueryString()->through(fn(Unit $u) => [
-            'id' => $u->id,
-            'name' => $u->name,
-        ]);
+        $search = $request->string('search')->toString();
+
+        $units = Unit::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy('name')
+            ->paginate(10)
+            ->withQueryString()
+            ->through(fn(Unit $u) => [
+                'id' => $u->id,
+                'name' => $u->name,
+            ]);
+
         return Inertia::render('units/index', [
             'units' => $units,
+            'filters' => ['search' => $search]
         ]);
     }
 

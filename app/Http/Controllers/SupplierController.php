@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,15 +16,21 @@ class SupplierController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $suppliers = Supplier::query()->orderBy('name')->paginate(10)->through(fn($s) => [
-            'id' => $s->id,
-            'name' => $s->name,
-            'phone' => $s->phone,
-            'is_active' => (bool)$s->is_active,
-        ]);
-        return Inertia::render('suppliers/index', ['suppliers' => $suppliers]);
+        $search = $request->input('search');
+        $suppliers = Supplier::query()
+            ->when($search, fn($q) => $q->where('name', 'like', "%$search%"))
+            ->orderBy('name')
+            ->paginate(10)
+            ->withQueryString()
+            ->through(fn($s) => [
+                'id' => $s->id,
+                'name' => $s->name,
+                'phone' => $s->phone,
+                'is_active' => (bool)$s->is_active,
+            ]);
+        return Inertia::render('suppliers/index', ['suppliers' => $suppliers, 'filters' => ['search' => $search]]);
     }
 
     /**

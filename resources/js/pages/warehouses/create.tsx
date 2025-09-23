@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
+import { useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
 import warehousesRoutes from '@/routes/warehouses'
 
@@ -13,6 +15,22 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function WarehouseCreate() {
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="warehouses"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
+                    { name: 'code', label: 'الكود', maxLength: 50 },
+                    { name: 'address', label: 'العنوان', maxLength: 200 },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="مخزن جديد" />
@@ -24,17 +42,17 @@ export default function WarehouseCreate() {
                             <div className="grid gap-2">
                                 <Label htmlFor="name">الاسم</Label>
                                 <Input id="name" name="name" required />
-                                <div className="text-sm text-destructive">{errors.name}</div>
+                                <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="code">الكود</Label>
                                 <Input id="code" name="code" />
-                                <div className="text-sm text-destructive">{errors.code}</div>
+                                <div className="text-sm text-destructive" data-error-for="code">{errors.code}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="address">العنوان</Label>
                                 <Input id="address" name="address" />
-                                <div className="text-sm text-destructive">{errors.address}</div>
+                                <div className="text-sm text-destructive" data-error-for="address">{errors.address}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="notes">ملاحظات</Label>

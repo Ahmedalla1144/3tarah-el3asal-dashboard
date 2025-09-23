@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
 import unitsRoutes from '@/routes/units'
+import { useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'الوحدات الأساسية', href: unitsRoutes.index().url },
@@ -12,6 +14,20 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function UnitCreate() {
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="units"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'اسم الوحدة', required: true, minLength: 2, maxLength: 100 },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="إضافة وحدة" />
@@ -23,7 +39,7 @@ export default function UnitCreate() {
                                 <div className="grid gap-2">
                                     <Label htmlFor="name">اسم الوحدة</Label>
                                     <Input id="name" name="name" required maxLength={100} />
-                                    <div className="text-sm text-destructive">{errors.name}</div>
+                                    <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Link href={unitsRoutes.index().url} className="inline-flex"><Button type="button" variant="outline">إلغاء</Button></Link>

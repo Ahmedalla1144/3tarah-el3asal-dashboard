@@ -4,14 +4,36 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
+import { useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
-type PageProps = { supplier: { id: number; name: string; phone?: string | null; address?: string | null; email?: string | null; tax_id?: string | null; opening_balance?: number | null; notes?: string | null; is_active: boolean } }
+type PageProps = {
+    supplier: { id: number; name: string; phone?: string | null; address?: string | null; email?: string | null; tax_id?: string | null; opening_balance?: number | null; notes?: string | null; is_active: boolean }
+    [key: string]: any
+}
 
 import suppliersRoutes from '@/routes/suppliers'
 
 export default function SupplierEdit() {
     const { props } = usePage<PageProps>()
     const { supplier } = props
+
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="suppliers"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
+                    { name: 'phone', label: 'الهاتف', maxLength: 30 },
+                    { name: 'email', label: 'البريد الإلكتروني', maxLength: 100 },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
+
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'الموردون', href: suppliersRoutes.index().url },
         { title: `تعديل: ${supplier.name}`, href: '#' },
@@ -29,12 +51,12 @@ export default function SupplierEdit() {
                             <div className="grid gap-2">
                                 <Label htmlFor="name">الاسم</Label>
                                 <Input id="name" name="name" required defaultValue={supplier.name} />
-                                <div className="text-sm text-destructive">{errors.name}</div>
+                                <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="phone">الهاتف</Label>
                                 <Input id="phone" name="phone" defaultValue={supplier.phone ?? ''} />
-                                <div className="text-sm text-destructive">{errors.phone}</div>
+                                <div className="text-sm text-destructive" data-error-for="phone">{errors.phone}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="address">العنوان</Label>
@@ -44,7 +66,7 @@ export default function SupplierEdit() {
                             <div className="grid gap-2">
                                 <Label htmlFor="email">البريد الإلكتروني</Label>
                                 <Input id="email" name="email" type="email" defaultValue={supplier.email ?? ''} />
-                                <div className="text-sm text-destructive">{errors.email}</div>
+                                <div className="text-sm text-destructive" data-error-for="email">{errors.email}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="tax_id">الرقم الضريبي</Label>

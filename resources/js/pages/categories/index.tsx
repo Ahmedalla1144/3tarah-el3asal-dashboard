@@ -1,37 +1,36 @@
-import categoriesRoutes from '@/routes/categories'
-import AppLayout from '@/layouts/app-layout'
-import { Head, Link, router } from '@inertiajs/react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { type BreadcrumbItem } from '@/types'
-import { useDebouncedCallback } from 'use-debounce'
-import { useState } from 'react'
-import { Pencil, Trash2, Plus } from 'lucide-react'
+import EmptyState from '@/components/empty-state';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import AppLayout from '@/layouts/app-layout';
+import categoriesRoutes from '@/routes/categories';
+import { type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/react';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
-type CategoryRow = { id: number; name: string }
-type PaginationLink = string | null
+type CategoryRow = { id: number; name: string };
+type PaginationLink = string | null;
 
 interface PageProps {
     categories: {
-        data: CategoryRow[]
-        links: { url: PaginationLink; label: string; active: boolean }[]
-        current_page: number
-        last_page: number
-        per_page: number
-        total: number
-    }
-    filters: { search?: string }
+        data: CategoryRow[];
+        links: { url: PaginationLink; label: string; active: boolean }[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
+    filters: { search?: string };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'الفئات', href: categoriesRoutes.index().url },
-]
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'الفئات', href: categoriesRoutes.index().url }];
 
 export default function CategoriesIndex({ categories, filters }: PageProps) {
-    const [search, setSearch] = useState(filters.search ?? '')
+    const [search, setSearch] = useState(filters.search ?? '');
     const debouncedSearch = useDebouncedCallback((value: string) => {
-        router.get(categoriesRoutes.index().url, { search: value }, { preserveState: true, replace: true })
-    }, 300)
+        router.get(categoriesRoutes.index().url, { search: value }, { preserveState: true, replace: true });
+    }, 300);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -44,8 +43,8 @@ export default function CategoriesIndex({ categories, filters }: PageProps) {
                             placeholder="ابحث بالاسم"
                             value={search}
                             onChange={(e) => {
-                                setSearch(e.target.value)
-                                debouncedSearch(e.target.value)
+                                setSearch(e.target.value);
+                                debouncedSearch(e.target.value);
                             }}
                         />
                     </div>
@@ -58,7 +57,7 @@ export default function CategoriesIndex({ categories, filters }: PageProps) {
                 </div>
 
                 <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                    <table className="min-w-[300px] w-full divide-y divide-border">
+                    <table className="w-full min-w-[300px] divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الرقم</th>
@@ -67,36 +66,40 @@ export default function CategoriesIndex({ categories, filters }: PageProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {categories.data.map((c) => (
-                                <tr key={c.id}>
-                                    <td className="px-4 py-2 text-sm">{c.id}</td>
-                                    <td className="px-4 py-2 text-sm">{c.name}</td>
-                                    <td className="px-4 py-2 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Link href={categoriesRoutes.edit(c.id).url} className="inline-flex">
-                                                <Button variant="outline" size="sm">
-                                                    <Pencil className="h-4 w-4" />
+                            {categories.data.length === 0 ? (
+                                <EmptyState colSpan={3} />
+                            ) : (
+                                categories.data.map((c) => (
+                                    <tr key={c.id}>
+                                        <td className="px-4 py-2 text-sm">{c.id}</td>
+                                        <td className="px-4 py-2 text-sm">{c.name}</td>
+                                        <td className="px-4 py-2 text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Link href={categoriesRoutes.edit(c.id).url} className="inline-flex">
+                                                    <Button variant="outline" size="sm">
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                                <Button
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        if (!confirm('حذف هذه الفئة؟')) return;
+                                                        router.delete(categoriesRoutes.destroy(c.id).url);
+                                                    }}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
                                                 </Button>
-                                            </Link>
-                                            <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => {
-                                                    if (!confirm('حذف هذه الفئة؟')) return
-                                                    router.delete(categoriesRoutes.destroy(c.id).url)
-                                                }}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
 
-                {categories.links.length > 0 && (
+                {categories.last_page > 1 && (
                     <div className="flex flex-wrap items-center gap-2">
                         {categories.links.map((link, idx) => (
                             <Link
@@ -112,7 +115,5 @@ export default function CategoriesIndex({ categories, filters }: PageProps) {
                 )}
             </div>
         </AppLayout>
-    )
+    );
 }
-
-

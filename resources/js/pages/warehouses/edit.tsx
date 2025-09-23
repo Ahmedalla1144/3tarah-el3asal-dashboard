@@ -4,14 +4,36 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
+import { useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
-type PageProps = { warehouse: { id: number; name: string; code?: string | null; address?: string | null; is_active: boolean } }
+type PageProps = {
+    warehouse: { id: number; name: string; code?: string | null; address?: string | null; is_active: boolean }
+    [key: string]: any
+}
 
 import warehousesRoutes from '@/routes/warehouses'
 
 export default function WarehouseEdit() {
     const { props } = usePage<PageProps>()
     const { warehouse } = props
+
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="warehouses"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
+                    { name: 'code', label: 'الكود', maxLength: 50 },
+                    { name: 'address', label: 'العنوان', maxLength: 200 },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
+
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'المخازن', href: warehousesRoutes.index().url },
         { title: `تعديل: ${warehouse.name}`, href: '#' },
@@ -29,17 +51,17 @@ export default function WarehouseEdit() {
                             <div className="grid gap-2">
                                 <Label htmlFor="name">الاسم</Label>
                                 <Input id="name" name="name" required defaultValue={warehouse.name} />
-                                <div className="text-sm text-destructive">{errors.name}</div>
+                                <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="code">الكود</Label>
                                 <Input id="code" name="code" defaultValue={warehouse.code ?? ''} />
-                                <div className="text-sm text-destructive">{errors.code}</div>
+                                <div className="text-sm text-destructive" data-error-for="code">{errors.code}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="address">العنوان</Label>
                                 <Input id="address" name="address" defaultValue={warehouse.address ?? ''} />
-                                <div className="text-sm text-destructive">{errors.address}</div>
+                                <div className="text-sm text-destructive" data-error-for="address">{errors.address}</div>
                             </div>
                             <div className="items-center gap-2 hidden">
                                 <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" defaultChecked={warehouse.is_active} />

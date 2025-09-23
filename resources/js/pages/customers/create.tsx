@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
 
 import customersRoutes from '@/routes/customers'
+import { useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'العملاء', href: customersRoutes.index().url },
@@ -13,6 +15,20 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CustomerCreate() {
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="customers"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
+                    { name: 'phone', label: 'الهاتف', maxLength: 30 },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="عميل جديد" />
@@ -36,7 +52,7 @@ export default function CustomerCreate() {
                             <div className="grid gap-2">
                                 <Label htmlFor="name">الاسم</Label>
                                 <Input id="name" name="name" required />
-                                <div className="text-sm text-destructive">{errors.name}</div>
+                                <div className="text-sm text-destructive" data-error-for="name">{errors.name}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="phone">الهاتف</Label>

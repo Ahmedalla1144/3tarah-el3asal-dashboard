@@ -35,6 +35,7 @@ interface PageProps {
 
 import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 import { form as payForm } from '@/routes/purchase-invoices/pay'
+import EmptyState from '@/components/empty-state'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'فواتير الشراء', href: purchaseInvoicesRoutes.index().url },
@@ -85,7 +86,10 @@ export default function PurchaseInvoicesIndex({ invoices, filters }: PageProps) 
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {invoices.data.map((inv) => (
+                            {invoices.data.length === 0 ? (
+                                <EmptyState colSpan={8} />
+                            ) : (
+                            invoices.data.map((inv) => (
                                 <tr key={inv.id}>
                                     <td className="px-4 py-2 text-sm">{inv.number}</td>
                                     <td className="px-4 py-2 text-sm">{inv.supplier ?? '-'}</td>
@@ -109,12 +113,13 @@ export default function PurchaseInvoicesIndex({ invoices, filters }: PageProps) 
                                         </div>
                                     </td>
                                 </tr>
-                            ))}
+                            ))
+                        )}
                         </tbody>
                     </table>
                 </div>
 
-                {invoices.links.length > 0 && (
+                {invoices.last_page > 1 && (
                     <div className="flex flex-wrap items-center gap-2">
                         {invoices.links.map((link, idx) => (
                             <Link

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreWarehouseRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,11 +16,21 @@ class WarehouseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $search = $request->string('search')->toString();
+
         $warehouses = Warehouse::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('code', 'like', "%{$search}%")
+                      ->orWhere('address', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('name')
             ->paginate(10)
+            ->withQueryString()
             ->through(fn($w) => [
                 'id' => $w->id,
                 'name' => $w->name,
@@ -30,6 +41,7 @@ class WarehouseController extends Controller
 
         return Inertia::render('warehouses/index', [
             'warehouses' => $warehouses,
+            'filters' => ['search' => $search]
         ]);
     }
 

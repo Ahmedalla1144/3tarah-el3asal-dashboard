@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { attachLiveValidation } from '@/components/forms/validate'
 
 interface ProductUnitRow { unit_id: number; unit: string | null; ratio_to_base: number; is_default_buy?: boolean }
 interface ProductRow { id: number; name: string; base_unit_id: number | null; cost_price: number | null; stock: number; units?: ProductUnitRow[] }
@@ -27,6 +28,21 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
 
     const [items, setItems] = useState([{ product_id: '', unit_id: '', qty: '', unit_cost: '', discount_value: '', tax_value: '' }])
     const [paidAmount, setPaidAmount] = useState<string>('')
+
+    useEffect(() => {
+        // Use a timeout to ensure the form is rendered
+        const timer = setTimeout(() => {
+            const form = document.querySelector('form[action*="purchase-invoices"]') as HTMLFormElement
+            if (form) {
+                attachLiveValidation(form, [
+                    { name: 'supplier_id', label: 'المورد', required: true },
+                    { name: 'warehouse_id', label: 'المخزن', required: true },
+                ])
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [])
 
     const total = useMemo(() => {
         return items.reduce((sum, r) => {
