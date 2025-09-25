@@ -5,7 +5,7 @@ import qz from 'qz-tray';
 
 type SignResponse = { signature: string };
 
-export function configureQZ(signingUrl: string, hashUrl: string, certificate: string) {
+export function configureQZ(signingUrl: string, certificate: string) {
     qz.security.setCertificatePromise(() => Promise.resolve(certificate));
 
     qz.security.setSignaturePromise((toSign: string) => {
@@ -18,14 +18,7 @@ export function configureQZ(signingUrl: string, hashUrl: string, certificate: st
             .then((r: SignResponse) => r.signature);
     });
 
-    qz.security.setHashPromise((toHash: string) => {
-        return fetch(hashUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: toHash }),
-        }).then((res) => res.text());
-    });
-
+    // تأكيد نوع الـ Promise
     qz.api.setPromiseType(function promise(resolver: (value: unknown) => void) {
         return new Promise(resolver);
     });

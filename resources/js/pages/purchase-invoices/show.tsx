@@ -58,7 +58,7 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
     const [selectedPrinter, setSelectedPrinter] = useState<string>('')
 
     useEffect(() => {
-        configureQZ('/qz/sign', '/qz/hash', CERT)
+        configureQZ('/qz/sign', CERT)
         listPrinters().then(setPrinters).catch(() => { })
     }, [])
 
