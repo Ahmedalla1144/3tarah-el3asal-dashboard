@@ -11,7 +11,7 @@ class QzController extends Controller
     public function sign(Request $request)
     {
         $data = (string) $request->input('data', '');
-        $privateKey = (string) config('services.qz.private_key');
+        $privateKey = file_get_contents(storage_path('keys/qz_private_key_pkcs8.pem')) ?: '';;
         if ($privateKey === '') {
             return response()->json(['error' => 'QZ private key not configured'], 500);
         }
