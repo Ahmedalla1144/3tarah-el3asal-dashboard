@@ -23,7 +23,7 @@ class QzController extends Controller
             return response()->json(['error' => 'Invalid QZ private key'], 500);
         }
         $ok = openssl_sign($data, $rawSig, $pkey, OPENSSL_ALGO_SHA512);
-        openssl_free_key($pkey);
+
         if (!$ok) {
             return response()->json(['error' => 'Signing failed'], 500);
         }
@@ -37,5 +37,3 @@ class QzController extends Controller
         return Response::make(hash('sha512', $data));
     }
 }
-
-
