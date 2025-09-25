@@ -146,7 +146,7 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                         <h3 className="text-lg font-medium mb-4">الوحدات الموجودة</h3>
                         <div className="space-y-4">
                             {product.units.map((unit) => (
-                                <div key={unit.id} className="grid grid-cols-1 gap-4 md:grid-cols-5 items-end border rounded-lg p-4">
+                                <div key={unit.id} className="flex flex-wrap gap-4 items-end border rounded-lg p-4">
                                     <div>
                                         <Label>الوحدة</Label>
                                         <div className="text-sm font-medium">{unit.unit_name}</div>
@@ -183,6 +183,7 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                                                     type="submit"
                                                     variant={unit.is_default_sale ? "default" : "outline"}
                                                     size="sm"
+                                                    disabled={unit.is_default_sale}
                                                 >
                                                     {unit.is_default_sale ? 'افتراضي للمبيعات' : 'تعيين للمبيعات'}
                                                 </Button>
@@ -199,6 +200,7 @@ export default function ProductUnits({ product, availableUnits }: PageProps) {
                                                 <Button
                                                     type="submit"
                                                     variant={unit.is_default_buy ? "default" : "outline"}
+                                                    disabled={unit.is_default_buy}
                                                     size="sm"
                                                 >
                                                     {unit.is_default_buy ? 'افتراضي للمشتريات' : 'تعيين للمشتريات'}

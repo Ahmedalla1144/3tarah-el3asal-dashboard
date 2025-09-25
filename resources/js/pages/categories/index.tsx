@@ -66,7 +66,7 @@ export default function CategoriesIndex({ categories, filters }: PageProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {categories.data.length === 0 ? (
+                            {search && categories.data.length === 0 ? (
                                 <EmptyState colSpan={3} />
                             ) : (
                                 categories.data.map((c) => (

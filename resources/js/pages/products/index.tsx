@@ -41,8 +41,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function ProductsIndex({ products, filters }: PageProps) {
-    // const { auth } = usePage<SharedData>().props
-
     const [search, setSearch] = useState(filters.search ?? '')
     const debouncedSearch = useDebouncedCallback((value: string) => {
         router.get(productsRoutes.index().url, { search: value }, { preserveState: true, replace: true, only: ['products', 'filters'] })
@@ -56,7 +54,7 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                 <div className="flex items-center justify-between gap-2">
                     <div className="w-full max-w-sm">
                         <Input
-                            placeholder="ابحث بالرقم أو الاسم"
+                            placeholder="ابحث بالكود أو الاسم"
                             value={search}
                             onChange={(e) => {
                                 setSearch(e.target.value)
@@ -88,7 +86,7 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {products.data.length === 0 ? (
+                            {search && products.data.length === 0 ? (
                                 <EmptyState colSpan={9} />
                             ) : products.data.map((p) => (
                                 <tr key={p.id} className={p.min_stock != null && p.stock <= p.min_stock ? 'bg-red-50 dark:bg-red-900/20' : ''}>

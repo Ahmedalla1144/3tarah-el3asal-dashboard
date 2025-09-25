@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,16 +19,21 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->randomElement(['كمون','كركم','فلفل أسود','ينسون','شمر','زنجبيل','قرفة']),
-            'category_id' => null,
-            'sku' => $this->faker->optional()->bothify('SKU-#####'),
-            'barcode' => $this->faker->optional()->ean13(),
-            'base_unit_id' => 1,
-            'sale_price' => $this->faker->randomFloat(2, 10, 300),
-            'cost_price' => $this->faker->randomFloat(2, 5, 200),
+            // 'name' => $this->faker->unique()->randomElement(['كمون','كركم','فلفل أسود','ينسون','شمر','زنجبيل','قرفة']),
+            'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
+            'base_unit_id' => Unit::inRandomOrder()->first()->id ?? Unit::factory(),
+            'sale_price' => $this->faker->randomFloat(2, 10, 5000),
+            'cost_price' => $this->faker->randomFloat(2, 5, 4000),
+            'sku' => $this->faker->unique()->ean8(),
+            // 'sku' => $this->faker->optional()->bothify('SKU-#####'),
+            'barcode' => $this->faker->ean13(),
+            // 'barcode' => $this->faker->optional()->ean13(),
             'min_stock' => $this->faker->randomFloat(3, 0, 2000),
             'is_batch_tracked' => false,
             'is_active' => true,
+
+
+            'name' => $this->faker->word(),
         ];
     }
 }

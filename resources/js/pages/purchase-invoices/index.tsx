@@ -86,7 +86,7 @@ export default function PurchaseInvoicesIndex({ invoices, filters }: PageProps) 
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {invoices.data.length === 0 ? (
+                            {search && invoices.data.length === 0 ? (
                                 <EmptyState colSpan={8} />
                             ) : (
                             invoices.data.map((inv) => (

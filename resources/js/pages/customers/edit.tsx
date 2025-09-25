@@ -4,35 +4,23 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
 
 type PageProps = {
     customer: { id: number; name: string; phone?: string | null; address?: string | null; email?: string | null; tax_id?: string | null; opening_balance?: number | null; credit_limit?: number | null; notes?: string | null; is_active: boolean }
-    [key: string]: any
+    [key: string]: unknown
 }
 
 import customersRoutes from '@/routes/customers'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 export default function CustomerEdit() {
     const { props } = usePage<PageProps>()
     const { customer } = props
 
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="customers"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
-                    { name: 'phone', label: 'الهاتف', maxLength: 30 },
-                    { name: 'email', label: 'البريد الإلكتروني', maxLength: 100 },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="customers"]', [
+        { name: 'name', label: 'الاسم' },
+        { name: 'phone', label: 'الهاتف', type: 'phone', required: false },
+    ])
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'العملاء', href: customersRoutes.index().url },
@@ -48,7 +36,7 @@ export default function CustomerEdit() {
                     action={customersRoutes.update(customer.id).url}
                     method="post"
                     className="mx-auto w-full max-w-xl space-y-4"
-                    onSubmit={(e)=> {
+                    onSubmit={(e) => {
                         const form = e.currentTarget as HTMLFormElement
                         const nameInput = (form.elements.namedItem('name') as HTMLInputElement)
                         if (!nameInput.value || nameInput.value.trim() === '') {
@@ -80,27 +68,27 @@ export default function CustomerEdit() {
                                 <Input id="email" name="email" type="email" defaultValue={customer.email ?? ''} />
                                 <div className="text-sm text-destructive" data-error-for="email">{errors.email}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="tax_id">الرقم الضريبي</Label>
                                 <Input id="tax_id" name="tax_id" defaultValue={customer.tax_id ?? ''} />
                                 <div className="text-sm text-destructive">{errors.tax_id}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="opening_balance">الرصيد الافتتاحي</Label>
                                 <Input id="opening_balance" name="opening_balance" type="number" step="0.01" min="0" defaultValue={customer.opening_balance ?? ''} />
                                 <div className="text-sm text-destructive">{errors.opening_balance}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="credit_limit">حد الائتمان</Label>
                                 <Input id="credit_limit" name="credit_limit" type="number" step="0.01" min="0" defaultValue={customer.credit_limit ?? ''} />
                                 <div className="text-sm text-destructive">{errors.credit_limit}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="notes">ملاحظات</Label>
                                 <Input id="notes" name="notes" defaultValue={customer.notes ?? ''} />
                                 <div className="text-sm text-destructive">{errors.notes}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex- items-center gap-2 hidden">
                                 <input type="hidden" name="is_active" value="0" />
                                 <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" defaultChecked={customer.is_active} value="1" />
                                 <Label htmlFor="is_active">نشط</Label>

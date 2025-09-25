@@ -135,7 +135,7 @@ class PurchaseInvoiceController extends Controller
             $productsById = Product::query()->whereIn('id', $productIds)->get()->keyBy('id');
             $ratios = ProductUnit::query()
                 ->whereIn('product_id', $productIds)
-                ->whereIn('unit_id', collect($items)->pluck('unit_id')->map(fn($v)=>(int)$v)->unique()->all())
+                ->whereIn('unit_id', collect($items)->pluck('unit_id')->map(fn($v) => (int)$v)->unique()->all())
                 ->get()
                 ->keyBy(fn($r) => $r->product_id . '|' . $r->unit_id);
 
@@ -279,7 +279,7 @@ class PurchaseInvoiceController extends Controller
                 'paid' => $purchaseInvoice->paid_amount,
                 'remaining' => $purchaseInvoice->remaining_amount,
                 'notes' => $purchaseInvoice->notes,
-                'items' => $purchaseInvoice->items->map(function($it){
+                'items' => $purchaseInvoice->items->map(function ($it) {
                     return [
                         'id' => $it->id,
                         'product' => $it->product?->name,
@@ -359,7 +359,7 @@ class PurchaseInvoiceController extends Controller
     public function pay(Request $request, PurchaseInvoice $purchaseInvoice): RedirectResponse
     {
         $validated = $request->validate([
-            'amount' => ['required', 'numeric', 'min:0.01', function($attr, $value, $fail) use ($purchaseInvoice) {
+            'amount' => ['required', 'numeric', 'min:0.01', function ($attr, $value, $fail) use ($purchaseInvoice) {
                 if ((float)$value > (float)$purchaseInvoice->remaining_amount) {
                     $fail('لا يمكن أن يكون المبلغ المدفوع أكبر من المتبقي للفاتورة');
                 }

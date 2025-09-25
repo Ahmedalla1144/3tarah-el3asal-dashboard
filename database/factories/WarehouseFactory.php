@@ -17,7 +17,7 @@ class WarehouseFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->randomElement(['المخزن الرئيسي','الفرع 1','الفرع 2']),
+            'name' => $this->faker->unique()->name(),
         ];
     }
 }

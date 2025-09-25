@@ -68,7 +68,7 @@ export default function UsersIndex({ users, filters }: PageProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {users.data.length === 0 ? (
+                            {search && users.data.length === 0 ? (
                                 <EmptyState colSpan={4} />
                             ) : (
                                 users.data.map((u) => (

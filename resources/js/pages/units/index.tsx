@@ -21,7 +21,7 @@ interface PageProps {
         per_page: number
         total: number
     },
-    filters: {search: string}
+    filters: { search: string }
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -41,7 +41,7 @@ export default function UnitsIndex({ units, filters }: PageProps) {
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between gap-2">
                     <div className="w/full max-w-sm">
-                        <Input placeholder="ابحث بالاسم" value={search} onChange={(e)=> { setSearch(e.target.value); debouncedSearch(e.target.value) }} />
+                        <Input placeholder="ابحث بالاسم" value={search} onChange={(e) => { setSearch(e.target.value); debouncedSearch(e.target.value) }} />
                     </div>
                     <Link href={unitsRoutes.create().url} className="inline-flex">
                         <Button>إضافة وحدة</Button>
@@ -49,33 +49,33 @@ export default function UnitsIndex({ units, filters }: PageProps) {
                 </div>
 
 
-                    <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                        <table className="min-w-[400px] w-full divide-y divide-border">
-                            <thead className="bg-muted/50">
-                                <tr>
-                                    <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
-                                    <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border bg-background">
-                            {units.data.length === 0 ? (
-                    <EmptyState colSpan={2} />
-                ) : (
-                    units.data.map((u) => (
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[400px] w-full divide-y divide-border">
+                        <thead className="bg-muted/50">
+                            <tr>
+                                <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border bg-background">
+                            {search && units.data.length === 0 ? (
+                                <EmptyState colSpan={2} />
+                            ) : (
+                                units.data.map((u) => (
                                     <tr key={u.id}>
                                         <td className="px-4 py-2 text-sm">{u.name}</td>
                                         <td className="px-4 py-2 text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link href={unitsRoutes.edit(u.id).url} className="inline-flex"><Button variant="outline" size="sm"><Pencil className="h-4 w-4" /></Button></Link>
-                                                <Button variant="destructive" size="sm" onClick={()=> { if (!confirm('حذف الوحدة؟')) return; router.delete(unitsRoutes.destroy(u.id).url) }}><Trash2 className="h-4 w-4" /></Button>
+                                                <Button variant="destructive" size="sm" onClick={() => { if (!confirm('حذف الوحدة؟')) return; router.delete(unitsRoutes.destroy(u.id).url) }}><Trash2 className="h-4 w-4" /></Button>
                                             </div>
                                         </td>
                                     </tr>
                                 ))
                             )}
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
+                </div>
 
                 {units.last_page > 1 && (
                     <div className="flex flex-wrap items-center gap-2">

@@ -122,7 +122,7 @@ export default function CustomersIndex({ customers, filters = {} }: PageProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {customers.data.length === 0 ? (
+                            {search && customers.data.length === 0 ? (
                                 <EmptyState colSpan={4} />
                             ) : (
                                 customers.data.map((c) => {
@@ -176,8 +176,7 @@ export default function CustomersIndex({ customers, filters = {} }: PageProps) {
                                                         onClick={() => {
                                                             // الانتقال إلى صفحة فواتير المبيعات مع فلترة حسب العميل
                                                             router.get('/sales-invoices', {
-                                                                customer_id: c.id,
-                                                                customer_name: c.name,
+                                                                search: c.name,
                                                             });
                                                         }}
                                                         title="عرض فواتير العميل"
@@ -208,6 +207,20 @@ export default function CustomersIndex({ customers, filters = {} }: PageProps) {
                         </tbody>
                     </table>
                 </div>
+                {customers.last_page > 1 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                        {customers.links.map((link, idx) => (
+                            <Link
+                                key={idx}
+                                href={link.url ?? '#'}
+                                className={`rounded-md px-3 py-1 text-sm ${link.active ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
+                                preserveScroll
+                            >
+                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
         </AppLayout>
     );

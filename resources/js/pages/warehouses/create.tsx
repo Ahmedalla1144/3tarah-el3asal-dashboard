@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
 
 import warehousesRoutes from '@/routes/warehouses'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'المخازن', href: warehousesRoutes.index().url },
@@ -15,21 +14,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function WarehouseCreate() {
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="warehouses"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
-                    { name: 'code', label: 'الكود', maxLength: 50 },
-                    { name: 'address', label: 'العنوان', maxLength: 200 },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="warehouses"]', [
+        { name: 'name', label: 'الاسم', minLength: 2 },
+        { name: 'code', label: 'الكود', required: false, type: 'number' },
+        { name: 'address', label: 'العنوان', required: false, maxLength: 200 },
+    ]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

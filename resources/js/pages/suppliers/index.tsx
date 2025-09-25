@@ -67,7 +67,7 @@ export default function SuppliersIndex({ suppliers, filters }: PageProps) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
-                            {suppliers.data.length === 0 ? (
+                            {search && suppliers.data.length === 0 ? (
                                 <EmptyState colSpan={3} />
                             ) : (
                                 suppliers.data.map((s) => (
@@ -99,6 +99,20 @@ export default function SuppliersIndex({ suppliers, filters }: PageProps) {
                         </tbody>
                     </table>
                 </div>
+                {suppliers.last_page > 1 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                        {suppliers.links.map((link, idx) => (
+                            <Link
+                                key={idx}
+                                href={link.url ?? '#'}
+                                className={`rounded-md px-3 py-1 text-sm ${link.active ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
+                                preserveScroll
+                            >
+                                <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
         </AppLayout>
     );

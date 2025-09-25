@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
 
 import suppliersRoutes from '@/routes/suppliers'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'الموردون', href: suppliersRoutes.index().url },
@@ -15,21 +14,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function SupplierCreate() {
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="suppliers"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
-                    { name: 'phone', label: 'الهاتف', maxLength: 30 },
-                    { name: 'email', label: 'البريد الإلكتروني', maxLength: 100 },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="suppliers"]', [
+        { name: 'name', label: 'الاسم' },
+        { name: 'phone', label: 'الهاتف', required: false, type: 'phone'},
+        { name: 'email', label: 'البريد الإلكتروني', required: false},
+    ]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -64,17 +53,17 @@ export default function SupplierCreate() {
                                 <Input id="tax_id" name="tax_id" />
                                 <div className="text-sm text-destructive">{errors.tax_id}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="opening_balance">الرصيد الافتتاحي</Label>
-                                <Input id="opening_balance" name="opening_balance" type="number" step="0.01" min="0" />
+                                <Input id="opening_balance" value={0} name="opening_balance" type="number" step="0.01" min="0" />
                                 <div className="text-sm text-destructive">{errors.opening_balance}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="notes">ملاحظات</Label>
                                 <Input id="notes" name="notes" />
                                 <div className="text-sm text-destructive">{errors.notes}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex- items-center gap-2 hidden">
                                 <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" />
                                 <Label htmlFor="is_active">نشط</Label>
                             </div>

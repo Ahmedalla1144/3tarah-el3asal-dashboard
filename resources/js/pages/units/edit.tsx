@@ -5,31 +5,20 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
 import unitsRoutes from '@/routes/units'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 interface PageProps {
     unit: { id: number; name: string }
-    [key: string]: any
+    [key: string]: unknown
 }
 
 export default function UnitEdit() {
     const { props } = usePage<PageProps>()
     const unit = props.unit
 
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="units"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'اسم الوحدة', required: true, minLength: 2, maxLength: 100 },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="units"]', [
+        { name: 'name', label: 'اسم الوحدة', minLength: 2 }
+    ]);
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'الوحدات الأساسية', href: unitsRoutes.index().url },

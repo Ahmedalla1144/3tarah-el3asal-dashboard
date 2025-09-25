@@ -5,8 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useMemo, useState, useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
+import { useMemo, useState } from 'react'
 
 interface ProductUnitRow { unit_id: number; unit: string | null; ratio_to_base: number; is_default_buy?: boolean }
 interface ProductRow { id: number; name: string; base_unit_id: number | null; cost_price: number | null; stock: number; units?: ProductUnitRow[] }
@@ -19,8 +18,9 @@ interface PageProps {
 }
 
 import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
-export default function PurchaseInvoiceCreate({ suppliers, warehouses, products, units, next_number }: PageProps) {
+export default function PurchaseInvoiceCreate({ suppliers, warehouses, products, next_number }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'فواتير الشراء', href: purchaseInvoicesRoutes.index().url },
         { title: 'إنشاء', href: purchaseInvoicesRoutes.store().url },
@@ -29,20 +29,10 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
     const [items, setItems] = useState([{ product_id: '', unit_id: '', qty: '', unit_cost: '', discount_value: '', tax_value: '' }])
     const [paidAmount, setPaidAmount] = useState<string>('')
 
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="purchase-invoices"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'supplier_id', label: 'المورد', required: true },
-                    { name: 'warehouse_id', label: 'المخزن', required: true },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="purchase-invoices"]', [
+        { name: 'supplier_id', label: 'المورد', required: true },
+        { name: 'warehouse_id', label: 'المخزن', required: true },
+    ]);
 
     const total = useMemo(() => {
         return items.reduce((sum, r) => {
@@ -176,27 +166,27 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
                                         </div>
                                         <div className="md:col-span-2">
                                             <Label>الكمية</Label>
-                                            <Input name={`items[${idx}][qty]`} value={items[idx].qty} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, qty: e.target.value}: r))} type="number" step="0.001" min="0" required />
+                                            <Input name={`items[${idx}][qty]`} value={items[idx].qty} onChange={(e) => setItems(prev => prev.map((r, i) => i === idx ? { ...r, qty: e.target.value } : r))} type="number" step="0.001" min="0" required />
                                             <div className="text-xs text-muted-foreground">الوحدة: {getSelectedUnitName(idx) ?? '-'}</div>
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.qty`]}</div>
                                             {/* عرض المتاح في الشراء غير معتمد على المخزون، لذا لن نعرض المتاح هنا */}
                                         </div>
                                         <div className="md:col-span-2">
                                             <Label>سعر الوحدة</Label>
-                                            <Input name={`items[${idx}][unit_cost]`} value={items[idx].unit_cost} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, unit_cost: e.target.value}: r))} type="number" step="0.01" min="0" required />
+                                            <Input name={`items[${idx}][unit_cost]`} value={items[idx].unit_cost} onChange={(e) => setItems(prev => prev.map((r, i) => i === idx ? { ...r, unit_cost: e.target.value } : r))} type="number" step="0.01" min="0" required />
                                             {getSelectedUnitName(idx) && (
                                                 <div className="text-xs text-muted-foreground">للوحدة: {getSelectedUnitName(idx)}</div>
                                             )}
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.unit_cost`]}</div>
                                         </div>
-                                        <div className="md:col-span-3">
+                                        <div className="md:col-span-3 hidden">
                                             <Label>الخصم</Label>
-                                            <Input name={`items[${idx}][discount_value]`} value={items[idx].discount_value} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, discount_value: e.target.value}: r))} type="number" step="0.01" min="0" />
+                                            <Input name={`items[${idx}][discount_value]`} value={items[idx].discount_value} onChange={(e) => setItems(prev => prev.map((r, i) => i === idx ? { ...r, discount_value: e.target.value } : r))} type="number" step="0.01" min="0" />
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.discount_value`]}</div>
                                         </div>
-                                        <div className="md:col-span-3">
+                                        <div className="md:col-span-3 hidden">
                                             <Label>الضريبة</Label>
-                                            <Input name={`items[${idx}][tax_value]`} value={items[idx].tax_value} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, tax_value: e.target.value}: r))} type="number" step="0.01" min="0" />
+                                            <Input name={`items[${idx}][tax_value]`} value={items[idx].tax_value} onChange={(e) => setItems(prev => prev.map((r, i) => i === idx ? { ...r, tax_value: e.target.value } : r))} type="number" step="0.01" min="0" />
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.tax_value`]}</div>
                                         </div>
                                     </div>
@@ -210,7 +200,7 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="grid gap-2">
                                     <Label htmlFor="paid_amount">المبلغ المدفوع (اختياري)</Label>
-                                    <Input id="paid_amount" name="paid_amount" type="number" step="0.01" min="0" max={total} value={paidAmount} onChange={(e)=> setPaidAmount(e.target.value)} />
+                                    <Input id="paid_amount" name="paid_amount" type="number" step="0.01" min="0" max={total} value={paidAmount} onChange={(e) => setPaidAmount(e.target.value)} />
                                     <div className="text-sm text-muted-foreground">لو دخلت مبلغ، هيتم تسجيل دفعة للمورد وربطها بالفاتورة.</div>
                                 </div>
                                 <div className="ml-auto w-full max-w-sm space-y-2 rounded-lg border p-4">
@@ -218,7 +208,7 @@ export default function PurchaseInvoiceCreate({ suppliers, warehouses, products,
                                 </div>
                             </div>
 
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="notes">ملاحظات</Label>
                                 <Input id="notes" name="notes" />
                                 <div className="text-sm text-destructive">{errors.notes}</div>

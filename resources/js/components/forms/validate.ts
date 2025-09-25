@@ -2,30 +2,54 @@ export type FieldRule = {
     name: string;
     label?: string;
     required?: boolean;
-    type?: 'string' | 'number';
+    type?: 'string' | 'number' | 'phone' | 'email' | 'password' | 'confirmPassword';
     minLength?: number;
     maxLength?: number;
+    matchWith?: string;
 };
 
-export function validateField(value: string, rule: FieldRule): string | null {
-    const label = rule.label ?? rule.name;
+export function validateField(value: string, rule: FieldRule, form?: HTMLFormElement): string | null {
+    const { label = rule.name, required = true, type = 'string', minLength = 3, maxLength = 80 } = rule;
+
     const trimmed = value?.trim?.() ?? '';
 
-    // For required fields, check if empty
-    if (rule.required && trimmed === '') return `حقل ${label} مطلوب`;
+    if (required && trimmed === '') return `حقل ${label} مطلوب`;
 
     if (trimmed !== '') {
-        if (rule.type === 'number') {
+        if (type === 'number') {
             const numValue = parseFloat(trimmed);
             if (isNaN(numValue) || numValue < 0) return `حقل ${label} يجب أن يكون رقمًا صالحًا`;
         }
 
-        if (rule.type === 'string') {
-            if (rule.minLength != null && trimmed.length < rule.minLength) return `حقل ${label} يجب أن لا يقل عن ${rule.minLength} حرف`;
-            if (rule.maxLength != null && trimmed.length > rule.maxLength) return `حقل ${label} يجب أن لا يزيد عن ${rule.maxLength} حرف`;
+        if (type === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(trimmed)) return `حقل ${label} يجب أن يكون بريدًا إلكترونيًا صالحًا`;
+        }
+
+        if (type === 'password') {
+            if (minLength != null && trimmed.length < minLength) return `حقل ${label} يجب أن لا يقل عن ${minLength} أحرف`;
+            if (maxLength != null && trimmed.length > maxLength) return `حقل ${label} يجب أن لا يزيد عن ${maxLength} أحرف`;
+        }
+
+        if (type === 'confirmPassword' && form) {
+            const target = form.querySelector<HTMLInputElement>(`[name="${rule.matchWith}"]`);
+            if (target && target.value !== trimmed) {
+                return `حقل ${label} لا يطابق ${rule.matchWith == 'password' ? 'كلمة المرور' : rule.matchWith}`;
+            }
+        }
+
+        if (type === 'string') {
+            if (minLength != null && trimmed.length < minLength) return `حقل ${label} يجب أن لا يقل عن ${minLength} حرف`;
+            if (maxLength != null && trimmed.length > maxLength) return `حقل ${label} يجب أن لا يزيد عن ${maxLength} حرف`;
+        }
+
+        if (type === 'phone') {
+            const phoneRegex = /^(010|011|012|015)[0-9]{8}$/;
+            if (!phoneRegex.test(trimmed)) {
+                return `حقل ${label} يجب أن يكون رقم هاتف مصري صحيح (مثال: 01012345678)`;
+            }
         }
     }
-
     return null;
 }
 
@@ -44,7 +68,7 @@ export function attachLiveValidation(form: HTMLFormElement, rules: FieldRule[]) 
     const validateInput = (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
         const rule = fieldRules.get(input.name);
         if (!rule) return true;
-        const error = validateField(String((input as HTMLInputElement).value ?? ''), rule);
+        const error = validateField(input.value ?? '', rule, form);
         setError(input.name, error);
         if (error) {
             input.setAttribute('aria-invalid', 'true');
@@ -60,8 +84,9 @@ export function attachLiveValidation(form: HTMLFormElement, rules: FieldRule[]) 
             let hasErrors = false;
             rules.forEach((r) => {
                 const input = form.elements.namedItem(r.name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
-                if (input && input.getAttribute('aria-invalid') === 'true') {
-                    hasErrors = true;
+                if (input) {
+                    const valid = validateInput(input);
+                    if (!valid) hasErrors = true;
                 }
             });
             submitButton.disabled = hasErrors;
@@ -97,7 +122,6 @@ export function attachLiveValidation(form: HTMLFormElement, rules: FieldRule[]) 
         }
     });
 
-    // Initial validation check
     setTimeout(() => {
         rules.forEach((r) => {
             const input = form.elements.namedItem(r.name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;

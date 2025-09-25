@@ -8,7 +8,11 @@ use App\Models\Customer;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductUnit;
+use App\Models\PurchaseInvoice;
+use App\Models\PurchaseInvoiceItem;
 use App\Models\Role;
+use App\Models\SalesInvoice;
+use App\Models\SalesInvoiceItem;
 use App\Models\Sequence;
 use App\Models\Supplier;
 use App\Models\Unit;
@@ -69,6 +73,16 @@ class DatabaseSeeder extends Seeder
             ['name' => 'فلفل أسود', 'category_id' => $catSpices->id, 'base_unit_id' => $uGram->id, 'sale_price' => 200, 'cost_price' => 150, 'min_stock' => 500],
             ['name' => 'نعناع', 'category_id' => $catHerbs->id, 'base_unit_id' => $uGram->id, 'sale_price' => 90, 'cost_price' => 60, 'min_stock' => 300],
         ];
+
+        User::factory(10)->create();
+        Warehouse::factory(10)->create();
+        Supplier::factory(20)->create();
+        Customer::factory(500)->create();
+
+        Product::factory(1000)->create();
+
+        SalesInvoice::factory(3000)->create();
+        PurchaseInvoice::factory(2000)->create();
 
         foreach ($products as $p) {
             $product = Product::query()->firstOrCreate(

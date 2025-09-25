@@ -4,10 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-
 import customersRoutes from '@/routes/customers'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'العملاء', href: customersRoutes.index().url },
@@ -15,20 +13,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CustomerCreate() {
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="customers"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 150 },
-                    { name: 'phone', label: 'الهاتف', maxLength: 30 },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="customers"]', [
+        { name: 'name', label: 'الاسم' },
+        { name: 'phone', label: 'الهاتف', type: 'phone', required: false },
+    ])
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="عميل جديد" />
@@ -38,7 +26,7 @@ export default function CustomerCreate() {
                     action={customersRoutes.store().url}
                     method="post"
                     className="mx-auto w-full max-w-xl space-y-4"
-                    onSubmit={(e)=> {
+                    onSubmit={(e) => {
                         const form = e.currentTarget as HTMLFormElement
                         const nameInput = (form.elements.namedItem('name') as HTMLInputElement)
                         if (!nameInput.value || nameInput.value.trim() === '') {
@@ -57,7 +45,7 @@ export default function CustomerCreate() {
                             <div className="grid gap-2">
                                 <Label htmlFor="phone">الهاتف</Label>
                                 <Input id="phone" name="phone" />
-                                <div className="text-sm text-destructive">{errors.phone}</div>
+                                <div className="text-sm text-destructive" data-error-for='phone'>{errors.phone}</div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="address">العنوان</Label>
@@ -69,27 +57,27 @@ export default function CustomerCreate() {
                                 <Input id="email" name="email" type="email" />
                                 <div className="text-sm text-destructive">{errors.email}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="tax_id">الرقم الضريبي</Label>
                                 <Input id="tax_id" name="tax_id" />
                                 <div className="text-sm text-destructive">{errors.tax_id}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="opening_balance">الرصيد الافتتاحي</Label>
                                 <Input id="opening_balance" name="opening_balance" type="number" step="0.01" min="0" defaultValue="0" />
                                 <div className="text-sm text-destructive">{errors.opening_balance}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="credit_limit">حد الائتمان</Label>
                                 <Input id="credit_limit" name="credit_limit" type="number" step="0.01" min="0" defaultValue="0" />
                                 <div className="text-sm text-destructive">{errors.credit_limit}</div>
                             </div>
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="notes">ملاحظات</Label>
                                 <Input id="notes" name="notes" />
                                 <div className="text-sm text-destructive">{errors.notes}</div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex- items-center gap-2 hidden">
                                 <input id="is_active" name="is_active" type="checkbox" className="h-4 w-4" />
                                 <Label htmlFor="is_active">نشط</Label>
                             </div>

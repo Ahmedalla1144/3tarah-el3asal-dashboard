@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useState, useEffect} from 'react'
+import { useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { attachLiveValidation } from '@/components/forms/validate'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'المنتجات', href: productsRoutes.index().url },
@@ -23,24 +23,15 @@ interface PageProps {
 export default function ProductCreate({ categories, units }: PageProps) {
     const [isActive, setIsActive] = useState(true)
 
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="products"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 200 },
-                    { name: 'category_id', label: 'الفئة', required: true },
-                    { name: 'base_unit_id', label: 'الوحدة الأساسية', required: true },
-                    { name: 'sale_price', label: 'سعر البيع', required: true },
-                    { name: 'cost_price', label: 'سعر التكلفة', required: true },
-                    { name: 'min_stock', label: 'الحد الأدنى للمخزون', required: true },
-                ])
-            }
-        }, 100)
+    useLiveValidation('form[action*="products"]', [
+        { name: 'name', label: 'الاسم', minLength: 2 },
+        { name: 'category_id', label: 'الفئة', type: 'number' },
+        { name: 'base_unit_id', label: 'الوحدة الأساسية', type: 'number' },
+        { name: 'sale_price', label: 'سعر البيع', type: 'number' },
+        { name: 'cost_price', label: 'سعر التكلفة', type: 'number' },
+        { name: 'min_stock', label: 'الحد الأدنى للمخزون', type: 'number' },
+    ]);
 
-        return () => clearTimeout(timer)
-    }, [])
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="إنشاء منتج" />
@@ -75,7 +66,7 @@ export default function ProductCreate({ categories, units }: PageProps) {
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="base_unit_id">الوحدة الأساسية</Label>
-                                <Select name="base_unit_id">
+                                <Select name="base_unit_id" required>
                                     <SelectTrigger id="base_unit_id">
                                         <SelectValue placeholder="اختر وحدة" />
                                     </SelectTrigger>
@@ -102,7 +93,7 @@ export default function ProductCreate({ categories, units }: PageProps) {
                                 <Input id="min_stock" name="min_stock" type="number" step="0.01" min="0" />
                                 <div className="text-sm text-destructive" data-error-for="min_stock">{errors.min_stock}</div>
                             </div>
-                                <div className="items-center gap-2 hidden">
+                            <div className="items-center gap-2 hidden">
                                 <input type="hidden" name="is_active" value={isActive ? '1' : '0'} />
                                 <Checkbox id="is_active" checked={isActive} onCheckedChange={(val) => setIsActive(!!val)} />
                                 <Label htmlFor="is_active">نشط</Label>

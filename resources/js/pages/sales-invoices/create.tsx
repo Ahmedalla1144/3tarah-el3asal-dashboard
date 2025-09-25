@@ -224,12 +224,12 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, ne
                                             )}
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.unit_price`]}</div>
                                         </div>
-                                        <div className="md:col-span-3">
+                                        <div className="md:col-span-3 hidden">
                                             <Label>الخصم</Label>
                                             <Input name={`items[${idx}][discount_value]`} value={items[idx].discount_value} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, discount_value: e.target.value}: r))} type="number" step="0.01" min="0" />
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.discount_value`]}</div>
                                         </div>
-                                        <div className="md:col-span-3">
+                                        <div className="md:col-span-3 hidden">
                                             <Label>الضريبة</Label>
                                             <Input name={`items[${idx}][tax_value]`} value={items[idx].tax_value} onChange={(e)=> setItems(prev=> prev.map((r,i)=> i===idx?{...r, tax_value: e.target.value}: r))} type="number" step="0.01" min="0" />
                                             <div className="text-sm text-destructive">{errors[`items.${idx}.tax_value`]}</div>
@@ -269,7 +269,7 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, ne
                                 </div>
                             </div>
 
-                            <div className="grid gap-2">
+                            <div className="grid- gap-2 hidden">
                                 <Label htmlFor="notes">ملاحظات</Label>
                                 <Input id="notes" name="notes" />
                                 <div className="text-sm text-destructive">{errors.notes}</div>

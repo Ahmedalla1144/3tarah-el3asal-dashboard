@@ -92,13 +92,6 @@ export default function CustomerPayment({ customer }: PageProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
-        // تشخيص البيانات قبل الإرسال
-        console.log('Form data before submit:', {
-            formData,
-            allocations,
-            totalAllocated
-        })
-
         // التحقق من أن المجموع المخصص يساوي المبلغ المدفوع
         if (Math.abs(totalAllocated - parseFloat(formData.amount)) > 0.01) {
             alert('مجموع التخصيمات يجب أن يساوي المبلغ المدفوع')
@@ -176,7 +169,7 @@ export default function CustomerPayment({ customer }: PageProps) {
                                             min="0.01"
                                             max={customer.current_balance}
                                             required
-                                            value={formData.amount}
+                                            value={formData.amount || customer.current_balance}
                                             onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
                                             placeholder="0.00"
                                         />

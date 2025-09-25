@@ -230,8 +230,8 @@
                     <th style="width: 15%;">الوحدة</th>
                     <th style="width: 10%;">الكمية</th>
                     <th style="width: 15%;">سعر الوحدة</th>
-                    <th style="width: 10%;">الخصم</th>
-                    <th style="width: 10%;">الضريبة</th>
+                    <th style="width: 10%;display: none">الخصم</th>
+                    <th style="width: 10%;display: none">الضريبة</th>
                     <th style="width: 15%;">الإجمالي</th>
                 </tr>
             </thead>
@@ -243,8 +243,8 @@
                     <td>{{ $item->unit->name }}</td>
                     <td>{{ number_format($item->qty, 0) }}</td>
                     <td>{{ rtrim(rtrim(number_format($item->unit_cost, 2), '0'), '.') }} جنيه</td>
-                    <td>{{ rtrim(rtrim(number_format($item->discount_value, 2), '0'), '.') }} جنيه</td>
-                    <td>{{ rtrim(rtrim(number_format($item->tax_value, 2), '0'), '.') }} جنيه</td>
+                    <td style="display: none">{{ rtrim(rtrim(number_format($item->discount_value, 2), '0'), '.') }} جنيه</td>
+                    <td style="display: none">{{ rtrim(rtrim(number_format($item->tax_value, 2), '0'), '.') }} جنيه</td>
                     <td>{{ rtrim(rtrim(number_format($item->line_total, 2), '0'), '.') }} جنيه</td>
                 </tr>
                 @endforeach

@@ -84,8 +84,8 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                                 <th className="px-4 py-2 text-left text-sm font-medium">SKU</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الكمية</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">سعر الوحدة</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الخصم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الضريبة</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium hidden">الخصم</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium hidden">الضريبة</th>
                                 <th className="px-4 py-2 text-left text-sm font-medium">الإجمالي</th>
                             </tr>
                         </thead>
@@ -96,8 +96,8 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                                     <td className="px-4 py-2 text-sm">{it.sku ?? '-'}</td>
                                     <td className="px-4 py-2 text-sm">{formatNumber(it.qty)}</td>
                                     <td className="px-4 py-2 text-sm">{formatEGP(it.unit_cost)}</td>
-                                    <td className="px-4 py-2 text-sm">{formatEGP(it.discount_value)}</td>
-                                    <td className="px-4 py-2 text-sm">{formatEGP(it.tax_value)}</td>
+                                    <td className="px-4 py-2 text-sm hidden">{formatEGP(it.discount_value)}</td>
+                                    <td className="px-4 py-2 text-sm hidden">{formatEGP(it.tax_value)}</td>
                                     <td className="px-4 py-2 text-sm">{formatEGP(it.line_total)}</td>
                                 </tr>
                             ))}
@@ -106,9 +106,9 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                 </div>
 
                 <div className="ml-auto w-full max-w-sm space-y-2 rounded-lg border p-4">
-                    <div className="flex items-center justify-between text-sm"><span>الإجمالي قبل</span><span>{formatEGP(invoice.subtotal)}</span></div>
-                    <div className="flex items-center justify-between text-sm"><span>الخصم</span><span>{formatEGP(invoice.discount_total)}</span></div>
-                    <div className="flex items-center justify-between text-sm"><span>الضريبة</span><span>{formatEGP(invoice.tax_total)}</span></div>
+                    <div className="flex- items-center justify-between text-sm hidden"><span>الإجمالي قبل</span><span>{formatEGP(invoice.subtotal)}</span></div>
+                    <div className="flex- items-center justify-between text-sm hidden"><span>الخصم</span><span>{formatEGP(invoice.discount_total)}</span></div>
+                    <div className="flex- items-center justify-between text-sm hidden"><span>الضريبة</span><span>{formatEGP(invoice.tax_total)}</span></div>
                     <div className="flex items-center justify-between text-base font-semibold"><span>الإجمالي</span><span>{formatEGP(invoice.total)}</span></div>
                     <div className="flex items-center justify-between text-sm"><span>المدفوع</span><span>{formatEGP(invoice.paid ?? 0)}</span></div>
                     <div className="flex items-center justify-between text-sm"><span>المتبقي</span><span>{formatEGP(invoice.remaining ?? 0)}</span></div>

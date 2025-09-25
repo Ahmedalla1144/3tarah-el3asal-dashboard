@@ -42,12 +42,12 @@ export default function ProductEdit({ product, categories, units, product_units 
             const form = document.querySelector('form[action*="products"]') as HTMLFormElement
             if (form) {
                 attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 200 },
-                    { name: 'category_id', label: 'الفئة', required: true },
-                    { name: 'base_unit_id', label: 'الوحدة الأساسية', required: true },
-                    { name: 'sale_price', label: 'سعر البيع', required: true },
-                    { name: 'cost_price', label: 'سعر التكلفة', required: true },
-                    { name: 'min_stock', label: 'الحد الأدنى للمخزون', required: true },
+                    { name: 'name', label: 'الاسم'},
+                    { name: 'category_id', label: 'الفئة', type: 'number' },
+                    { name: 'base_unit_id', label: 'الوحدة الأساسية', type: 'number' },
+                    { name: 'sale_price', label: 'سعر البيع', type: 'number' },
+                    { name: 'cost_price', label: 'سعر التكلفة', type: 'number' },
+                    { name: 'min_stock', label: 'الحد الأدنى للمخزون', type: 'number' },
                 ])
             }
         }, 100)
@@ -57,12 +57,12 @@ export default function ProductEdit({ product, categories, units, product_units 
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'المنتجات', href: productsRoutes.index().url },
-        { title: `تعديل #${product.id}`, href: productsRoutes.edit(product.id).url },
+        { title: `تعديل #${product.name}`, href: productsRoutes.edit(product.id).url },
     ]
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`تعديل منتج #${product.id}`} />
+            <Head title={`تعديل منتج #${product.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <Form
@@ -109,7 +109,6 @@ export default function ProductEdit({ product, categories, units, product_units 
                                     const cp = parseFloat(String(product.cost_price) || '0')
                                     const newSp = Number.isFinite(sp) ? (sp * ratio) : sp
                                     const newCp = Number.isFinite(cp) ? (cp * ratio) : cp
-                                    console.log(newSp, newCp)
                                     setSalePrice(newSp ? String(Number(newSp.toFixed(6))) : '')
                                     setCostPrice(newCp ? String(Number(newCp.toFixed(6))) : '')
                                     setBaseUnitId(val)

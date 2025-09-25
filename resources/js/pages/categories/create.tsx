@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'الفئات', href: categoriesRoutes.index().url },
@@ -14,19 +13,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function CategoryCreate() {
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="categories"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 100 },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="categories"]', [
+        {name: 'name', label: 'الاسم'}
+    ]);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="إنشاء فئة" />

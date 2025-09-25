@@ -34,7 +34,7 @@ class ProductController extends Controller
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('sku', 'like', "%{$search}%");
+                        ->orWhere('sku', 'like', "%{$search}%");
                 });
             })
             ->orderByDesc('id')
@@ -94,23 +94,25 @@ class ProductController extends Controller
     {
         $this->authorize('create', Product::class);
 
-        $data = $request->validated();
-        $product = Product::create($data);
+        try {
+            $data = $request->validated();
+            $product = Product::create($data);
 
-        // Automatically create a product unit for the base unit if it exists
-        if ($product->base_unit_id) {
-            ProductUnit::create([
-                'product_id' => $product->id,
-                'unit_id' => $product->base_unit_id,
-                'ratio_to_base' => 1.0,
-                'is_default_sale' => true, // Make base unit default for sales
-                'is_default_buy' => true,  // Make base unit default for purchases
-            ]);
+            if ($product->base_unit_id) {
+                ProductUnit::create([
+                    'product_id' => $product->id,
+                    'unit_id' => $product->base_unit_id,
+                    'ratio_to_base' => 1.0,
+                    'is_default_sale' => true,
+                    'is_default_buy' => true,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'حدث خطأ ما! برجاء المحاولة مرة اخرى');
         }
-
         return redirect()
             ->route('products.index')
-            ->with('status', 'Product created');
+            ->with('status', "تم اضافة المنتج $product->name");
     }
 
     /**

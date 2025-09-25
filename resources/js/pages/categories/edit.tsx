@@ -5,27 +5,16 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 interface PageProps {
     category: { id: number; name: string }
 }
 
 export default function CategoryEdit({ category }: PageProps) {
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="categories"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 100 },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="categories"]', [
+            {name: 'name', label: 'الاسم'}
+        ]);
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'الفئات', href: categoriesRoutes.index().url },
         { title: `تعديل #${category.id}`, href: categoriesRoutes.edit(category.id).url },

@@ -4,14 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { type BreadcrumbItem } from '@/types'
-import { useEffect } from 'react'
-import { attachLiveValidation } from '@/components/forms/validate'
 
 type Role = { id: number; name: string }
 
 interface PageProps { roles: Role[] }
 
 import usersRoutes from '@/routes/users'
+import { useLiveValidation } from '@/hooks/useLiveValidation'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'المستخدمون', href: usersRoutes.index().url },
@@ -19,22 +18,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 export default function UserCreate({ roles }: PageProps) {
-    useEffect(() => {
-        // Use a timeout to ensure the form is rendered
-        const timer = setTimeout(() => {
-            const form = document.querySelector('form[action*="users"]') as HTMLFormElement
-            if (form) {
-                attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم', required: true, minLength: 2, maxLength: 100 },
-                    { name: 'email', label: 'البريد الإلكتروني', required: true, maxLength: 100 },
-                    { name: 'password', label: 'كلمة المرور', required: true, minLength: 6, maxLength: 50 },
-                    { name: 'password_confirmation', label: 'تأكيد كلمة المرور', required: true },
-                ])
-            }
-        }, 100)
-
-        return () => clearTimeout(timer)
-    }, [])
+    useLiveValidation('form[action*="users"]', [
+        { name: 'name', label: 'الاسم' },
+        { name: 'email', label: 'البريد الإلكتروني', type: 'email' },
+        { name: 'password', label: 'كلمة المرور', minLength: 6, maxLength: 50, type: 'password' },
+        { name: 'password_confirmation', label: 'تأكيد كلمة المرور', matchWith: 'password', type: 'confirmPassword' },
+    ]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

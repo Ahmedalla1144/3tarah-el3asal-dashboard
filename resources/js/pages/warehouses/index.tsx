@@ -19,7 +19,7 @@ interface PageProps {
         per_page: number
         total: number
     },
-    filters: {search: string}
+    filters: { search: string }
 }
 
 import warehousesRoutes from '@/routes/warehouses'
@@ -43,7 +43,7 @@ export default function WarehousesIndex({ warehouses, filters }: PageProps) {
                 <div className="flex items-center justify-between gap-2">
                     <div className="w-full max-w-sm">
                         <Input
-                            placeholder="ابحث باسم المخزن"
+                            placeholder="ابحث باسم المخزن او الكود"
                             value={search}
                             onChange={(e) => {
                                 setSearch(e.target.value)
@@ -60,22 +60,22 @@ export default function WarehousesIndex({ warehouses, filters }: PageProps) {
                 </div>
 
 
-                    <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
-                        <table className="min-w-[500px] w-full divide-y divide-border">
-                            <thead className="bg-muted/50">
-                                <tr>
-                                    <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
-                                    <th className="px-4 py-2 text-left text-sm font-medium">الكود</th>
-                                    <th className="px-4 py-2 text-left text-sm font-medium">العنوان</th>
-                                    <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border bg-background">
+                <div className="overflow-x-auto rounded-lg border border-sidebar-border/70 dark:border-sidebar-border">
+                    <table className="min-w-[500px] w-full divide-y divide-border">
+                        <thead className="bg-muted/50">
+                            <tr>
+                                <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium">الكود</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium">العنوان</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border bg-background">
 
 
-                            {warehouses.data.length === 0 ? (
+                            {search && warehouses.data.length === 0 ? (
                                 <EmptyState colSpan={4} />
-                ) : (
+                            ) : (
                                 warehouses.data.map((w) => (
                                     <tr key={w.id}>
                                         <td className="px-4 py-2 text-sm">{w.name}</td>
@@ -103,9 +103,9 @@ export default function WarehousesIndex({ warehouses, filters }: PageProps) {
                                     </tr>
                                 ))
                             )}
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </AppLayout>
     )
