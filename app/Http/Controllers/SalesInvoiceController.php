@@ -141,7 +141,7 @@ class SalesInvoiceController extends Controller
             $productsById = Product::query()->whereIn('id', $productIds)->get()->keyBy('id');
             $ratios = ProductUnit::query()
                 ->whereIn('product_id', $productIds)
-                ->whereIn('unit_id', collect($items)->pluck('unit_id')->map(fn($v)=>(int)$v)->unique()->all())
+                ->whereIn('unit_id', collect($items)->pluck('unit_id')->map(fn($v) => (int)$v)->unique()->all())
                 ->get()
                 ->keyBy(fn($r) => $r->product_id . '|' . $r->unit_id);
 
@@ -291,7 +291,7 @@ class SalesInvoiceController extends Controller
         $salesInvoice->load([
             'customer',
             'warehouse',
-            'items.product',
+            'items.product' => function ($query) {$query->withTrashed();},
             'items.unit'
         ]);
 
@@ -314,7 +314,7 @@ class SalesInvoiceController extends Controller
                     'id' => $salesInvoice->warehouse->id,
                     'name' => $salesInvoice->warehouse->name
                 ] : null,
-                'items' => $salesInvoice->items->map(function($item) {
+                'items' => $salesInvoice->items->map(function ($item) {
                     return [
                         'id' => $item->id,
                         'product' => [
@@ -366,7 +366,7 @@ class SalesInvoiceController extends Controller
     public function pay(Request $request, SalesInvoice $salesInvoice): RedirectResponse
     {
         $validated = $request->validate([
-            'amount' => ['required', 'numeric', 'min:0.01', function($attr, $value, $fail) use ($salesInvoice) {
+            'amount' => ['required', 'numeric', 'min:0.01', function ($attr, $value, $fail) use ($salesInvoice) {
                 if ((float)$value > (float)$salesInvoice->remaining_amount) {
                     $fail('لا يمكن أن يكون المبلغ المدفوع أكبر من المتبقي للفاتورة');
                 }
@@ -412,7 +412,9 @@ class SalesInvoiceController extends Controller
         $salesInvoice->load([
             'customer',
             'warehouse',
-            'items.product',
+            'items.product' => function ($query) {
+                $query->withTrashed();
+            },
             'items.unit'
         ]);
 

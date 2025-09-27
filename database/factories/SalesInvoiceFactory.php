@@ -32,7 +32,7 @@ class SalesInvoiceFactory extends Factory
             'warehouse_id' => Warehouse::get()->random()->id ?? Warehouse::factory(),
             'date' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'due_date' => $this->faker->optional()->dateTimeBetween('now', '+3 months'),
-            'status' => $this->faker->randomElement(['open', 'paid', 'cancelled']),
+            'status' => $this->faker->randomElement(['open', 'paid']),
             'subtotal' => $subtotal,
             'discount_total' => $discount,
             'tax_total' => $tax,

@@ -50,23 +50,28 @@ interface PageProps {
 }
 
 const CERT = `-----BEGIN CERTIFICATE-----
-MIIDKzCCAhOgAwIBAgIURQdGKgELUzk+S6jHmuV7o1oc9hAwDQYJKoZIhvcNAQEL
-BQAwJTEjMCEGA1UEAwwaM3RhcmEuZWwzYXNhbC5tcmJvdHVzYS5jb20wHhcNMjUw
-OTI1MTUyMjA1WhcNMzUwOTIzMTUyMjA1WjAlMSMwIQYDVQQDDBozdGFyYS5lbDNh
-c2FsLm1yYm90dXNhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AM1UUd7fxTmZn4w0JvjQ+N8dssYwtcpSkfUKQ77m4nw/lpDbJbE+7Kpq53GAh5qn
-ykngJl9ojBcHO4XKCKuCOAW+kxphr7mxA0rYJU96p42pys1PC8S2MjVyCI3aehcf
-aBCqRZtd39SAG+43lCwl0CXLcWw4HL727i1Cp9u1FfRidm10f62u33EJSgmR4lyL
-FijuW8v6QXhFAgmAEmBKQENf7aix+NzJ4h5fL8tA040NzVaVZHRT7uIpfDzv0ToY
-I3JbzSxdTmixe1sIz0h6pqUAcibUUUArmrrr10m4Kcbg0YBEeYp8YybgJo0Iq3U8
-FcZfOgXyu0VbcVqJvqCn7VkCAwEAAaNTMFEwHQYDVR0OBBYEFEiUvw4foYihYNkL
-aIbIrtQjX7GRMB8GA1UdIwQYMBaAFEiUvw4foYihYNkLaIbIrtQjX7GRMA8GA1Ud
-EwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAFvsyUF5S1wPEcs3RBQT3cId
-zrv2yQcestfuJ25aRKxt3F6k2/DSTzMNNqz5OkJ+9Sp1LlVqJLxneczt25IfeKZj
-94cagbYPnBHplLf8+glN/reesM50pxJ5HsRmei0vjjtIEYJo7qhnJzSDopSu/pZJ
-PFX4L4K0W+0EEFMbDdcJtRNFeqSAnB1c+qGp2eXbYUJ3sfPOdyKBvjZ/+BAFv7QY
-xXv180+qjXOkOws1UAbScgi5t9/OpVt+55Km+fHvoER2cHK34pU+tqCF5kddip1h
-Eq9iHF2ox/AjpR4n7T3o5l6iIZxC4I5p7rhQl5OGOmgHJSlTlKh9qrbEJILAkZU=
+MIIECzCCAvOgAwIBAgIGAZmIJ9+OMA0GCSqGSIb3DQEBCwUAMIGiMQswCQYDVQQG
+EwJVUzELMAkGA1UECAwCTlkxEjAQBgNVBAcMCUNhbmFzdG90YTEbMBkGA1UECgwS
+UVogSW5kdXN0cmllcywgTExDMRswGQYDVQQLDBJRWiBJbmR1c3RyaWVzLCBMTEMx
+HDAaBgkqhkiG9w0BCQEWDXN1cHBvcnRAcXouaW8xGjAYBgNVBAMMEVFaIFRyYXkg
+RGVtbyBDZXJ0MB4XDTI1MDkyNTIyMzIxOFoXDTQ1MDkyNTIyMzIxOFowgaIxCzAJ
+BgNVBAYTAlVTMQswCQYDVQQIDAJOWTESMBAGA1UEBwwJQ2FuYXN0b3RhMRswGQYD
+VQQKDBJRWiBJbmR1c3RyaWVzLCBMTEMxGzAZBgNVBAsMElFaIEluZHVzdHJpZXMs
+IExMQzEcMBoGCSqGSIb3DQEJARYNc3VwcG9ydEBxei5pbzEaMBgGA1UEAwwRUVog
+VHJheSBEZW1vIENlcnQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCQ
+qA6LxNrHZRa/CzI9RZ7ZlQ11OG0x4bXxzKb0cMiyA6Wv4iz/Kj4SJrQaGWZIH11f
+YVz121XQOXRUYI12GHLTO4ZDoWlMilHohuILRlKGT79EhKXngO9sXWRm0C/YO4tS
+sFEkCjkXJoAE9dJ01I278LcFH8PEq+cJToRmK/zFaA0KR2F3Qh5t6oTRAWSU2ksk
+N9BYbb288zNEFcT5+dkDA/j1MkU39q1uZVTSVypP05ghJjay519mmiB1PcwOVjkz
+UGE++T2qyh4rTyyv43/95bit7SIJ0ey6vYAgAOPdITlHzXL4owqRSOA7x95eRZ2K
+sgbDFWKKibc2sOA67u9fAgMBAAGjRTBDMBIGA1UdEwEB/wQIMAYBAf8CAQEwDgYD
+VR0PAQH/BAQDAgEGMB0GA1UdDgQWBBQb0oCANRa5Nj3KTuYROkS6f4WrqTANBgkq
+hkiG9w0BAQsFAAOCAQEACsza15jeJmQis+8ydqVRULz6eqpE1pBysZR1mh0LCyQg
+5Gmr9O2vmElJwMDMJAglQttIu1aGvKIQM1dReUctSQjXxHgr126TjCW/vZ4yCco8
+7g8Yp9P82OBtkK71I6FXSFeZkFPNvr3LzacdzHKMZF66SHJ4x/7gSiZnKNs9V0qp
+FACxmfKd3q8ZA30x4+NydD2jlvZbnEnyJwrgc2ZchkBQKo22JIBFf4n8WY3c3DW9
+50KGGPvcXmn3eU3+g313hG8jiIq6qyfnViUENKiRyAnmBI9WetpTx1SHEQliQXeS
+VSL96fa0h5a6tj7DdFMB6DcetpmklnqsJWWA2NVrng==
 -----END CERTIFICATE-----`;
 
 export default function SalesInvoiceShow({ invoice }: PageProps) {
@@ -80,7 +85,17 @@ export default function SalesInvoiceShow({ invoice }: PageProps) {
 
     useEffect(() => {
         configureQZ('/qz/sign', CERT)
-        listPrinters().then(setPrinters).catch(() => { })
+        // listPrinters().then(setPrinters).catch(() => { })
+
+        listPrinters()
+            .then((printers) => {
+                console.log("Printers found:", printers);
+                setPrinters(printers);
+            })
+            .catch((err) => {
+                console.error("Error listing printers", err);
+            });
+
     }, [])
 
     const handlePrint = () => {

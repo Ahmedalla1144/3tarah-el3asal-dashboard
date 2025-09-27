@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean('is_batch_tracked')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
             $table->index(['category_id', 'is_active']);
         });
     }

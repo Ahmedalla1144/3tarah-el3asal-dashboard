@@ -31,6 +31,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     id="email"
                                     type="email"
                                     name="email"
+                                    value={'admin@example.com'}
                                     required
                                     autoFocus
                                     tabIndex={1}
@@ -53,6 +54,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     id="password"
                                     type="password"
                                     name="password"
+                                    value={'password'}
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"

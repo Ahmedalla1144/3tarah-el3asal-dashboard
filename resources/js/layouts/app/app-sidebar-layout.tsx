@@ -15,8 +15,10 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
         const flash = props.flash
         if (flash?.error) {
             add({ title: 'خطأ', description: flash.error, variant: 'destructive' })
+            flash.error = '';
         } else if (flash?.status) {
             add({ title: 'تم', description: flash.status })
+            flash.status = '';
         }
     }, [props.flash?.error, props.flash?.status])
 

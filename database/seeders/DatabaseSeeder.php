@@ -77,12 +77,12 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
         Warehouse::factory(10)->create();
         Supplier::factory(20)->create();
-        Customer::factory(500)->create();
+        Customer::factory(25)->create();
 
-        Product::factory(1000)->create();
+        Product::factory(50)->create();
 
-        SalesInvoice::factory(3000)->create();
-        PurchaseInvoice::factory(2000)->create();
+        SalesInvoice::factory(100)->create();
+        PurchaseInvoice::factory(100)->create();
 
         foreach ($products as $p) {
             $product = Product::query()->firstOrCreate(
