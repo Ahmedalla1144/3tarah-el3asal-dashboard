@@ -109,9 +109,81 @@ hash.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     hash.form = hashForm
+/**
+ * @see routes/web.php:57
+ * @route '/qz-test'
+ */
+export const test = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: test.url(options),
+    method: 'get',
+})
+
+test.definition = {
+    methods: ["get","head"],
+    url: '/qz-test',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+ * @see routes/web.php:57
+ * @route '/qz-test'
+ */
+test.url = (options?: RouteQueryOptions) => {
+    return test.definition.url + queryParams(options)
+}
+
+/**
+ * @see routes/web.php:57
+ * @route '/qz-test'
+ */
+test.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: test.url(options),
+    method: 'get',
+})
+/**
+ * @see routes/web.php:57
+ * @route '/qz-test'
+ */
+test.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: test.url(options),
+    method: 'head',
+})
+
+    /**
+ * @see routes/web.php:57
+ * @route '/qz-test'
+ */
+    const testForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: test.url(options),
+        method: 'get',
+    })
+
+            /**
+ * @see routes/web.php:57
+ * @route '/qz-test'
+ */
+        testForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: test.url(options),
+            method: 'get',
+        })
+            /**
+ * @see routes/web.php:57
+ * @route '/qz-test'
+ */
+        testForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: test.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    test.form = testForm
 const qz = {
     sign: Object.assign(sign, sign),
 hash: Object.assign(hash, hash),
+test: Object.assign(test, test),
 }
 
 export default qz

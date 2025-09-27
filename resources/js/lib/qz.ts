@@ -30,8 +30,15 @@ export async function ensureQZConnected(): Promise<void> {
 }
 
 export async function listPrinters(): Promise<string[]> {
-    await ensureQZConnected();
-    return qz.printers.find();
+    try {
+        await ensureQZConnected();
+        const printers = await qz.printers.find();
+        console.log('Available printers:', printers);
+        return printers;
+    } catch (error) {
+        console.error('Error listing printers:', error);
+        throw error;
+    }
 }
 
 export async function printHtmlToPrinter(printer: string, html: string): Promise<void> {
@@ -42,10 +49,17 @@ export async function printHtmlToPrinter(printer: string, html: string): Promise
 }
 
 export async function printUrlToPrinter(printer: string, url: string): Promise<void> {
-    await ensureQZConnected();
-    const cfg = qz.configs.create(printer, { copies: 1, margins: 0 });
-    const data = [{ type: 'html', data: url }];
-    await qz.print(cfg, data);
+    try {
+        await ensureQZConnected();
+        const cfg = qz.configs.create(printer, { copies: 1, margins: 0 });
+        const data = [{ type: 'html', data: url }];
+        console.log('Printing to printer:', printer, 'URL:', url);
+        await qz.print(cfg, data);
+        console.log('Print job sent successfully');
+    } catch (error) {
+        console.error('Error printing:', error);
+        throw error;
+    }
 }
 
 export default qz;

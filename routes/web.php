@@ -52,6 +52,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // QZ Tray signing endpoints
     Route::post('/qz/sign', [QzController::class, 'sign'])->name('qz.sign');
     Route::post('/qz/hash', [QzController::class, 'hash'])->name('qz.hash');
+    
+    // QZ Test page
+    Route::get('/qz-test', function () {
+        return Inertia::render('QzTest');
+    })->name('qz.test');
+    
+    // Test print page
+    Route::get('/test-print', function () {
+        return view('test-print');
+    })->name('test.print');
 });
 
 require __DIR__ . '/settings.php';
