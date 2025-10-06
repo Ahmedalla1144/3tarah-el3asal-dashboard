@@ -1,7 +1,86 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import font from './font'
+/**
+* @see \App\Http\Controllers\QzController::cert
+ * @see app/Http/Controllers/QzController.php:11
+ * @route '/qz/cert'
+ */
+export const cert = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: cert.url(options),
+    method: 'get',
+})
+
+cert.definition = {
+    methods: ["get","head"],
+    url: '/qz/cert',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\QzController::cert
+ * @see app/Http/Controllers/QzController.php:11
+ * @route '/qz/cert'
+ */
+cert.url = (options?: RouteQueryOptions) => {
+    return cert.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\QzController::cert
+ * @see app/Http/Controllers/QzController.php:11
+ * @route '/qz/cert'
+ */
+cert.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: cert.url(options),
+    method: 'get',
+})
+/**
+* @see \App\Http\Controllers\QzController::cert
+ * @see app/Http/Controllers/QzController.php:11
+ * @route '/qz/cert'
+ */
+cert.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: cert.url(options),
+    method: 'head',
+})
+
+    /**
+* @see \App\Http\Controllers\QzController::cert
+ * @see app/Http/Controllers/QzController.php:11
+ * @route '/qz/cert'
+ */
+    const certForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: cert.url(options),
+        method: 'get',
+    })
+
+            /**
+* @see \App\Http\Controllers\QzController::cert
+ * @see app/Http/Controllers/QzController.php:11
+ * @route '/qz/cert'
+ */
+        certForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: cert.url(options),
+            method: 'get',
+        })
+            /**
+* @see \App\Http\Controllers\QzController::cert
+ * @see app/Http/Controllers/QzController.php:11
+ * @route '/qz/cert'
+ */
+        certForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: cert.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    cert.form = certForm
 /**
 * @see \App\Http\Controllers\QzController::sign
- * @see app/Http/Controllers/QzController.php:11
+ * @see app/Http/Controllers/QzController.php:21
  * @route '/qz/sign'
  */
 export const sign = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +95,7 @@ sign.definition = {
 
 /**
 * @see \App\Http\Controllers\QzController::sign
- * @see app/Http/Controllers/QzController.php:11
+ * @see app/Http/Controllers/QzController.php:21
  * @route '/qz/sign'
  */
 sign.url = (options?: RouteQueryOptions) => {
@@ -25,7 +104,7 @@ sign.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\QzController::sign
- * @see app/Http/Controllers/QzController.php:11
+ * @see app/Http/Controllers/QzController.php:21
  * @route '/qz/sign'
  */
 sign.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +114,7 @@ sign.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\QzController::sign
- * @see app/Http/Controllers/QzController.php:11
+ * @see app/Http/Controllers/QzController.php:21
  * @route '/qz/sign'
  */
     const signForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +124,7 @@ sign.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\QzController::sign
- * @see app/Http/Controllers/QzController.php:11
+ * @see app/Http/Controllers/QzController.php:21
  * @route '/qz/sign'
  */
         signForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +135,7 @@ sign.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     sign.form = signForm
 /**
 * @see \App\Http\Controllers\QzController::hash
- * @see app/Http/Controllers/QzController.php:34
+ * @see app/Http/Controllers/QzController.php:44
  * @route '/qz/hash'
  */
 export const hash = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -71,7 +150,7 @@ hash.definition = {
 
 /**
 * @see \App\Http\Controllers\QzController::hash
- * @see app/Http/Controllers/QzController.php:34
+ * @see app/Http/Controllers/QzController.php:44
  * @route '/qz/hash'
  */
 hash.url = (options?: RouteQueryOptions) => {
@@ -80,7 +159,7 @@ hash.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\QzController::hash
- * @see app/Http/Controllers/QzController.php:34
+ * @see app/Http/Controllers/QzController.php:44
  * @route '/qz/hash'
  */
 hash.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -90,7 +169,7 @@ hash.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\QzController::hash
- * @see app/Http/Controllers/QzController.php:34
+ * @see app/Http/Controllers/QzController.php:44
  * @route '/qz/hash'
  */
     const hashForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -100,7 +179,7 @@ hash.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\QzController::hash
- * @see app/Http/Controllers/QzController.php:34
+ * @see app/Http/Controllers/QzController.php:44
  * @route '/qz/hash'
  */
         hashForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -109,81 +188,11 @@ hash.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     hash.form = hashForm
-/**
- * @see routes/web.php:57
- * @route '/qz-test'
- */
-export const test = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: test.url(options),
-    method: 'get',
-})
-
-test.definition = {
-    methods: ["get","head"],
-    url: '/qz-test',
-} satisfies RouteDefinition<["get","head"]>
-
-/**
- * @see routes/web.php:57
- * @route '/qz-test'
- */
-test.url = (options?: RouteQueryOptions) => {
-    return test.definition.url + queryParams(options)
-}
-
-/**
- * @see routes/web.php:57
- * @route '/qz-test'
- */
-test.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
-    url: test.url(options),
-    method: 'get',
-})
-/**
- * @see routes/web.php:57
- * @route '/qz-test'
- */
-test.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
-    url: test.url(options),
-    method: 'head',
-})
-
-    /**
- * @see routes/web.php:57
- * @route '/qz-test'
- */
-    const testForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: test.url(options),
-        method: 'get',
-    })
-
-            /**
- * @see routes/web.php:57
- * @route '/qz-test'
- */
-        testForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: test.url(options),
-            method: 'get',
-        })
-            /**
- * @see routes/web.php:57
- * @route '/qz-test'
- */
-        testForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: test.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    test.form = testForm
 const qz = {
-    sign: Object.assign(sign, sign),
+    cert: Object.assign(cert, cert),
+sign: Object.assign(sign, sign),
 hash: Object.assign(hash, hash),
-test: Object.assign(test, test),
+font: Object.assign(font, font),
 }
 
 export default qz

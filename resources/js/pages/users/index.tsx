@@ -61,10 +61,10 @@ export default function UsersIndex({ users, filters }: PageProps) {
                     <table className="w-full min-w-[600px] divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">البريد</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الأدوار</th>
-                                <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الاسم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">البريد</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الأدوار</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">

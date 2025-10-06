@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../wayfinder'
 /**
- * @see routes/web.php:19
+ * @see routes/web.php:21
  * @route '/'
  */
 export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ home.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
- * @see routes/web.php:19
+ * @see routes/web.php:21
  * @route '/'
  */
 home.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ home.url = (options?: RouteQueryOptions) => {
 }
 
 /**
- * @see routes/web.php:19
+ * @see routes/web.php:21
  * @route '/'
  */
 home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -30,7 +30,7 @@ home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
- * @see routes/web.php:19
+ * @see routes/web.php:21
  * @route '/'
  */
 home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -39,7 +39,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
- * @see routes/web.php:19
+ * @see routes/web.php:21
  * @route '/'
  */
     const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -48,7 +48,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
- * @see routes/web.php:19
+ * @see routes/web.php:21
  * @route '/'
  */
         homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -56,7 +56,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
- * @see routes/web.php:19
+ * @see routes/web.php:21
  * @route '/'
  */
         homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -148,6 +148,77 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     dashboard.form = dashboardForm
+/**
+ * @see routes/web.php:42
+ * @route '/print-worker'
+ */
+export const printWorker = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: printWorker.url(options),
+    method: 'get',
+})
+
+printWorker.definition = {
+    methods: ["get","head"],
+    url: '/print-worker',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+ * @see routes/web.php:42
+ * @route '/print-worker'
+ */
+printWorker.url = (options?: RouteQueryOptions) => {
+    return printWorker.definition.url + queryParams(options)
+}
+
+/**
+ * @see routes/web.php:42
+ * @route '/print-worker'
+ */
+printWorker.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: printWorker.url(options),
+    method: 'get',
+})
+/**
+ * @see routes/web.php:42
+ * @route '/print-worker'
+ */
+printWorker.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: printWorker.url(options),
+    method: 'head',
+})
+
+    /**
+ * @see routes/web.php:42
+ * @route '/print-worker'
+ */
+    const printWorkerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: printWorker.url(options),
+        method: 'get',
+    })
+
+            /**
+ * @see routes/web.php:42
+ * @route '/print-worker'
+ */
+        printWorkerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: printWorker.url(options),
+            method: 'get',
+        })
+            /**
+ * @see routes/web.php:42
+ * @route '/print-worker'
+ */
+        printWorkerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: printWorker.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    printWorker.form = printWorkerForm
 /**
  * @see routes/settings.php:21
  * @route '/settings/appearance'

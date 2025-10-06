@@ -42,7 +42,7 @@ export default function ProductEdit({ product, categories, units, product_units 
             const form = document.querySelector('form[action*="products"]') as HTMLFormElement
             if (form) {
                 attachLiveValidation(form, [
-                    { name: 'name', label: 'الاسم'},
+                    { name: 'name', label: 'الاسم', type: 'string', minLength: 2},
                     { name: 'category_id', label: 'الفئة', type: 'number' },
                     { name: 'base_unit_id', label: 'الوحدة الأساسية', type: 'number' },
                     { name: 'sale_price', label: 'سعر البيع', type: 'number' },

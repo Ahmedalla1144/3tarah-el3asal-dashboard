@@ -53,9 +53,9 @@ export default function Dashboard({ metrics }: PageProps) {
                                 <table className="min-w-full divide-y divide-border">
                                     <thead className="bg-muted/50">
                                         <tr>
-                                            <th className="px-4 py-2 text-left text-sm font-medium">المنتج</th>
-                                            <th className="px-4 py-2 text-left text-sm font-medium">المخزون</th>
-                                            <th className="px-4 py-2 text-left text-sm font-medium">الحد الأدنى</th>
+                                            <th className="px-4 py-2 text-right text-sm font-medium">المنتج</th>
+                                            <th className="px-4 py-2 text-right text-sm font-medium">المخزون</th>
+                                            <th className="px-4 py-2 text-right text-sm font-medium">الحد الأدنى</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-border bg-background">

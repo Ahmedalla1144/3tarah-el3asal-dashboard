@@ -74,15 +74,15 @@ export default function ProductsIndex({ products, filters }: PageProps) {
                     <table className="min-w-[900px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الرقم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الكود SKU</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">المخزون</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الحد الأدنى</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">سعر البيع</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">سعر التكلفة</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium hidden">نشط؟</th>
-                                <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الرقم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الاسم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الكود SKU</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">المخزون</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الحد الأدنى</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">سعر البيع</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">سعر التكلفة</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium hidden">نشط؟</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">

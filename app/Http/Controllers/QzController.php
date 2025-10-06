@@ -8,6 +8,16 @@ use Illuminate\Support\Facades\Response;
 
 class QzController extends Controller
 {
+    public function cert()
+    {
+        $certPath = storage_path('keys/qz_cert.pem');
+        if (!file_exists($certPath)) {
+            return response("Certificate not found", 500);
+        }
+        return response(file_get_contents($certPath), 200)
+            ->header('Content-Type', 'text/plain');
+    }
+
     public function sign(Request $request)
     {
         $data = (string) $request->input('data', '');
@@ -35,5 +45,19 @@ class QzController extends Controller
     {
         $data = (string) $request->input('data', '');
         return Response::make(hash('sha512', $data));
+    }
+
+    /**
+     * Return base64 of the Cairo-Regular TTF so we can inline the font into HTML sent to QZ Tray.
+     */
+    public function fontBase64()
+    {
+        $fontPath = public_path('fonts/static/Cairo-Regular.ttf');
+        if (!file_exists($fontPath)) {
+            return response('Font not found', 404);
+        }
+        $data = file_get_contents($fontPath);
+        $b64 = base64_encode($data);
+        return response($b64, 200)->header('Content-Type', 'text/plain');
     }
 }

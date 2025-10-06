@@ -41,3 +41,13 @@ export interface User {
     roles?: string[];
     [key: string]: unknown; // This allows for additional properties...
 }
+
+interface PrintJob {
+    id: number;
+    invoice_id: number;
+    printer_name?: string;
+    type: 'sales' | 'purchase';
+    printed: boolean;
+    created_at?: string;
+    updated_at?: string;
+}

@@ -18,7 +18,7 @@ export function validateField(value: string, rule: FieldRule, form?: HTMLFormEle
     if (trimmed !== '') {
         if (type === 'number') {
             const numValue = parseFloat(trimmed);
-            if (isNaN(numValue) || numValue < 0) return `حقل ${label} يجب أن يكون رقمًا صالحًا`;
+            if (isNaN(numValue) || numValue <= 0) return `حقل ${label} يجب أن يكون رقمًا صالحًا`;
         }
 
         if (type === 'email') {

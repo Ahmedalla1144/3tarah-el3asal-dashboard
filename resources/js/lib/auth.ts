@@ -6,16 +6,3 @@ export function useRoles() {
     const roles = auth?.user?.roles as string[] | undefined
     return roles ?? []
 }
-
-export function useIsAdmin() {
-    const roles = useRoles()
-    return roles.includes('admin')
-}
-
-export function useIsCashier() {
-    const roles = useRoles()
-    return roles.includes('cashier')
-}
-
-
-

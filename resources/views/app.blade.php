@@ -1,8 +1,15 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+<html lang="ar" dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <meta property="og:title" content="عطارة العسال" />
+        <meta property="og:description" content="أفضل منتجات العطارة الطبيعية" />
+        <meta property="og:image" content="https://3tara.el3asal.mrbotusa.com/logo2.svg" />
+        <meta property="og:url" content="https://3tara.el3asal.mrbotusa.com/" />
+        <meta property="og:type" content="website" />
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>

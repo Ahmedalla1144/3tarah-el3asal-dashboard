@@ -115,10 +115,10 @@ export default function CustomersIndex({ customers, filters = {} }: PageProps) {
                     <table className="w-full min-w-[500px] divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الهاتف</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الرصيد المدين</th>
-                                <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الاسم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الهاتف</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الرصيد المدين</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">

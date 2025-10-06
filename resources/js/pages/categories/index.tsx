@@ -60,9 +60,9 @@ export default function CategoriesIndex({ categories, filters }: PageProps) {
                     <table className="w-full min-w-[300px] divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الرقم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
-                                <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الرقم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الاسم</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">

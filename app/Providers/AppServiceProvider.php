@@ -31,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole(['admin', 'cashier']);
         });
 
+        Gate::define('access-print-jobs', function (User $user) {
+            return $user->hasRole(['printer']);
+        });
+
         Inertia::share('auth', function () {
             $authUser = Auth::user();
             if (!$authUser) {

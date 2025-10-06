@@ -64,10 +64,10 @@ export default function WarehousesIndex({ warehouses, filters }: PageProps) {
                     <table className="min-w-[500px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الاسم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الكود</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">العنوان</th>
-                                <th className="px-4 py-2 text-right text-sm font-medium">إجراءات</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الاسم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الكود</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">العنوان</th>
+                                <th className="px-4 py-2 text-left text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">

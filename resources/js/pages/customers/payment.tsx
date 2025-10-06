@@ -169,7 +169,7 @@ export default function CustomerPayment({ customer }: PageProps) {
                                             min="0.01"
                                             max={customer.current_balance}
                                             required
-                                            value={formData.amount || customer.current_balance}
+                                            value={formData.amount}
                                             onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
                                             placeholder="0.00"
                                         />

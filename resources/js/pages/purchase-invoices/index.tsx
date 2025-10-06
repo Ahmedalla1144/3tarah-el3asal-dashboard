@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { type BreadcrumbItem } from '@/types'
 import { useDebouncedCallback } from 'use-debounce'
 import { useState } from 'react'
-import { Plus, Printer, Eye } from 'lucide-react'
+import { Plus, Printer, Eye, CreditCard } from 'lucide-react'
 import { formatEGP } from '@/lib/currency'
 
 type InvoiceRow = {
@@ -36,6 +36,7 @@ interface PageProps {
 import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 import { form as payForm } from '@/routes/purchase-invoices/pay'
 import EmptyState from '@/components/empty-state'
+import { useToast } from '@/components/ui/toast'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'فواتير الشراء', href: purchaseInvoicesRoutes.index().url },
@@ -46,6 +47,26 @@ export default function PurchaseInvoicesIndex({ invoices, filters }: PageProps) 
     const debouncedSearch = useDebouncedCallback((value: string) => {
         router.get(purchaseInvoicesRoutes.index().url, { search: value }, { preserveState: true, replace: true })
     }, 300)
+    const { add } = useToast();
+
+    const handleRemotePrint = async (invoice: InvoiceRow) => {
+        try {
+            await fetch("/print-jobs", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    invoice_id: invoice.id,
+                    printer_name: "",
+                    type: 'purchase'
+                }),
+            });
+
+            // ✅ هنا هنعرض التوست
+            add({ title: 'تم الإرسال', description: `تم إرسال الفاتورة رقم ${invoice.number} للطابعة 🎉` });
+        } catch {
+            add({ title: 'خطأ', description: 'فشل إرسال أمر الطباعة', variant: 'destructive' });
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -75,46 +96,57 @@ export default function PurchaseInvoicesIndex({ invoices, filters }: PageProps) 
                     <table className="min-w-[900px] w-full divide-y divide-border">
                         <thead className="bg-muted/50">
                             <tr>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الرقم</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">المورد</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">التاريخ</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الحالة</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">الإجمالي</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">المدفوع</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">المتبقي</th>
-                                <th className="px-4 py-2 text-left text-sm font-medium">إجراءات</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الرقم</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">المورد</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">التاريخ</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الحالة</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">الإجمالي</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">المدفوع</th>
+                                <th className="px-4 py-2 text-right text-sm font-medium">المتبقي</th>
+                                <th className="px-4 py-2 text-center text-sm font-medium">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border bg-background">
                             {search && invoices.data.length === 0 ? (
                                 <EmptyState colSpan={8} />
                             ) : (
-                            invoices.data.map((inv) => (
-                                <tr key={inv.id}>
-                                    <td className="px-4 py-2 text-sm">{inv.number}</td>
-                                    <td className="px-4 py-2 text-sm">{inv.supplier ?? '-'}</td>
-                                    <td className="px-4 py-2 text-sm">{inv.date}</td>
-                                    <td className="px-4 py-2 text-sm">{inv.status}</td>
-                                    <td className="px-4 py-2 text-sm">{formatEGP(inv.total)}</td>
-                                    <td className="px-4 py-2 text-sm">{formatEGP(inv.paid ?? 0)}</td>
-                                    <td className="px-4 py-2 text-sm">{formatEGP(inv.remaining ?? 0)}</td>
-                                    <td className="px-4 py-2 text-sm">
-                                        <div className="flex items-center gap-2">
-                                            <Link href={purchaseInvoicesRoutes.show(inv.id).url} className="text-blue-600 hover:underline">
-                                                <Eye className="h-4 w-4" />
-                                            </Link>
-                                            <button
-                                                onClick={() => window.open(`/purchase-invoices/${inv.id}/print`, '_blank')}
-                                                className="text-green-600 hover:underline"
-                                            >
-                                                <Printer className="h-4 w-4" />
-                                            </button>
-                                            <Link href={payForm(inv.id).url} className="text-orange-600 hover:underline">سداد</Link>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
+                                invoices.data.map((inv) => (
+                                    <tr key={inv.id}>
+                                        <td className="px-4 py-2 text-sm">{inv.number}</td>
+                                        <td className="px-4 py-2 text-sm">{inv.supplier ?? '-'}</td>
+                                        <td className="px-4 py-2 text-sm">{inv.date}</td>
+                                        <td className="px-4 py-2 text-sm">{inv.status}</td>
+                                        <td className="px-4 py-2 text-sm">{formatEGP(inv.total)}</td>
+                                        <td className="px-4 py-2 text-sm">{formatEGP(inv.paid ?? 0)}</td>
+                                        <td className="px-4 py-2 text-sm">{formatEGP(inv.remaining ?? 0)}</td>
+                                        <td className="px-4 py-2 text-sm">
+                                            <div className="flex items-center gap-2">
+                                                <Button variant="outline" size='sm' title="طباعة عن بُعد" onClick={() => void handleRemotePrint(inv)} className="hover:underline">
+                                                    <Printer className="h-4 w-4" />
+                                                </Button>
+                                                <Link href={purchaseInvoicesRoutes.show(inv.id).url} className="hover:underline">
+                                                    <Button variant="outline" size='sm' title="عرض فاتورة" className="hover:underline">
+                                                        <Eye className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                                <Link
+                                                    onClick={() => window.open(`/purchase-invoices/${inv.id}/print`, '_blank')}
+                                                    className="hover:underline"
+                                                >
+                                                    <Button variant="outline" size='sm' title='طباعة فاتورة'>
+                                                        <Printer className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                                <Button variant="outline" size='sm' title='سداد فاتورة'>
+                                                    <Link href={payForm(inv.id).url} className="hover:underline">
+                                                        <CreditCard className='h-4 w-4' />
+                                                    </Link>
+                                                </Button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\QzController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductUnitController;
 use App\Http\Controllers\CategoryController;
@@ -13,8 +13,10 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerPaymentController;
+use App\Http\Controllers\PrintJobController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UnitController;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -37,9 +39,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('customers/{customer}/payment', [CustomerPaymentController::class, 'store'])->name('customers.payment.store');
         Route::resource('users', UserController::class)->except(['show']);
     });
+    Route::get('/print-worker', function () {
+        return Inertia::render('prints/index');
+    })->name('print-worker')->middleware('can:access-print-jobs');
 
     Route::middleware('can:access-sales-invoices')->group(function () {
         Route::resource('sales-invoices', SalesInvoiceController::class)->only(['index', 'create', 'store', 'show']);
+        Route::get('/sales-invoices/{salesInvoice}/pdf', [SalesInvoiceController::class, 'pdf'])
+            ->name('sales-invoices.pdf');
         Route::get('sales-invoices/{salesInvoice}/print', [SalesInvoiceController::class, 'print'])->name('sales-invoices.print');
         Route::get('sales-invoices/{salesInvoice}/pay', [SalesInvoiceController::class, 'payForm'])->name('sales-invoices.pay.form');
         Route::post('sales-invoices/{salesInvoice}/pay', [SalesInvoiceController::class, 'pay'])->name('sales-invoices.pay');
@@ -48,20 +55,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('purchase-invoices/{purchaseInvoice}/pay', [PurchaseInvoiceController::class, 'payForm'])->name('purchase-invoices.pay.form');
         Route::post('purchase-invoices/{purchaseInvoice}/pay', [PurchaseInvoiceController::class, 'pay'])->name('purchase-invoices.pay');
     });
+});
 
-    // QZ Tray signing endpoints
+
+// QZ Tray signing endpoints
+Route::withoutMiddleware([VerifyCsrfToken::class])->group(function () {
+    Route::get('/qz/cert', [QzController::class, 'cert'])->name('qz.cert');
     Route::post('/qz/sign', [QzController::class, 'sign'])->name('qz.sign');
     Route::post('/qz/hash', [QzController::class, 'hash'])->name('qz.hash');
-    
-    // QZ Test page
-    Route::get('/qz-test', function () {
-        return Inertia::render('QzTest');
-    })->name('qz.test');
-    
-    // Test print page
-    Route::get('/test-print', function () {
-        return view('test-print');
-    })->name('test.print');
+    Route::get('/qz/font-base64', [QzController::class, 'fontBase64'])->name('qz.font.base64');
+
+
+    Route::get('/print-jobs', [PrintJobController::class, 'index']);
+    Route::post('/print-jobs', [PrintJobController::class, 'store']);
+    Route::post('/print-jobs/{job}/done', [PrintJobController::class, 'done']);
 });
 
 require __DIR__ . '/settings.php';

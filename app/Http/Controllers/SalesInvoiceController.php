@@ -16,6 +16,7 @@ use App\Models\Unit;
 use App\Models\Warehouse;
 use App\Models\Account;
 use App\Models\PaymentMethod;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -291,7 +292,9 @@ class SalesInvoiceController extends Controller
         $salesInvoice->load([
             'customer',
             'warehouse',
-            'items.product' => function ($query) {$query->withTrashed();},
+            'items.product' => function ($query) {
+                $query->withTrashed();
+            },
             'items.unit'
         ]);
 
@@ -308,7 +311,8 @@ class SalesInvoiceController extends Controller
                 'customer' => $salesInvoice->customer ? [
                     'id' => $salesInvoice->customer->id,
                     'name' => $salesInvoice->customer->name,
-                    'current_balance' => (float)$salesInvoice->customer->current_balance
+                    'current_balance' => (float)$salesInvoice->customer->current_balance,
+                    'customer_balance_at_creation' => (float)$salesInvoice->customer_balance_at_creation
                 ] : null,
                 'warehouse' => $salesInvoice->warehouse ? [
                     'id' => $salesInvoice->warehouse->id,
@@ -419,5 +423,22 @@ class SalesInvoiceController extends Controller
         ]);
 
         return view('sales-invoices.print', ['invoice' => $salesInvoice]);
+    }
+
+    public function pdf($id)
+    {
+        $invoice = SalesInvoice::with([
+            'customer',
+            'warehouse',
+            'items.product' => function ($query) {
+                $query->withTrashed();
+            },
+            'items.unit'
+        ])->findOrFail($id);
+
+        $pdf = Pdf::loadView('sales-invoices.pdf', compact('invoice'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream("invoice-{$invoice->number}.pdf");
     }
 }

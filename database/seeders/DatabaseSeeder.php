@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
 
+        Role::query()->firstOrCreate(['name' => 'printer']);
         $roleAdmin = Role::query()->firstOrCreate(['name' => 'admin']);
         $roleCashier = Role::query()->firstOrCreate(['name' => 'cashier']);
         DB::table('role_user')->insert([
@@ -74,15 +75,15 @@ class DatabaseSeeder extends Seeder
             ['name' => 'نعناع', 'category_id' => $catHerbs->id, 'base_unit_id' => $uGram->id, 'sale_price' => 90, 'cost_price' => 60, 'min_stock' => 300],
         ];
 
-        User::factory(10)->create();
-        Warehouse::factory(10)->create();
-        Supplier::factory(20)->create();
-        Customer::factory(25)->create();
+        // User::factory(10)->create();
+        // Warehouse::factory(10)->create();
+        // Supplier::factory(20)->create();
+        // Customer::factory(25)->create();
 
-        Product::factory(50)->create();
+        // Product::factory(50)->create();
 
-        SalesInvoice::factory(100)->create();
-        PurchaseInvoice::factory(100)->create();
+        // SalesInvoice::factory(100)->create();
+        // PurchaseInvoice::factory(100)->create();
 
         foreach ($products as $p) {
             $product = Product::query()->firstOrCreate(
