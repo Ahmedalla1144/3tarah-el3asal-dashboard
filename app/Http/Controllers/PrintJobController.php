@@ -12,8 +12,9 @@ class PrintJobController extends Controller
     {
         $job = PrintJob::create([
             'invoice_id' => $request->invoice_id,
-            'printer_name' => 'Samsung M332x 382x 402x Series',
+            // 'printer_name' => 'Samsung M332x 382x 402x Series',
             // 'printer_name' => $request->printer_name ?? 'Samsung Universal Print Driver 2',
+            'printer_name' => $request->printer_name ?? 'Samsung M332x 382x 402x Series',
             'type' => $request->type ?? 'sales',
         ]);
 

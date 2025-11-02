@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { Printer } from 'lucide-react'
 import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 import { form as payForm } from '@/routes/purchase-invoices/pay'
-import { configureQZ, ensureQZConnected, listPrinters, printUrlToPrinter } from '@/lib/qz'
+import { configureQZ, ensureQZConnected, getDefaultPrinter, listPrinters } from '@/lib/qz'
 import { useToast } from '@/components/ui/toast'
 
 interface PageProps {
@@ -36,6 +36,7 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
     ]
 
     const [printers, setPrinters] = useState<string[]>([])
+    const [defaultPrinter, setDefaultPrinter] = useState<string>('')
     const [selectedPrinter, setSelectedPrinter] = useState<string>('')
     const { add } = useToast()
 
@@ -43,9 +44,11 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
         configureQZ();
         ensureQZConnected();
 
-        // delay listing to allow qz to initialize
         setTimeout(() => {
-            listPrinters().then(setPrinters).catch(() => {});
+            getDefaultPrinter().then(printer => setDefaultPrinter(printer)).catch((error) => {
+                console.log("Error getting default printer", error)
+            });
+            listPrinters().then(setPrinters).catch((error) => { console.log("Error Printing", error) });
         }, 800);
     }, [])
 
@@ -60,7 +63,7 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     invoice_id: invoice.id,
-                    printer_name: "",
+                    printer_name: defaultPrinter,
                     type: 'purchase'
                 }),
             });
@@ -69,21 +72,6 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
             add({ title: 'تم الإرسال', description: `تم إرسال الفاتورة رقم ${invoice.number} للطابعة 🎉` });
         } catch {
             add({ title: 'خطأ', description: 'فشل إرسال أمر الطباعة', variant: 'destructive' });
-        }
-    }
-
-    const handleQZPrint = async () => {
-        if (!selectedPrinter) {
-            alert('يرجى اختيار طابعة أولاً')
-            return
-        }
-
-        try {
-            await printUrlToPrinter(selectedPrinter, `${window.location.origin}/purchase-invoices/${invoice.id}/print?qz=1`)
-            add({ title: 'تم الإرسال', description: `تم إرسال الفاتورة رقم ${invoice.number} للطابعة 🎉` });
-        } catch (error) {
-            console.error('Print error:', error)
-            alert('فشل في إرسال مهمة الطباعة: ' + (error instanceof Error ? error.message : 'خطأ غير معروف'))
         }
     }
 
@@ -104,14 +92,12 @@ export default function PurchaseInvoiceShow({ invoice }: PageProps) {
                                 طباعة
                             </Button>
 
-                            <Button disabled={!selectedPrinter} onClick={handleRemotePrint}>طباعة عن بُعد</Button>
+                            <Button disabled={!selectedPrinter && !defaultPrinter} onClick={handleRemotePrint}>طباعة عن بُعد</Button>
 
-                            <select className="rounded border px-2 py-1 dark:bg-black" value={selectedPrinter} onChange={(e) => setSelectedPrinter(e.target.value)}>
+                            <select className="rounded border px-2 py-1 dark:bg-black" value={defaultPrinter || selectedPrinter} onChange={(e) => setSelectedPrinter(e.target.value)}>
                                 <option value="">اختر طابعة</option>
                                 {printers.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
-
-                            <Button disabled={!selectedPrinter} onClick={handleQZPrint}>طباعة QZ</Button>
 
                             <Link href={payForm(invoice.id).url} className="inline-flex"><Button>سداد</Button></Link>
                             <Link href={purchaseInvoicesRoutes.index().url} className="inline-flex"><Button variant="outline">رجوع</Button></Link>

@@ -104,7 +104,8 @@ class PurchaseInvoiceController extends Controller
     {
         $data = $request->validated();
 
-        DB::transaction(function () use ($data) {
+        try {
+            return DB::transaction(function () use ($data) {
             $invoice = PurchaseInvoice::create([
                 'number' => $data['number'],
                 'supplier_id' => $data['supplier_id'],
@@ -129,6 +130,19 @@ class PurchaseInvoiceController extends Controller
                 return !empty($it['product_id'])
                     && (float)($it['qty'] ?? 0) > 0;
             }));
+
+            // Consolidate duplicate products (same product + same unit)
+            $consolidatedItems = [];
+            foreach ($items as $item) {
+                $key = (int)$item['product_id'] . '|' . (int)$item['unit_id'];
+                if (!isset($consolidatedItems[$key])) {
+                    $consolidatedItems[$key] = $item;
+                } else {
+                    // If same product and unit, add quantities
+                    $consolidatedItems[$key]['qty'] = (float)$consolidatedItems[$key]['qty'] + (float)$item['qty'];
+                }
+            }
+            $items = array_values($consolidatedItems);
 
             // Prefetch products and unit ratios to avoid N+1 queries
             $productIds = collect($items)->pluck('product_id')->map(fn($v) => (int)$v)->unique()->all();
@@ -252,9 +266,15 @@ class PurchaseInvoiceController extends Controller
                     $invoice->update(['status' => 'paid']);
                 }
             }
-        });
 
-        return redirect()->route('purchase-invoices.index')->with('status', 'Purchase invoice created');
+            return redirect()->route('purchase-invoices.index')->with('status', 'Purchase invoice created');
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['items' => $e->getMessage()])
+                ->with('error', 'فشل إنشاء الفاتورة: ' . $e->getMessage());
+        }
     }
 
     /**

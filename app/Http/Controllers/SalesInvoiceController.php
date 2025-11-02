@@ -102,7 +102,8 @@ class SalesInvoiceController extends Controller
     {
         $data = $request->validated();
 
-        DB::transaction(function () use ($data) {
+        try {
+            return DB::transaction(function () use ($data) {
             // Get customer balance at the time of invoice creation
             $customerBalance = 0;
             if ($data['customer_id']) {
@@ -136,6 +137,19 @@ class SalesInvoiceController extends Controller
                     && (float)($it['qty'] ?? 0) > 0;
             }));
 
+            // Consolidate duplicate products (same product + same unit)
+            $consolidatedItems = [];
+            foreach ($items as $item) {
+                $key = (int)$item['product_id'] . '|' . (int)$item['unit_id'];
+                if (!isset($consolidatedItems[$key])) {
+                    $consolidatedItems[$key] = $item;
+                } else {
+                    // If same product and unit, add quantities
+                    $consolidatedItems[$key]['qty'] = (float)$consolidatedItems[$key]['qty'] + (float)$item['qty'];
+                }
+            }
+            $items = array_values($consolidatedItems);
+
             // Prefetch products and unit ratios to avoid N+1 queries
             $productIds = collect($items)->pluck('product_id')->map(fn($v) => (int)$v)->unique()->all();
             $unitPairs = collect($items)->map(fn($it) => [(int)$it['product_id'], (int)$it['unit_id']])->all();
@@ -147,20 +161,31 @@ class SalesInvoiceController extends Controller
                 ->keyBy(fn($r) => $r->product_id . '|' . $r->unit_id);
 
             foreach ($items as $item) {
+                $productId = (int)$item['product_id'];
+                $unitId = (int)$item['unit_id'];
+
                 // Determine ratio to base for the selected unit
-                $ratio = (float) ($ratios->get(((int)$item['product_id']) . '|' . ((int)$item['unit_id']))->ratio_to_base ?? 1.0);
+                $ratio = (float) ($ratios->get($productId . '|' . $unitId)->ratio_to_base ?? 1.0);
 
                 // Check stock availability for the selected unit
-                $product = $productsById->get((int)$item['product_id']);
-                if (!$product || $product->stock <= 0) {
-                    throw new \Exception("المنتج {$product->name} غير متوفر في المخزون");
+                $product = $productsById->get($productId);
+                if (!$product) {
+                    throw new \Exception("المنتج المحدد غير موجود في النظام");
+                }
+
+                if ($product->stock <= 0) {
+                    throw new \Exception("المنتج '{$product->name}' غير متوفر في المخزون");
                 }
 
                 // Calculate available quantity in the selected unit
                 $availableInSelectedUnit = $product->stock / $ratio;
-                if ($availableInSelectedUnit < (float)$item['qty']) {
-                    $unitName = $ratios->get(((int)$item['product_id']) . '|' . ((int)$item['unit_id']))->unit?->name ?? 'الوحدة المختارة';
-                    throw new \Exception("الكمية المطلوبة للمنتج {$product->name} ({$item['qty']} {$unitName}) تتجاوز المخزون المتاح ({$availableInSelectedUnit} {$unitName})");
+                $requestedQty = (float)$item['qty'];
+
+                if ($availableInSelectedUnit < $requestedQty) {
+                    $unitName = $ratios->get($productId . '|' . $unitId)->unit?->name ?? 'الوحدة المختارة';
+                    $availableQty = round($availableInSelectedUnit, 3);
+                    $requestedQtyFormatted = round($requestedQty, 3);
+                    throw new \Exception("الكمية المطلوبة للمنتج '{$product->name}' ({$requestedQtyFormatted} {$unitName}) تتجاوز المخزون المتاح ({$availableQty} {$unitName})");
                 }
 
                 // If unit_price not provided, derive from base sale_price
@@ -257,9 +282,15 @@ class SalesInvoiceController extends Controller
                     $invoice->update(['status' => 'paid']);
                 }
             }
-        });
 
-        return redirect()->route('sales-invoices.index')->with('status', 'Sales invoice created');
+            return redirect()->route('sales-invoices.index')->with('status', 'Sales invoice created');
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['items' => $e->getMessage()])
+                ->with('error', 'فشل إنشاء الفاتورة: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -212,7 +212,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::show
- * @see app/Http/Controllers/PurchaseInvoiceController.php:263
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:283
  * @route '/purchase-invoices/{purchase_invoice}'
  */
 export const show = (args: { purchase_invoice: string | number } | [purchase_invoice: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -227,7 +227,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::show
- * @see app/Http/Controllers/PurchaseInvoiceController.php:263
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:283
  * @route '/purchase-invoices/{purchase_invoice}'
  */
 show.url = (args: { purchase_invoice: string | number } | [purchase_invoice: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -255,7 +255,7 @@ show.url = (args: { purchase_invoice: string | number } | [purchase_invoice: str
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::show
- * @see app/Http/Controllers/PurchaseInvoiceController.php:263
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:283
  * @route '/purchase-invoices/{purchase_invoice}'
  */
 show.get = (args: { purchase_invoice: string | number } | [purchase_invoice: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -264,7 +264,7 @@ show.get = (args: { purchase_invoice: string | number } | [purchase_invoice: str
 })
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::show
- * @see app/Http/Controllers/PurchaseInvoiceController.php:263
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:283
  * @route '/purchase-invoices/{purchase_invoice}'
  */
 show.head = (args: { purchase_invoice: string | number } | [purchase_invoice: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -274,7 +274,7 @@ show.head = (args: { purchase_invoice: string | number } | [purchase_invoice: st
 
     /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::show
- * @see app/Http/Controllers/PurchaseInvoiceController.php:263
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:283
  * @route '/purchase-invoices/{purchase_invoice}'
  */
     const showForm = (args: { purchase_invoice: string | number } | [purchase_invoice: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -284,7 +284,7 @@ show.head = (args: { purchase_invoice: string | number } | [purchase_invoice: st
 
             /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::show
- * @see app/Http/Controllers/PurchaseInvoiceController.php:263
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:283
  * @route '/purchase-invoices/{purchase_invoice}'
  */
         showForm.get = (args: { purchase_invoice: string | number } | [purchase_invoice: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -293,7 +293,7 @@ show.head = (args: { purchase_invoice: string | number } | [purchase_invoice: st
         })
             /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::show
- * @see app/Http/Controllers/PurchaseInvoiceController.php:263
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:283
  * @route '/purchase-invoices/{purchase_invoice}'
  */
         showForm.head = (args: { purchase_invoice: string | number } | [purchase_invoice: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -309,7 +309,7 @@ show.head = (args: { purchase_invoice: string | number } | [purchase_invoice: st
     show.form = showForm
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::print
- * @see app/Http/Controllers/PurchaseInvoiceController.php:298
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:318
  * @route '/purchase-invoices/{purchaseInvoice}/print'
  */
 export const print = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -324,7 +324,7 @@ print.definition = {
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::print
- * @see app/Http/Controllers/PurchaseInvoiceController.php:298
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:318
  * @route '/purchase-invoices/{purchaseInvoice}/print'
  */
 print.url = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -357,7 +357,7 @@ print.url = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoi
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::print
- * @see app/Http/Controllers/PurchaseInvoiceController.php:298
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:318
  * @route '/purchase-invoices/{purchaseInvoice}/print'
  */
 print.get = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -366,7 +366,7 @@ print.get = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoi
 })
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::print
- * @see app/Http/Controllers/PurchaseInvoiceController.php:298
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:318
  * @route '/purchase-invoices/{purchaseInvoice}/print'
  */
 print.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -376,7 +376,7 @@ print.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvo
 
     /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::print
- * @see app/Http/Controllers/PurchaseInvoiceController.php:298
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:318
  * @route '/purchase-invoices/{purchaseInvoice}/print'
  */
     const printForm = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -386,7 +386,7 @@ print.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvo
 
             /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::print
- * @see app/Http/Controllers/PurchaseInvoiceController.php:298
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:318
  * @route '/purchase-invoices/{purchaseInvoice}/print'
  */
         printForm.get = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -395,7 +395,7 @@ print.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvo
         })
             /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::print
- * @see app/Http/Controllers/PurchaseInvoiceController.php:298
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:318
  * @route '/purchase-invoices/{purchaseInvoice}/print'
  */
         printForm.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -411,7 +411,7 @@ print.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvo
     print.form = printForm
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::pay
- * @see app/Http/Controllers/PurchaseInvoiceController.php:359
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:379
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
 export const pay = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -426,7 +426,7 @@ pay.definition = {
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::pay
- * @see app/Http/Controllers/PurchaseInvoiceController.php:359
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:379
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
 pay.url = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -459,7 +459,7 @@ pay.url = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::pay
- * @see app/Http/Controllers/PurchaseInvoiceController.php:359
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:379
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
 pay.post = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -469,7 +469,7 @@ pay.post = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoic
 
     /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::pay
- * @see app/Http/Controllers/PurchaseInvoiceController.php:359
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:379
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
     const payForm = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -479,7 +479,7 @@ pay.post = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoic
 
             /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::pay
- * @see app/Http/Controllers/PurchaseInvoiceController.php:359
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:379
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
         payForm.post = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

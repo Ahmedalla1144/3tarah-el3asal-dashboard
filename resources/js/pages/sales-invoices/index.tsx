@@ -5,7 +5,7 @@ import { formatEGP } from '@/lib/currency';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { CreditCard, Eye, Plus, Printer } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 type InvoiceRow = {
@@ -36,16 +36,29 @@ import EmptyState from '@/components/empty-state';
 import salesInvoicesRoutes from '@/routes/sales-invoices';
 import { form as payForm } from '@/routes/sales-invoices/pay';
 import { useToast } from '@/components/ui/toast';
+import { configureQZ, ensureQZConnected, getDefaultPrinter } from '@/lib/qz';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'فواتير المبيعات', href: salesInvoicesRoutes.index().url }];
 
 export default function SalesInvoicesIndex({ invoices, filters }: PageProps) {
     const [search, setSearch] = useState(filters.search ?? '');
+    const [defaultPrinter, setDefaultPrinter] = useState<string>('')
     const debouncedSearch = useDebouncedCallback((value: string) => {
         router.get(salesInvoicesRoutes.index().url, { search: value }, { preserveState: true, replace: true });
     }, 300);
 
     const { add } = useToast();
+
+    useEffect(() => {
+        configureQZ();
+        ensureQZConnected();
+        setTimeout(() => {
+            getDefaultPrinter().then(printer => setDefaultPrinter(printer)).catch((error) => {
+                console.log("Error getting default printer", error)
+            });
+        }, 1000);
+    }, [])
+
 
     const handleRemotePrint = async (invoice: InvoiceRow) => {
         try {
@@ -54,7 +67,7 @@ export default function SalesInvoicesIndex({ invoices, filters }: PageProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     invoice_id: invoice.id,
-                    printer_name: "",
+                    printer_name: defaultPrinter,
                 }),
             });
 

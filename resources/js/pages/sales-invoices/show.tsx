@@ -7,50 +7,9 @@ import { Printer, CreditCard } from 'lucide-react'
 import salesInvoicesRoutes from '@/routes/sales-invoices'
 import { form as payForm } from '@/routes/sales-invoices/pay'
 import { useEffect, useState } from 'react'
-import { configureQZ, ensureQZConnected, listPrinters } from '@/lib/qz'
+import { configureQZ, ensureQZConnected, getDefaultPrinter, listPrinters } from '@/lib/qz'
 import { useToast } from '@/components/ui/toast'
-
-interface InvoiceItem {
-    id: number
-    product: {
-        id: number
-        name: string
-    }
-    unit: {
-        id: number
-        name: string
-    }
-    qty: number
-    unit_price: number
-    discount_value: number
-    tax_value: number
-    total: number
-}
-
-interface PageProps {
-    invoice: {
-        id: number
-        number: string
-        date: string
-        status: string
-        total: number
-        paid_amount: number
-        remaining_amount: number
-        notes: string | null
-        customer: {
-            id: number
-            name: string
-            current_balance: number
-            customer_balance_at_creation: number
-        } | null
-        warehouse: {
-            id: number
-            name: string
-        } | null
-        items: InvoiceItem[]
-    }
-}
-
+import { PageProps } from '@/types/sales-invoices'
 
 export default function SalesInvoiceShow({ invoice }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -59,13 +18,18 @@ export default function SalesInvoiceShow({ invoice }: PageProps) {
     ]
 
     const [printers, setPrinters] = useState<string[]>([])
+    const [defaultPrinter, setDefaultPrinter] = useState<string>()
     const [selectedPrinter, setSelectedPrinter] = useState<string>('')
     const { add } = useToast()
 
     useEffect(() => {
         configureQZ();
         ensureQZConnected();
+
         setTimeout(() => {
+            getDefaultPrinter().then(printer => setDefaultPrinter(printer)).catch((error) => {
+                console.log("Error getting default printer", error)
+            });
             listPrinters()
                 .then((printers) => {
                     setPrinters(printers);
@@ -87,7 +51,7 @@ export default function SalesInvoiceShow({ invoice }: PageProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     invoice_id: invoice.id,
-                    printer_name: "",
+                    printer_name: defaultPrinter,
                 }),
             });
 
@@ -97,21 +61,6 @@ export default function SalesInvoiceShow({ invoice }: PageProps) {
             add({ title: 'خطأ', description: 'فشل إرسال أمر الطباعة', variant: 'destructive' });
         }
     };
-
-    // const handleQZPrint = async () => {
-    //     if (!selectedPrinter) {
-    //         alert('يرجى اختيار طابعة أولاً')
-    //         return
-    //     }
-
-    //     try {
-    //         await printUrlToPrinter(selectedPrinter, `${window.location.origin}/sales-invoices/${invoice.id}/print`)
-    //         alert('تم إرسال مهمة الطباعة بنجاح')
-    //     } catch (error) {
-    //         console.error('Print error:', error)
-    //         alert('فشل في إرسال مهمة الطباعة: ' + (error instanceof Error ? error.message : 'خطأ غير معروف'))
-    //     }
-    // }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -130,8 +79,8 @@ export default function SalesInvoiceShow({ invoice }: PageProps) {
                                 <Printer className="mr-2 h-4 w-4" />
                                 طباعة
                             </Button>
-                            <Button onClick={handleRemotePrint}>طباعة عن بُعد</Button>
-                            <select className="rounded border px-2 py-1 dark:bg-black" value={selectedPrinter} onChange={(e) => setSelectedPrinter(e.target.value)}>
+                            <Button disabled={!selectedPrinter && !defaultPrinter} onClick={handleRemotePrint}>طباعة عن بُعد</Button>
+                            <select className="rounded border px-2 py-1 dark:bg-black" value={defaultPrinter || selectedPrinter} onChange={(e) => setSelectedPrinter(e.target.value)}>
                                 <option value="">اختر طابعة</option>
                                 {printers.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>

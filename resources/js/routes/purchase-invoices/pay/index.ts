@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::form
- * @see app/Http/Controllers/PurchaseInvoiceController.php:337
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:357
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
 export const form = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ form.definition = {
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::form
- * @see app/Http/Controllers/PurchaseInvoiceController.php:337
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:357
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
 form.url = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ form.url = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoic
 
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::form
- * @see app/Http/Controllers/PurchaseInvoiceController.php:337
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:357
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
 form.get = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -58,7 +58,7 @@ form.get = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoic
 })
 /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::form
- * @see app/Http/Controllers/PurchaseInvoiceController.php:337
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:357
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
 form.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -68,7 +68,7 @@ form.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoi
 
     /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::form
- * @see app/Http/Controllers/PurchaseInvoiceController.php:337
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:357
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
     const formForm = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -78,7 +78,7 @@ form.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoi
 
             /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::form
- * @see app/Http/Controllers/PurchaseInvoiceController.php:337
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:357
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
         formForm.get = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -87,7 +87,7 @@ form.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoi
         })
             /**
 * @see \App\Http\Controllers\PurchaseInvoiceController::form
- * @see app/Http/Controllers/PurchaseInvoiceController.php:337
+ * @see app/Http/Controllers/PurchaseInvoiceController.php:357
  * @route '/purchase-invoices/{purchaseInvoice}/pay'
  */
         formForm.head = (args: { purchaseInvoice: number | { id: number } } | [purchaseInvoice: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

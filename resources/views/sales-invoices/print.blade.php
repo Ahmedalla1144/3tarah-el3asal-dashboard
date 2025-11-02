@@ -22,88 +22,103 @@
 
         body {
             font-family: 'Cairo', sans-serif;
-            font-size: 14px;
+            font-size: 11px;
             color: #333;
             background: white;
-            padding: 20px;
+            padding: 6px;
             direction: rtl;
             text-align: right;
-            line-height: 1.6;
+            line-height: 1.4;
         }
 
         .invoice-container {
             direction: rtl;
             unicode-bidi: bidi-override;
             text-align: right;
-            max-width: 800px;
+            max-width: 510px;
             margin: 0 auto;
             background: white;
             border: 1px solid #ddd;
-            padding: 30px;
+            padding: 12px;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 6px;
+        }
+
+        .header-left {
+            flex: 1;
+            text-align: right;
         }
 
         .company-name {
-            font-size: 24px;
+            font-size: 17px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin: 0;
+        }
+
+        .header-right {
+            flex: 1;
+            text-align: left;
         }
 
         .invoice-title {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin: 0;
         }
 
         .invoice-number {
-            font-size: 16px;
+            font-size: 13px;
             color: #666;
+            margin-top: 2px;
         }
 
         .invoice-details {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .customer-info,
         .invoice-info {
             flex: 1;
-            padding: 0 10px;
+            padding: 0 5px;
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 3px;
             color: #333;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .info-label {
             font-weight: bold;
             color: #666;
+            font-size: 13px;
         }
 
         .info-value {
             color: #333;
+            font-size: 13px;
         }
 
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
         td,
         th {
@@ -117,16 +132,18 @@
 
         .items-table th {
             background-color: #f5f5f5;
-            padding: 12px 8px;
+            padding: 5px 3px;
             text-align: right;
             font-weight: bold;
             border: 1px solid #ddd;
+            font-size: 13px;
         }
 
         .items-table td {
-            padding: 10px 8px;
+            padding: 4px 3px;
             border: 1px solid #ddd;
             text-align: right;
+            font-size: 13px;
         }
 
         .items-table tr:nth-child(even) {
@@ -135,31 +152,33 @@
 
         .summary {
             margin-left: auto;
-            width: 300px;
+            width: 200px;
             border: 1px solid #ddd;
-            padding: 20px;
+            padding: 8px;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            padding: 5px 0;
+            margin-bottom: 3px;
+            padding: 2px 0;
         }
 
         .summary-label {
             font-weight: bold;
+            font-size: 13px;
         }
 
         .summary-value {
             font-weight: bold;
+            font-size: 13px;
         }
 
         .total-row {
             border-top: 2px solid #333;
-            padding-top: 10px;
-            margin-top: 10px;
-            font-size: 16px;
+            padding-top: 5px;
+            margin-top: 5px;
+            font-size: 14px;
         }
 
         .debit-balance {
@@ -168,19 +187,24 @@
 
         .final-total {
             color: #d32f2f;
-            font-size: 18px;
+            font-size: 15px;
         }
 
         .notes {
-            margin-top: 30px;
-            padding: 15px;
+            margin-top: 10px;
+            padding: 8px;
             background-color: #f9f9f9;
             border-right: 4px solid #333;
         }
 
         .notes-title {
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 3px;
+            font-size: 13px;
+        }
+
+        .notes div {
+            font-size: 13px;
         }
 
         @media print {
@@ -190,7 +214,7 @@
 
             .invoice-container {
                 border: none;
-                padding: 20px;
+                padding: 10px;
             }
 
             .no-print {
@@ -225,9 +249,13 @@
     <div class="invoice-container">
         <!-- Header -->
         <div class="header">
-            <div class="company-name">عطارة العسال</div>
-            <div class="invoice-title">فاتورة مبيعات</div>
-            <div class="invoice-number">رقم الفاتورة: {{ $invoice->number }}</div>
+            <div class="header-left">
+                <div class="company-name">عطارة العسال</div>
+            </div>
+            <div class="header-right">
+                <div class="invoice-title">فاتورة مبيعات</div>
+                <div class="invoice-number">رقم: {{ $invoice->number }}</div>
+            </div>
         </div>
 
         <!-- Invoice Details -->
@@ -390,26 +418,44 @@
             if (!el) return alert('لم أجد عنصر الفاتورة في الصفحة (.invoice-container)');
 
             // Quality settings
-            const dpi = 300; // change to 150 if too large
-            const scale = 2; // increase for clearer text
+            const dpi = 300;
+            const scale = 2;
 
-            // Paper size: default to A4 portrait (297mm height)
-            const paperHeightMm = 297;
-            const pageHeightPx = Math.round((paperHeightMm / 25.4) * dpi / 72 * 72 * (scale / 1));
-            // The calculation above aims to approximate printable pixels — html2canvas scale handles resolution.
+            // Get the actual element dimensions
+            const elementHeight = el.offsetHeight;
+            const elementWidth = el.offsetWidth;
+            console.log(`Element dimensions: ${elementWidth}px x ${elementHeight}px`);
+
+            // Paper size: 14cm height (140mm)
+            // html2canvas renders the element at scale, so we need to base calculation on the rendered canvas
+            // For physical paper size, we calculate based on the actual rendered canvas dimensions
+            // Assuming the container is 510px wide (max-width), at scale 2 it becomes 1020px wide
+            // Height calculation: we want to fit approximately 14cm worth of content
+            const paperHeightMm = 140;
+            // Simplified calculation: approximate 14cm in pixels at screen scale
+            const estimatedPageHeightPx = 1000; // Start with reasonable estimate
+            const pageHeightPx = estimatedPageHeightPx;
+
+            console.log(`Calculated page height: ${pageHeightPx}px for ${paperHeightMm}mm paper`);
 
             try {
+                console.log(`Starting html2canvas conversion...`);
                 const canvas = await html2canvas(el, {
                     scale: scale,
                     useCORS: true,
                     allowTaint: false,
-                    backgroundColor: '#ffffff'
+                    backgroundColor: '#ffffff',
+                    logging: true
                 });
+                console.log(`Canvas created: ${canvas.width}x${canvas.height}`);
 
                 const images = sliceCanvasToBase64Pages(canvas, pageHeightPx);
 
                 await qz.websocket.connect();
-                const cfg = qz.configs.create(printerName);
+                const cfg = qz.configs.create(printerName, {
+                    units: 'mm',
+                    printerPaperSize: { width: 105, height: 140 }
+                });
 
                 for (let i = 0; i < images.length; i++) {
                     const base64 = images[i].split(',')[1];
@@ -434,7 +480,8 @@
                 } catch (e) {
                     /* ignore */
                 }
-                alert('تم إرسال الفاتورة للطباعة عبر QZ Tray');
+                const pageCount = images.length;
+                alert(`تم إرسال ${pageCount} صفحة للطباعة عبر QZ Tray`);
             } catch (err) {
                 console.error(err);
                 alert('فشل تجهيـز صورة الطباعة، سيتم استخدام نافذة الطباعة التقليدية.\n\n' + (err && err.message ? err
@@ -467,6 +514,8 @@
             const width = canvas.width;
             let y = 0;
 
+            console.log(`Canvas dimensions: ${width}x${totalHeight}, Page height: ${pageHeightPx}`);
+
             while (y < totalHeight) {
                 const h = Math.min(pageHeightPx, totalHeight - y);
                 const pageCanvas = document.createElement('canvas');
@@ -477,10 +526,11 @@
                 ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
                 ctx.drawImage(canvas, 0, y, width, h, 0, 0, width, h);
                 pages.push(pageCanvas.toDataURL('image/png'));
+                console.log(`Created page ${pages.length}: y=${y}, height=${h}`);
                 y += h;
             }
 
-            // If only one page, return as single image
+            console.log(`Total pages created: ${pages.length}`);
             return pages;
         }
 

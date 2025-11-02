@@ -86,7 +86,11 @@ export async function listPrinters(): Promise<string[]> {
  */
 export async function printRawToPrinter(printer: string, raw: string): Promise<void> {
     await ensureQZConnected();
-    const cfg = qz.configs.create(printer, { copies: 1 });
+    const cfg = qz.configs.create(printer, {
+        copies: 1,
+        units: 'mm',
+        printerPaperSize: { width: 105, height: 140 }
+    });
     const data = [{ type: 'raw', format: 'command', flavor: 'plain', data: [raw] }];
     await qz.print(cfg, data);
 }
@@ -104,7 +108,12 @@ export async function getDefaultPrinter(): Promise<string> {
  */
 export async function printUrlToPrinter(printer: string, url: string): Promise<void> {
     await ensureQZConnected();
-    const cfg = qz.configs.create(printer, { copies: 1, margins: 0 });
+    const cfg = qz.configs.create(printer, {
+        copies: 1,
+        margins: 0,
+        units: 'mm',
+        printerPaperSize: { width: 105, height: 140 }
+    });
 
     // هات HTML من السيرفر
 

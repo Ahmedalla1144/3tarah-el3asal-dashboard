@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { type BreadcrumbItem } from '@/types'
 import { useDebouncedCallback } from 'use-debounce'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus, Printer, Eye, CreditCard } from 'lucide-react'
 import { formatEGP } from '@/lib/currency'
 
@@ -37,6 +37,7 @@ import purchaseInvoicesRoutes from '@/routes/purchase-invoices'
 import { form as payForm } from '@/routes/purchase-invoices/pay'
 import EmptyState from '@/components/empty-state'
 import { useToast } from '@/components/ui/toast'
+import { configureQZ, ensureQZConnected, getDefaultPrinter } from '@/lib/qz'
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'فواتير الشراء', href: purchaseInvoicesRoutes.index().url },
@@ -44,10 +45,21 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function PurchaseInvoicesIndex({ invoices, filters }: PageProps) {
     const [search, setSearch] = useState(filters.search ?? '')
+    const [defaultPrinter, setDefaultPrinter] = useState<string>('')
     const debouncedSearch = useDebouncedCallback((value: string) => {
         router.get(purchaseInvoicesRoutes.index().url, { search: value }, { preserveState: true, replace: true })
     }, 300)
     const { add } = useToast();
+
+    useEffect(() => {
+        configureQZ();
+        ensureQZConnected();
+        setTimeout(() => {
+            getDefaultPrinter().then(printer => setDefaultPrinter(printer)).catch((error) => {
+                console.log("Error getting default printer", error)
+            });
+        }, 1000);
+    }, [])
 
     const handleRemotePrint = async (invoice: InvoiceRow) => {
         try {
@@ -56,7 +68,7 @@ export default function PurchaseInvoicesIndex({ invoices, filters }: PageProps) 
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     invoice_id: invoice.id,
-                    printer_name: "",
+                    printer_name: defaultPrinter,
                     type: 'purchase'
                 }),
             });

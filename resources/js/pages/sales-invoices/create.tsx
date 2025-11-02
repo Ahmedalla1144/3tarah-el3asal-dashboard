@@ -30,7 +30,6 @@ export default function SalesInvoiceCreate({ customers, warehouses, products, ne
     const [selectedCustomerId, setSelectedCustomerId] = useState<string>('')
 
     useEffect(() => {
-        // Use a timeout to ensure the form is rendered
         const timer = setTimeout(() => {
             const form = document.querySelector('form[action*="sales-invoices"]') as HTMLFormElement
             if (form) {
